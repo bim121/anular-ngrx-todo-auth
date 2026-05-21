@@ -1,12 +1,35 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {
+  ApplicationConfig,
+  isDevMode,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideStore, provideState } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
+import { provideRouterStore } from '@ngrx/router-store';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './core/auth.interceptors';
+import { authReducer, authFeatureKey } from './auth/auth.reducer';
+import { todosReducer, todosFeatureKey } from './todos/todo.reducer';
+import { AuthEffects } from './auth/auth.effects';
+import { TodoEffects } from './todos/todo.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes), provideClientHydration(withEventReplay())
-  ]
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideRouter(routes),
+    provideClientHydration(withEventReplay()),
+    provideStore(),
+    provideState(authFeatureKey, authReducer),
+    provideState(todosFeatureKey, todosReducer),
+    provideEffects(AuthEffects, TodoEffects),
+    provideRouterStore(),
+    ...(isDevMode()
+      ? [provideStoreDevtools({ maxAge: 25 })]
+      : []),
+  ],
 };
