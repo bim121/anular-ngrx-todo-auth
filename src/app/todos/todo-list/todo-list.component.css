@@ -6,10 +6,27 @@
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
-h2 {
-  text-align: center;
-  color: #333;
+.todo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+}
+.todo-header h2 {
+  margin: 0;
+  color: #333;
+}
+.logout-btn {
+  padding: 8px 14px;
+  background-color: #d9534f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.logout-btn:hover {
+  background-color: #c9302c;
 }
 .add-todo-form {
   display: flex;

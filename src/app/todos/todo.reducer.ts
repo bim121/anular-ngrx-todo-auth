@@ -1,5 +1,6 @@
 import { TodosState } from './todo.model';
 import * as TodoActions from './todo.actions';
+import * as AuthActions from '../auth/auth.actions';
 import { createReducer, on } from '@ngrx/store';
 
 export const todosFeatureKey = 'todos';
@@ -85,5 +86,7 @@ export const todosReducer = createReducer(
         ...state,
         error: error.message || 'Failed to delete messages',
         loading: false
-    }))
+    })),
+
+    on(AuthActions.logoutUser, () => initialTodoState)
 )
