@@ -11,6 +11,7 @@ import { Store } from "@ngrx/store";
     selector: 'app-register',
     imports: [CommonModule, FormsModule, RouterLink],
     templateUrl: './register.component.html',
+    standalone: true,
     styleUrl: './register.component.css'
 })
 export class RegisterComponent {

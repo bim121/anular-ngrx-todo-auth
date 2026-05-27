@@ -57,7 +57,9 @@ export const todosReducer = createReducer(
 
     on(TodoActions.updateTodoSuccess, (state, {todo}) => ({
         ...state,
-        items: state.items.map(item => item.id ? todo : item),
+        items: state.items.map((item) =>
+            item.id === todo.id ? todo : item
+        ),
         loading: false
     })),
 

@@ -4,8 +4,6 @@ import { TodoService } from "./todo.service";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import * as AuthSelectors from '../auth/auth.selectors';
 import { catchError, exhaustMap, filter, map, of, withLatestFrom } from "rxjs";
-import { access } from "fs";
-import { loadTodosSuccess, loadTodosFailure } from './todo.actions';
 import * as TodoActions from './todo.actions';
 
 @Injectable()

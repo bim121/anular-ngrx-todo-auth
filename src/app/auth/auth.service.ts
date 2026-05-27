@@ -60,7 +60,7 @@ export class AuthService {
         if(error.message) {
             errorMessage = error.message;
         } else if (error.status) {
-            errorMessage = "Server error: ${error.status}";
+            errorMessage = `Server error: ${error.status}`;
         }
         return throwError(() => new Error(errorMessage));
     }
