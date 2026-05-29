@@ -77,6 +77,17 @@ src/app/
 
 Подробнее: [docs/adr/ADR-001-feature-based-structure.md](./docs/adr/ADR-001-feature-based-structure.md)
 
+### Path aliases (`tsconfig.json`)
+
+| Alias | Путь |
+|-------|------|
+| `@app/core/*` | `src/app/core/*` |
+| `@app/shared/*` | `src/app/shared/*` |
+| `@app/features/auth/*` | `src/app/features/auth/*` |
+| `@app/features/todos/*` | `src/app/features/todos/*` |
+
+Пример: `import { authGuard } from '@app/core/guards/auth.guard';`
+
 ## NgRx DevTools
 
 Расширение [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools) → вкладка Redux в браузере. В production не подключается.

@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { TodoService } from "./todo.service";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import * as AuthSelectors from '../../auth/data-access/auth.selectors';
+import * as AuthSelectors from '@app/features/auth/data-access/auth.selectors';
 import { catchError, exhaustMap, filter, map, of, withLatestFrom } from "rxjs";
 import * as TodoActions from './todo.actions';
 

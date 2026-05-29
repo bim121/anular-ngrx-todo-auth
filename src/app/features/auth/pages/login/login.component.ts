@@ -3,8 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
-import * as AuthActions from '../../data-access/auth.actions';
-import { selectAuthLoading, selectAuthError } from '../../data-access/auth.selectors';
+import * as AuthActions from '@app/features/auth/data-access/auth.actions';
+import {
+  selectAuthLoading,
+  selectAuthError,
+} from '@app/features/auth/data-access/auth.selectors';
 import { Observable } from 'rxjs';
 
 @Component({

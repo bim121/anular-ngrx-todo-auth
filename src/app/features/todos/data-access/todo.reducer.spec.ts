@@ -1,6 +1,6 @@
 import { todosReducer, initialTodoState } from './todo.reducer';
 import * as TodoActions from './todo.actions';
-import * as AuthActions from '../../auth/data-access/auth.actions';
+import * as AuthActions from '@app/features/auth/data-access/auth.actions';
 import { Todo } from './todo.model';
 
 describe('todosReducer', () => {
