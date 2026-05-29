@@ -6,8 +6,6 @@ import { Observable } from 'rxjs';
 import { Todo } from '@app/features/todos/data-access/todo.model';
 import * as TodoActions from '@app/features/todos/data-access/todo.actions';
 import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
-import * as AuthActions from '@app/features/auth/data-access/auth.actions';
-
 @Component({
   selector: 'app-todo-list',
   standalone: true,
@@ -70,10 +68,6 @@ export class TodoListComponent implements OnInit {
       this.store.dispatch(TodoActions.updateTodo({ todo: todoToUpdate }));
       this.cancelEdit();
     }
-  }
-
-  logout(): void {
-    this.store.dispatch(AuthActions.logoutUser());
   }
 
   trackById(index: number, item: Todo): string {

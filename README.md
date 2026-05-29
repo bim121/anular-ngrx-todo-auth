@@ -65,7 +65,9 @@ src/app/
 │   ├── guards/              # authGuard
 │   └── interceptors/      # authInterceptor (Bearer token)
 ├── shared/                  # ui, pipes, validators (Phase 1+)
-├── layout/                  # main-layout, auth-layout (Phase 1.3)
+├── layout/
+│   ├── main-layout/         # header (user, logout), footer, outlet
+│   └── auth-layout/         # centered card for login/register
 └── features/
     ├── auth/
     │   ├── data-access/     # NgRx + AuthService
