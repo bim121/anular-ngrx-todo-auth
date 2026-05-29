@@ -11,11 +11,11 @@ import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './core/auth.interceptors';
-import { authReducer, authFeatureKey } from './auth/auth.reducer';
-import { todosReducer, todosFeatureKey } from './todos/todo.reducer';
-import { AuthEffects } from './auth/auth.effects';
-import { TodoEffects } from './todos/todo.effects';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { authReducer, authFeatureKey } from './features/auth/data-access/auth.reducer';
+import { todosReducer, todosFeatureKey } from './features/todos/data-access/todo.reducer';
+import { AuthEffects } from './features/auth/data-access/auth.effects';
+import { TodoEffects } from './features/todos/data-access/todo.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { switchMap, take } from 'rxjs';
-import { selectToken } from '../auth/auth.selectors';
+import { selectToken } from '../../features/auth/data-access/auth.selectors';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const store = inject(Store);

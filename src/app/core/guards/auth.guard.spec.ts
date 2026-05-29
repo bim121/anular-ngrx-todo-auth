@@ -3,7 +3,7 @@ import { Router, UrlTree } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, firstValueFrom, isObservable, of } from 'rxjs';
 import { authGuard } from './auth.guard';
-import { selectIsLoggedIn } from './auth.selectors';
+import { selectIsLoggedIn } from '../../features/auth/data-access/auth.selectors';
 
 const runGuard = () =>
   TestBed.runInInjectionContext(() => authGuard({} as any, {} as any));

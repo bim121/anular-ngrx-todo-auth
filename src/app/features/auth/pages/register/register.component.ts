@@ -3,8 +3,8 @@ import { RouterLink } from "@angular/router";
 import { FormsModule, NgForm } from "@angular/forms";
 import { Component, inject } from "@angular/core";
 import { from, Observable } from "rxjs";
-import * as fromAuthSelector from '../auth.selectors';
-import * as AuthActions from '../auth.actions';
+import * as fromAuthSelector from '../../data-access/auth.selectors';
+import * as AuthActions from '../../data-access/auth.actions';
 import { Store } from "@ngrx/store";
 
 @Component({

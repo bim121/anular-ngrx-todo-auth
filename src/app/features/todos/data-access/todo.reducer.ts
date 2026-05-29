@@ -1,6 +1,6 @@
 import { TodosState } from './todo.model';
 import * as TodoActions from './todo.actions';
-import * as AuthActions from '../auth/auth.actions';
+import * as AuthActions from '../../auth/data-access/auth.actions';
 import { createReducer, on } from '@ngrx/store';
 
 export const todosFeatureKey = 'todos';

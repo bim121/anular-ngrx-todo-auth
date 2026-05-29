@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { Todo } from '../todo.model';
-import * as TodoActions from '../todo.actions';
-import * as TodoSelectors from '../todo.selectors';
-import * as AuthActions from '../../auth/auth.actions';
+import { Todo } from '../../data-access/todo.model';
+import * as TodoActions from '../../data-access/todo.actions';
+import * as TodoSelectors from '../../data-access/todo.selectors';
+import * as AuthActions from '../../../auth/data-access/auth.actions';
 
 @Component({
   selector: 'app-todo-list',

@@ -1,59 +1,93 @@
-# AnularNgrxTodoAuth
+# Angular NgRx Todo Auth
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.11.
+Todo-приложение на Angular 21 с авторизацией и NgRx (store + effects + router-store + devtools). REST подделан через `json-server` и `db.json`.
 
-## Development server
+**Текущий этап:** Phase 0 завершён — Login → Todos CRUD → Logout работает.
 
-To start a local development server, run:
+## Стек
 
-```bash
-ng serve
-```
+- Angular 21 (standalone components, SSR)
+- NgRx Store / Effects / Router-Store / Store-DevTools
+- RxJS, TypeScript 5.9
+- json-server — mock REST API
+- Vitest — unit-тесты
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Установка
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Запуск (dev)
+
+Один скрипт поднимает API (`:3000`) и Angular (`:4200`) параллельно:
 
 ```bash
-ng generate --help
+npm run dev
 ```
 
-## Building
-
-To build the project run:
+Если хочется отдельно:
 
 ```bash
-ng build
+npm run api      # json-server :3000
+npm start        # ng serve   :4200
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Открыть [http://localhost:4200](http://localhost:4200).
 
-## Running unit tests
+## Тестовый пользователь
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Из `db.json`:
 
-```bash
-ng test
+| email | password |
+|-------|----------|
+| `test@example.com` | `password123` |
+
+Регистрация новых пользователей через `/register` тоже работает — записи пишутся в `db.json`.
+
+## Скрипты
+
+| Скрипт | Что делает |
+|--------|------------|
+| `npm start` | `ng serve` (только Angular) |
+| `npm run api` | `json-server db.json -p 3000` |
+| `npm run dev` | API + Angular одновременно |
+| `npm run build` | Production-сборка |
+| `npm test` | Vitest unit-тесты |
+
+## Структура
+
+```
+src/app/
+├── app.config.ts
+├── app.routes.ts
+├── core/
+│   ├── guards/              # authGuard
+│   └── interceptors/      # authInterceptor (Bearer token)
+├── shared/                  # ui, pipes, validators (Phase 1+)
+├── layout/                  # main-layout, auth-layout (Phase 1.3)
+└── features/
+    ├── auth/
+    │   ├── data-access/     # NgRx + AuthService
+    │   └── pages/           # login, register
+    └── todos/
+        ├── data-access/
+        └── pages/           # todo-list
 ```
 
-## Running end-to-end tests
+Подробнее: [docs/adr/ADR-001-feature-based-structure.md](./docs/adr/ADR-001-feature-based-structure.md)
 
-For end-to-end (e2e) testing, run:
+## NgRx DevTools
 
-```bash
-ng e2e
-```
+Расширение [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools) → вкладка Redux в браузере. В production не подключается.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Известные ограничения Phase 0
 
-## Additional Resources
+- Нет persistence: после refresh страницы пользователь разлогинен (`localStorage` rehydrate — в Phase 3).
+- Пароль и mock-`accessToken` приходят с json-server — это учебная заглушка, не для прода.
+- Нет UI для ошибок API (Phase 1).
+- Нет e2e и CI (Phase 1+).
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Следующие фазы
+
+См. [`plans/`](./plans/) — phase-01 и далее.
