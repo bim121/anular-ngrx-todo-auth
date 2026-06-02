@@ -3,7 +3,8 @@ import {
   isDevMode,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withPreloading } from '@angular/router';
+import { TodosPreloadStrategy } from '@app/core/routing/todos-preload.strategy';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideStore, provideState } from '@ngrx/store';
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideRouter(routes),
+    provideRouter(routes, withPreloading(TodosPreloadStrategy)),
     provideClientHydration(withEventReplay()),
     provideStore(),
     provideState(authFeatureKey, authReducer),

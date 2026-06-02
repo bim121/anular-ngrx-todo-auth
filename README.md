@@ -58,6 +58,21 @@ npm start        # ng serve   :4200
 
 После `npm run build` в выводе CLI смотри **Lazy chunk files** — отдельные бандлы для `auth-routes`, `todos-routes`, layouts и страниц login/register/todos.
 
+### Preloading (Phase 1.4)
+
+`TodosPreloadStrategy` в `app.config.ts` — после старта приложения в фоне подгружается только todos feature (`data: { preload: true }` в `app.routes.ts`). Auth chunks остаются lazy до перехода на `/login`.
+
+Примерные размеры todos-related chunks (production build):
+
+| Chunk | Raw | Transfer (gzip) |
+|-------|-----|-----------------|
+| `todos-routes` | ~0.6 kB | ~0.6 kB |
+| `main-layout-component` | ~3.6 kB | ~1.3 kB |
+| `todo-list-component` | ~6.8 kB | ~2.1 kB |
+| shared NgRx/RxJS (lazy) | ~30 kB | ~6.7 kB |
+
+Полный анализ: `npm run build:stats` → `dist/anular-ngrx-todo-auth/stats.json`.
+
 ## Структура
 
 ```
