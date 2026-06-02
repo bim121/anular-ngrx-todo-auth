@@ -1,5 +1,9 @@
 # Phase 15 — Blue-green deployment & tenant versioning
 
+> **Теория:** [guides/phase-15-blue-green-theory.md](./guides/phase-15-blue-green-theory.md) — статус: placeholder  
+> **Backend:** B-28 — gateway routing, admin commands  
+> **Admin UI v2:** [admin-panel-spec.md](./admin-panel-spec.md)
+
 **Длительность:** 36–39 недели (50–70 ч)  
 **Предусловия:** Phase 14, infrastructure access (staging)  
 **Цель:** Zero-downtime deploys, tenant pinned to versions, safe DB migrations.
@@ -117,7 +121,20 @@ Move `tenant_beta` to green first; monitor 24h; then `tenant_acme`.
 
 ---
 
-## Неделя 4 — Frontend version compatibility
+## Неделя 4 — Admin panel v2 (blue/green + migrations)
+
+См. [admin-panel-spec.md](./admin-panel-spec.md):
+
+- [ ] Blue/Green switch UI per tenant (confirm + audit log)
+- [ ] Migration runner: version → preview → execute → progress
+- [ ] Bulk migrate checkbox selection
+- [ ] Deployment overview dashboard
+- [ ] SignalR `MigrationProgressHub` subscription (backend B-12)
+- [ ] E2E: switch tenant to green → verify routing
+
+---
+
+## Неделя 4 (legacy) — Frontend version compatibility
 
 ### 15.4.1 API version matrix
 
@@ -179,6 +196,7 @@ Postmortem: timeline, root cause, action items.
 
 ## Критерии готовности
 
+- [ ] Admin v2: switch track + migrate UI tested
 - [ ] Staging blue-green switch executed twice
 - [ ] One expand/contract migration applied
 - [ ] Canary tenant on green while others on blue

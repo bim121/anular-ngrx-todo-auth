@@ -1,4 +1,6 @@
 # Phase 9 — Microfrontends
+> **Теория:** [guides/phase-09-microfrontends-theory.md](./guides/phase-09-microfrontends-theory.md) — статус: placeholder
+
 
 **Длительность:** 19–21 недели (50–60 ч)  
 **Предусловия:** Phase 8, Nx workspace  
@@ -191,3 +193,5 @@ Playwright: shell loads, remote todos visible.
 ## Следующая фаза
 
 → [phase-10-electron.md](./phase-10-electron.md)
+
+

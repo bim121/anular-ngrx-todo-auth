@@ -7,6 +7,7 @@
     "api": "json-server db.json -p 3000",
     "dev": "concurrently \"npm run api\" \"ng serve\"",
     "build": "ng build",
+    "build:stats": "ng build --stats-json",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:anular-ngrx-todo-auth": "node dist/anular-ngrx-todo-auth/server/server.mjs"

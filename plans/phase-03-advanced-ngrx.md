@@ -1,4 +1,6 @@
 # Phase 3 — Advanced NgRx
+> **Теория:** [guides/phase-03-advanced-ngrx-theory.md](./guides/phase-03-advanced-ngrx-theory.md) — статус: placeholder
+
 
 **Длительность:** 7–8 недель (60–80 ч)  
 **Предусловия:** Phase 2  
@@ -292,3 +294,5 @@ Mock load from `assets/config.json` в APP_INITIALIZER.
 ## Следующая фаза
 
 → [phase-04-architecture-patterns.md](./phase-04-architecture-patterns.md)
+
+

@@ -1,5 +1,8 @@
 # Phase 1 — Production-grade core
 
+> **Теория:** [guides/phase-01-production-core-theory.md](./guides/phase-01-production-core-theory.md) — статус: placeholder  
+> **Backend:** контракт в [`../../contracts/openapi.yaml`](../../contracts/openapi.yaml) — backend реализует позже (B-02)
+
 **Длительность:** 3–4 недели (30–40 ч)  
 **Предусловия:** [Phase 0](./phase-00-foundation.md) выполнена полностью  
 **Цель:** Чистая структура, routing, формы, ошибки, контракт API, lint.
@@ -15,7 +18,7 @@
 - [ ] Toast вместо alert
 - [ ] ESLint + Husky
 - [ ] ADR-001, ADR-002 в `docs/adr/`
-- [ ] `docs/api-contract.yaml`
+- [ ] OpenAPI draft в [`../../contracts/openapi.yaml`](../../contracts/openapi.yaml) (shared с backend)
 
 ---
 
@@ -198,18 +201,13 @@ pipe(
 
 - GET `/todos?userId=xxx` — убедиться, что effects передают query param.
 
-### 4.3 api-contract.yaml
+### 4.3 OpenAPI contract (shared)
+
+Draft в [`../../contracts/openapi.yaml`](../../contracts/openapi.yaml) — single source of truth.  
+Backend реализует в `todo-platform-backend` (B-02). Локальная копия/ symlink опционально в `docs/`.
 
 ```yaml
-openapi: 3.0.0
-paths:
-  /users:
-    get: ...
-  /todos:
-    get:
-      parameters:
-        - name: userId
-          in: query
+# см. ../../contracts/openapi.yaml — paths /users, /todos, /admin/*
 ```
 
 ### 4.4 ESLint
@@ -243,7 +241,7 @@ pre-commit: `npm run lint && npm test`
 | 2 | Login invalid показывает ошибки полей | e2e или manual |
 | 3 | Duplicate email register fails | manual |
 | 4 | Lint в CI локально проходит | `npm run lint` |
-| 5 | api-contract описывает все endpoints | review yaml |
+| 5 | OpenAPI contract описывает все endpoints | review `../../contracts/openapi.yaml` |
 
 ---
 

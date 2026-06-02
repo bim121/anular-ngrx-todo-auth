@@ -1,8 +1,12 @@
 # Phase 13 — Real API integration
 
+> **Теория:** [guides/phase-13-real-api-theory.md](./guides/phase-13-real-api-theory.md) — статус: placeholder  
+> **Backend:** ASP.NET [`../todo-platform-backend`](../todo-platform-backend) — pred: **B-03, B-05** complete  
+> **Cutover:** [integration-map.md](./integration-map.md)
+
 **Длительность:** 28–31 недели (40–60 ч)  
-**Предусловия:** Phase 12, **[Phase 17](./phase-17-auth-oidc-keycloak.md)** (OIDC/Keycloak), **реальный бэкенд**  
-**Цель:** OpenAPI client, API валидирует **access_token от Keycloak**, search/attachments endpoints.
+**Предусловия:** Phase 12, [Phase 17](./phase-17-auth-oidc-keycloak.md), backend B-03 + B-05 в sibling repo  
+**Цель:** OpenAPI client → **TodoPlatform.Api**, Keycloak JWT, `environment.useRealApi = true`
 
 ---
 
@@ -13,7 +17,8 @@
 - [ ] JWT access + refresh rotation
 - [ ] RFC 7807 errors в NgRx
 - [ ] API versioning header
-- [ ] Contract tests against real provider
+- [ ] Contract tests against **todo-platform-backend** (Pact provider URL in CI)
+- [ ] Cutover checklist from [integration-map.md](./integration-map.md)
 
 ---
 
@@ -21,7 +26,7 @@
 
 ### 13.1.1 OpenAPI spec
 
-Бэкенд предоставляет `openapi.yaml` → положить в `contracts/`.
+Shared contract: [`../../contracts/openapi.yaml`](../../contracts/openapi.yaml) — реализует backend B-02.
 
 ### 13.1.2 Codegen
 

@@ -53,7 +53,10 @@ npm start        # ng serve   :4200
 | `npm run api` | `json-server db.json -p 3000` |
 | `npm run dev` | API + Angular одновременно |
 | `npm run build` | Production-сборка |
+| `npm run build:stats` | Сборка + `stats.json` (анализ lazy chunks) |
 | `npm test` | Vitest unit-тесты |
+
+После `npm run build` в выводе CLI смотри **Lazy chunk files** — отдельные бандлы для `auth-routes`, `todos-routes`, layouts и страниц login/register/todos.
 
 ## Структура
 
@@ -103,4 +106,20 @@ src/app/
 
 ## Следующие фазы
 
-См. [`plans/`](./plans/) — phase-01 и далее.
+См. [`plans/`](./plans/) — Phase 1 и далее.
+
+## Backend (отдельный репозиторий)
+
+ASP.NET Core backend разрабатывается **независимо**:
+
+- Roadmap: [`../todo-platform-backend/plans/`](../todo-platform-backend/plans/)
+- Теория CQRS/архитектуры: [`../todo-platform-backend/plans/guides/b-00-architecture-and-cqrs-theory.md`](../todo-platform-backend/plans/guides/b-00-architecture-and-cqrs-theory.md)
+- Shared API contract: [`../contracts/openapi.yaml`](../contracts/openapi.yaml)
+- Интеграция с фронтом: [`plans/integration-map.md`](./plans/integration-map.md)
+
+Фронт подключается к бэку по готовности (Phase 13, `useRealApi: true`).
+
+## Guides (теория)
+
+- Frontend: [`plans/guides/`](./plans/guides/)
+- Backend: [`../todo-platform-backend/plans/guides/`](../todo-platform-backend/plans/guides/)

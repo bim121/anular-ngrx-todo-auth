@@ -1,4 +1,6 @@
 # Phase 18 — AI & Vector features
+> **Теория:** [guides/phase-18-ai-features-theory.md](./guides/phase-18-ai-features-theory.md) — статус: placeholder
+
 
 **Длительность:** 33–36 недели (30–40 ч)  
 **Предусловия:** [product-features-expansion.md](./product-features-expansion.md) V2.3, Phase 13 API  
@@ -151,3 +153,5 @@ AI results announced to screen readers.
 
 ← [product-features-expansion.md](./product-features-expansion.md)  
 ← [phase-17-auth-oidc-keycloak.md](./phase-17-auth-oidc-keycloak.md)
+
+

@@ -1,5 +1,9 @@
 # Phase 14 — Multi-tenant
 
+> **Теория:** [guides/phase-14-multi-tenant-theory.md](./guides/phase-14-multi-tenant-theory.md) — статус: placeholder  
+> **Backend:** B-11, B-12 — [`../todo-platform-backend`](../todo-platform-backend)  
+> **Admin UI:** [admin-panel-spec.md](./admin-panel-spec.md) — **Admin v1 (обязательно)**
+
 **Длительность:** 32–35 недели (50–70 ч)  
 **Предусловия:** Phase 13, backend supports tenants  
 **Цель:** Tenant isolation, config per tenant, migration abstraction.
@@ -125,9 +129,16 @@ interface MigrationRunner {
 }
 ```
 
-### 14.4.2 Admin UI mock (optional)
+### 14.4.2 Admin UI v1 (обязательно)
 
-Internal page `/admin/tenants` — list migration status (read-only from API).
+См. [admin-panel-spec.md](./admin-panel-spec.md):
+
+- [ ] Lazy route `/admin` + `AdminLayoutComponent`
+- [ ] `AdminFacade` + NgRx slice `admin`
+- [ ] Tenant list: schemaVersion, track (blue/green), status
+- [ ] Tenant detail + pending migrations
+- [ ] Backend когда B-12 готов, иначе json-server admin mock
+- [ ] ADR-021: Admin CQRS-lite
 
 ### 14.4.3 Version per tenant
 
@@ -148,7 +159,8 @@ Store `schemaVersion` in tenant config — show warning if client outdated.
 - [ ] 2 tenants with different branding work
 - [ ] Data isolation E2E green
 - [ ] ADR-010 published
-- [ ] Migration status visible in admin mock
+- [ ] Admin v1 live (tenant list + detail)
+- [ ] Migration status visible in admin (not mock-only)
 
 ---
 

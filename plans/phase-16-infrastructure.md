@@ -1,20 +1,32 @@
-# Phase 16 — Infrastructure (Terraform, Kubernetes, Ansible, GitOps)
+# Phase 16 — Frontend infrastructure (CDN, MFE deploy)
 
-**Длительность:** 40–52+ недели (80–120 ч)  
-**Предусловия:** Phase 15, cloud account (AWS/GCP/Azure) or local kind cluster  
-**Цель:** IaC for full stack, K8s deploy, Ansible bootstrap, observability, secrets.
+> **Теория:** [guides/phase-16-infrastructure-theory.md](./guides/phase-16-infrastructure-theory.md) — статус: placeholder  
+> **Backend infra:** Terraform/K8s/Helm → [`../todo-platform-backend`](../todo-platform-backend) B-25, B-26, B-28  
+> **Full stack deploy** = Frontend Phase 16 + Backend B-26
+
+**Длительность:** 40–52+ недели (40–60 ч frontend-only)  
+**Предусловия:** Phase 15  
+**Цель:** Frontend CDN (shell + MFE manifests), CI deploy, **не** дублировать backend Terraform/K8s здесь
 
 ---
 
-## Результат фазы
+## Результат фазы (frontend scope)
 
-- [ ] Terraform modules: network, cluster, DB, state backend
-- [ ] Helm charts: shell, todos-mfe, API
-- [ ] Ansible playbooks for VM path (alternative)
-- [ ] ArgoCD GitOps flow
-- [ ] Prometheus + Grafana + Loki
-- [ ] Vault or Sealed Secrets
-- [ ] Staging environment reproducible from scratch
+- [ ] S3/CloudFront or Azure Static Web Apps for shell bundle
+- [ ] CDN for Module Federation `remoteEntry.json`
+- [ ] GitHub Actions deploy frontend staging/prod
+- [ ] Environment config per track (blue/green shell URLs)
+- [ ] Cross-link: backend infra in `todo-platform-backend/infra/` (B-25–B-28)
+
+> **Делегировано backend:** Terraform modules (VPC, AKS, Postgres), Helm API charts, Prometheus/Grafana stack, Ansible — см. [../todo-platform-backend/plans/backend-phase-25-terraform-azure.md](../todo-platform-backend/plans/backend-phase-25-terraform-azure.md)
+
+---
+
+## Результат фазы (legacy full-stack — см. backend)
+
+- [ ] ~~Terraform modules: network, cluster, DB~~ → backend B-25
+- [ ] Helm: shell + todos-mfe (frontend) + API (backend B-26)
+- [ ] ~~ArgoCD full stack~~ → backend B-26 + frontend pipeline here
 
 ---
 

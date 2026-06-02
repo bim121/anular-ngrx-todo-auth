@@ -1,4 +1,6 @@
 # Phase 10 — Electron
+> **Теория:** [guides/phase-10-electron-theory.md](./guides/phase-10-electron-theory.md) — статус: placeholder
+
 
 **Длительность:** 22–23 недели (40–50 ч)  
 **Предусловия:** Phase 9 (или shell-only if MFE deferred)  
@@ -179,3 +181,5 @@ Document: real deploy needs cert (Windows/mac).
 ## Следующая фаза
 
 → [phase-11-testing-quality.md](./phase-11-testing-quality.md)
+
+

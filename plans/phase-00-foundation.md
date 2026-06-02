@@ -1,4 +1,6 @@
 # Phase 0 — Стабильный фундамент
+> **Теория:** [guides/phase-00-foundation-theory.md](./guides/phase-00-foundation-theory.md) — статус: placeholder
+
 
 **Длительность:** 1–2 недели (10–20 ч)  
 **Предусловия:** Node 20+, `npm install`  
@@ -255,3 +257,5 @@ throw new Error(`Server error: ${error.status}`);
 ## Следующая фаза
 
 → [phase-01-production-core.md](./phase-01-production-core.md)
+
+

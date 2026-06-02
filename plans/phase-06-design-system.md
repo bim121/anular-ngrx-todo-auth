@@ -1,4 +1,6 @@
 # Phase 6 — Design System
+> **Теория:** [guides/phase-06-design-system-theory.md](./guides/phase-06-design-system-theory.md) — статус: placeholder
+
 
 **Длительность:** 13–14 недели (40–50 ч)  
 **Предусловия:** Phase 5, Nx workspace  
@@ -178,3 +180,5 @@ Chromatic/Percy — 5 stories on PR.
 ## Следующая фаза
 
 → [phase-07-seo-ssr-i18n.md](./phase-07-seo-ssr-i18n.md)
+
+

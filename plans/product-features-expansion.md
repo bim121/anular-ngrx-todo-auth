@@ -17,37 +17,39 @@ flowchart LR
 
 ---
 
-## Матрица: фича → фаза → навык для карьеры
+## Матрица: фича → фаза → backend → навык
 
-| # | Вектор | Фича | Фаза | Навык на интервью |
-|---|--------|------|------|-------------------|
-| V1 | Collaboration | Real-time sync todos | 4–5 | WebSocket, RxJS multicast |
-| V1 | | Comments на todo | 4 | Nested state, optimistic |
-| V1 | | Share todo link / readonly | 7 | SSR public page |
-| V2 | Search | Full-text search | 5, 13 | Debounce, API design |
-| V2 | | **Vector / semantic search** | 13+ | Embeddings, RAG basics |
-| V2 | | Filters saved views | 3 | NgRx + SignalStore |
-| V3 | Productivity | Kanban board | 6 | Drag-drop CDK |
-| V3 | | Due dates + calendar view | 6 | i18n dates, timezone |
-| V3 | | Recurring todos | 13 | Cron rules, API |
-| V3 | | Priorities, tags, subtasks | 3–4 | Entity adapter trees |
-| V4 | Admin | Admin dashboard | 14, 17 | RBAC, CASL |
-| V4 | | Audit log | 14 | Immutable event log UI |
-| V4 | | User management mock | 17 | Keycloak admin API |
-| V5 | Integrations | Export CSV/JSON | 5 | Blob download |
-| V5 | | Webhooks UI | 13 | Event-driven |
-| V5 | | Public REST docs consumer | 13 | OpenAPI |
-| V6 | Analytics | Personal stats dashboard | 5 | Charts, memoization |
-| V6 | | Web Vitals dashboard | 12 | RUM |
-| V7 | Notifications | In-app notification center | 3, 12 | NgRx entity notifications |
-| V7 | | Push notifications PWA | 12 | Service Worker push |
-| V8 | Files | Attachments на todo | 13 | Presigned URL upload |
-| V8 | | Image preview + NgOptimizedImage | 5 | perf |
-| V9 | AI | NL: «add buy milk tomorrow» | 18 | LLM API, prompt |
-| V9 | | Smart priority suggestions | 18 | ML mock / rules engine |
-| V9 | | Duplicate detection (embeddings) | 18 | vector similarity |
-| V10 | Workspaces | Projects / teams | 14 | Multi-tenant UX |
-| V10 | | Invite member flow | 17 | OIDC groups |
+| # | Вектор | Фича | Frontend | Backend | Навык |
+|---|--------|------|----------|---------|-------|
+| V1 | Collaboration | Real-time sync | 4–5 | B-13 | WebSocket, SignalR |
+| V1 | | Comments | 4 | B-03 | Nested state |
+| V1 | | Share link | 7 | B-02 | SSR public page |
+| V2 | Search | Full-text | 5, 13 | B-15 | API design |
+| V2 | | Vector search | 13+ | B-29 | Embeddings |
+| V2 | | Saved views | 3 | B-10 | Read models |
+| V3 | Productivity | Kanban | 6 | B-01, B-09 | Drag-drop + SQL |
+| V3 | | Calendar | 6 | B-01 | i18n dates |
+| V3 | | Recurring | 13 | B-03 | Cron API |
+| V3 | | Tags/subtasks | 3–4 | B-03 | Entity trees |
+| V4 | Admin | Admin dashboard | 14, 17 | B-12, B-28 | CASL + CQRS |
+| V4 | | Audit log | 14 | B-16 | Kafka stream |
+| V4 | | User mgmt | 17 | B-05 | Keycloak admin |
+| V5 | Integrations | Export | 5 | B-02 | Blob download |
+| V5 | | Webhooks | 13 | B-07, B-16 | Event-driven |
+| V5 | | OpenAPI consumer | 13 | B-02 | Contract-first |
+| V6 | Analytics | Stats dashboard | 5 | B-10 | Charts + SQL |
+| V6 | | Web Vitals | 12 | — | RUM frontend |
+| V7 | Notifications | In-app | 3, 12 | B-07 | NgRx + RabbitMQ |
+| V7 | | Push PWA | 12 | B-17 | Service Worker |
+| V8 | Files | Attachments | 13 | B-14 | Presigned URL |
+| V8 | | Image perf | 5 | — | NgOptimizedImage |
+| V9 | AI | NL todos | 18 | B-29 | LLM API |
+| V9 | | Smart priority | 18 | B-29 | Rules/ML |
+| V9 | | Duplicate detect | 18 | B-29 | Vector similarity |
+| V10 | Workspaces | Teams | 14 | B-11 | Multi-tenant |
+| V10 | | Invite flow | 17 | B-05 | OIDC groups |
+
+См. [integration-map.md](./integration-map.md)
 
 ---
 

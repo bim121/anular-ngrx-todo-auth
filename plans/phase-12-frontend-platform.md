@@ -1,4 +1,6 @@
 # Phase 12 — Frontend platform & observability
+> **Теория:** [guides/phase-12-frontend-platform-theory.md](./guides/phase-12-frontend-platform-theory.md) — статус: placeholder
+
 
 **Длительность:** 26–27 недели (30–40 ч)  
 **Предусловия:** Phase 11  
@@ -193,3 +195,5 @@ Mock 429 from json-server → toast + retry-after header display.
 
 → [phase-17-auth-oidc-keycloak.md](./phase-17-auth-oidc-keycloak.md) (**рекомендуется сразу после 12**)  
 → [phase-13-real-api.md](./phase-13-real-api.md)
+
+

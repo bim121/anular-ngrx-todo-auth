@@ -1,4 +1,6 @@
 # Phase 2 — Modern Angular (signals, zoneless, signal forms)
+> **Теория:** [guides/phase-02-modern-angular-theory.md](./guides/phase-02-modern-angular-theory.md) — статус: placeholder
+
 
 **Длительность:** 5–6 недель (50–60 ч)  
 **Предусловия:** Phase 1  
@@ -204,3 +206,5 @@ Todos остаются в NgRx — spike только для secondary data.
 ## Следующая фаза
 
 → [phase-03-advanced-ngrx.md](./phase-03-advanced-ngrx.md)
+
+

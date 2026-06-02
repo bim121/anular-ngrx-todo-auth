@@ -1,4 +1,6 @@
 # Phase 5 — Performance
+> **Теория:** [guides/phase-05-performance-theory.md](./guides/phase-05-performance-theory.md) — статус: placeholder
+
 
 **Длительность:** 11–12 недели (40–50 ч)  
 **Предусловия:** Phase 4, Nx libs стабильны  
@@ -225,3 +227,5 @@ Facade: показать cached todos immediately, фоновый refresh.
 ## Следующая фаза
 
 → [phase-06-design-system.md](./phase-06-design-system.md)
+
+

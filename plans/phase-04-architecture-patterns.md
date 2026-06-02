@@ -1,5 +1,8 @@
 # Phase 4 — Architecture & patterns
 
+> **Теория:** [guides/phase-04-architecture-patterns-theory.md](./guides/phase-04-architecture-patterns-theory.md) — статус: placeholder  
+> **Backend CQRS:** [../todo-platform-backend/plans/guides/b-00-architecture-and-cqrs-theory.md](../todo-platform-backend/plans/guides/b-00-architecture-and-cqrs-theory.md) — **full**
+
 **Длительность:** 9–10 недели (40–50 ч)  
 **Предусловия:** Phase 3  
 **Цель:** Facades, smart/dumb, repository abstraction, state machines, Nx monorepo.
@@ -10,7 +13,8 @@
 
 - [ ] `AuthFacade`, `TodosFacade`
 - [ ] Smart/dumb split для todos
-- [ ] `TodoRepository` interface + json implementation
+- [ ] `TodoRepository` interface + json implementation + **`HttpTodoRepository` skeleton** (still json-server until Phase 13)
+- [ ] Таблица CQRS-lite ↔ backend Commands (см. ниже)
 - [ ] Auth state machine documented + implemented
 - [ ] Nx workspace с libs
 - [ ] Interceptor chain complete
@@ -199,6 +203,20 @@ libs/
 2. [ ] Обновить imports на `@anular-ngrx/auth-data-access`.
 3. [ ] `nx build web` green.
 4. [ ] `nx test` per lib.
+
+---
+
+## CQRS-lite ↔ Backend MediatR (integration prep)
+
+| Frontend (Facade) | NgRx | Backend (B-03) |
+|-------------------|------|----------------|
+| `TodosFacade.add()` | `addTodo` action | `CreateTodoCommand` |
+| `TodosFacade.load()` | `loadTodos` + selector | `GetTodosQuery` |
+| `TodosFacade.update()` | `updateTodo` | `UpdateTodoCommand` |
+| `TodosFacade.remove()` | `removeTodo` | `DeleteTodoCommand` |
+
+`HttpTodoRepository` — skeleton с `environment.apiUrl`, default still `JsonServerTodoRepository`.  
+См. [integration-map.md](./integration-map.md).
 
 ---
 

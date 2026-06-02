@@ -1,5 +1,8 @@
 # Phase 11 — Testing & quality at scale
 
+> **Теория:** [guides/phase-11-testing-quality-theory.md](./guides/phase-11-testing-quality-theory.md) — статус: placeholder  
+> **Pact provider:** [`../todo-platform-backend`](../todo-platform-backend) (optional until B-02 ready)
+
 **Длительность:** 24–25 недели (40–50 ч)  
 **Предусловия:** Phase 10 (или Phase 8 if Electron skipped)  
 **Цель:** Test pyramid, Playwright E2E, a11y CI, contract tests foundation.
@@ -114,9 +117,12 @@ npm i -D @pact-foundation/pact
 
 Consumer test: `TodoRepository.getAll` expects GET `/todos?userId=`.
 
-### 11.4.2 Sync with api-contract.yaml
+**Provider:** [`../todo-platform-backend`](../todo-platform-backend) running locally or CI (optional until B-02).  
+Provider URL: `http://localhost:5000` (ASP.NET) or mock provider in CI if backend not ready.
 
-Script validates Pact matches OpenAPI subset.
+### 11.4.2 Sync with OpenAPI
+
+Script validates Pact matches [`../../contracts/openapi.yaml`](../../contracts/openapi.yaml) subset.
 
 ### 11.4.3 CI
 

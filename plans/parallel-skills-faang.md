@@ -34,6 +34,8 @@
 
 ## 2. Frontend system design (2 кейса / месяц)
 
+См. также **Backend system design** в [`../todo-platform-backend/plans/parallel-skills-backend.md`](../todo-platform-backend/plans/parallel-skills-backend.md).
+
 ### Кейсы привязать к проекту
 
 | # | Кейс | Связь с фазой |
@@ -46,6 +48,21 @@
 | 6 | Multi-tenant SaaS frontend | Phase 14 |
 | 7 | Blue-green + CDN | Phase 15 |
 | 8 | Observability for SPA | Phase 12 |
+| 9 | Multi-tenant admin panel | Phase 14–15 + backend B-12 |
+| 10 | CQRS end-to-end (Facade → MediatR) | Phase 4 + backend B-03 |
+
+### Backend system design (parallel track)
+
+| # | Кейс | Backend фаза |
+|---|------|--------------|
+| 1 | URL shortener | B-06 |
+| 2 | Rate limiter | B-19 |
+| 3 | Notification system | B-07, B-17 |
+| 4 | Multi-tenant SaaS DB | B-11, B-21 |
+| 5 | Saga order flow | B-18 |
+| 6 | Search at scale | B-15, B-29 |
+
+Документы: `docs/system-design/backend/` (в backend repo) + `docs/system-design/` (frontend)
 
 ### Формат документа
 

@@ -1,5 +1,8 @@
 # Phase 17 — Auth libraries, OIDC и Keycloak
 
+> **Теория:** [guides/phase-17-auth-oidc-keycloak-theory.md](./guides/phase-17-auth-oidc-keycloak-theory.md) — статус: placeholder  
+> **Backend:** B-05, B-08 — JWT validation в [`../todo-platform-backend`](../todo-platform-backend)
+
 **Длительность:** 28–32 недели (вставка после Phase 12, **до или параллельно** Phase 13)  
 **Предусловия:** Phase 11–12, рабочий custom JWT из Phase 0–3  
 **Цель:** Профессиональный AuthN/AuthZ стек: `angular-oauth2-oidc` → **Keycloak**, RBAC через **CASL**, готово к enterprise и multi-tenant.

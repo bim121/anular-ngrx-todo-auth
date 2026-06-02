@@ -1,4 +1,6 @@
 # Phase 7 — SEO, SSR, i18n
+> **Теория:** [guides/phase-07-seo-ssr-i18n-theory.md](./guides/phase-07-seo-ssr-i18n-theory.md) — статус: placeholder
+
 
 **Длительность:** 15–16 недели (40–50 ч)  
 **Предусловия:** Phase 6, SSR уже в angular.json  
@@ -204,3 +206,5 @@ Build script generates static URLs for prerendered routes.
 ## Следующая фаза
 
 → [phase-08-build-webpack.md](./phase-08-build-webpack.md)
+
+

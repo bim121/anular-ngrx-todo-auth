@@ -1,4 +1,6 @@
 # Phase 8 — Build pipeline & Webpack/esbuild
+> **Теория:** [guides/phase-08-build-webpack-theory.md](./guides/phase-08-build-webpack-theory.md) — статус: placeholder
+
 
 **Длительность:** 17–18 недели (30–40 ч)  
 **Предусловия:** Phase 7  
@@ -159,3 +161,5 @@ If CDN used — `integrity` attribute.
 ## Следующая фаза
 
 → [phase-09-microfrontends.md](./phase-09-microfrontends.md)
+
+
