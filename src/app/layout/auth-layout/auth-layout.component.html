@@ -1,5 +1,11 @@
 <div class="auth-layout">
   <div class="auth-layout__card">
+    @if (pageContext.activePage$ | async; as page) {
+      <header class="auth-page-heading">
+        <p class="auth-page-heading__crumb">{{ page.breadcrumb }}</p>
+        <h1>{{ page.title }}</h1>
+      </header>
+    }
     <router-outlet />
   </div>
 </div>

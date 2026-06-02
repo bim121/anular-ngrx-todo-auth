@@ -17,3 +17,24 @@
     0 4px 6px -1px rgba(0, 0, 0, 0.08),
     0 10px 24px -4px rgba(0, 0, 0, 0.12);
 }
+
+.auth-page-heading {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.auth-page-heading__crumb {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6366f1;
+}
+
+.auth-page-heading h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+}

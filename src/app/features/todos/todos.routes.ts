@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@app/core/guards/auth.guard';
+import { RoutePageData } from '@app/core/routing/route-page-data.model';
 
 export const TODOS_ROUTES: Routes = [
   {
@@ -16,6 +17,10 @@ export const TODOS_ROUTES: Routes = [
             (m) => m.TodoListComponent
           ),
         canActivate: [authGuard],
+        data: {
+          title: 'My Todos',
+          breadcrumb: 'Todos',
+        } satisfies RoutePageData,
       },
     ],
   },

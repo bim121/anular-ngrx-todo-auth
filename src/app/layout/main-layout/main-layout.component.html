@@ -1,6 +1,15 @@
 <div class="main-layout">
   <header class="main-header">
-    <a routerLink="/todos" class="brand">Todo App</a>
+    <div class="main-header__start">
+      <a routerLink="/todos" class="brand">Todo App</a>
+      @if (pageContext.activePage$ | async; as page) {
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a routerLink="/todos">Home</a>
+          <span class="breadcrumbs__sep" aria-hidden="true">/</span>
+          <span class="breadcrumbs__current" aria-current="page">{{ page.breadcrumb }}</span>
+        </nav>
+      }
+    </div>
 
     <div class="main-header__actions">
       @if (user$ | async; as user) {
@@ -11,6 +20,11 @@
   </header>
 
   <main class="main-content">
+    @if (pageContext.activePage$ | async; as page) {
+      <div class="page-heading">
+        <h1>{{ page.title }}</h1>
+      </div>
+    }
     <router-outlet />
   </main>
 

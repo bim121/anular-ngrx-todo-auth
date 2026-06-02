@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { RoutePageContextService } from '@app/core/services/route-page-context.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,7 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {}
+export class App {
+  /** Eager init: syncs `document.title` from route `data` on every navigation. */
+  private readonly _routePageContext = inject(RoutePageContextService);
+}

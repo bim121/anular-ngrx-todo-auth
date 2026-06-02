@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { guestGuard } from '@app/core/guards/guest.guard';
+import { RoutePageData } from '@app/core/routing/route-page-data.model';
 
 export const AUTH_ROUTES: Routes = [
   {
@@ -16,6 +17,10 @@ export const AUTH_ROUTES: Routes = [
             (m) => m.LoginComponent
           ),
         canActivate: [guestGuard],
+        data: {
+          title: 'Sign In',
+          breadcrumb: 'Login',
+        } satisfies RoutePageData,
       },
       {
         path: 'register',
@@ -24,6 +29,10 @@ export const AUTH_ROUTES: Routes = [
             (m) => m.RegisterComponent
           ),
         canActivate: [guestGuard],
+        data: {
+          title: 'Create Account',
+          breadcrumb: 'Register',
+        } satisfies RoutePageData,
       },
     ],
   },

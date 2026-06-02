@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { User } from '@app/features/auth/data-access/auth.model';
 import { selectUser } from '@app/features/auth/data-access/auth.selectors';
 import * as AuthActions from '@app/features/auth/data-access/auth.actions';
+import { RoutePageContextService } from '@app/core/services/route-page-context.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -16,6 +17,7 @@ import * as AuthActions from '@app/features/auth/data-access/auth.actions';
 })
 export class MainLayoutComponent {
   private store = inject(Store);
+  readonly pageContext = inject(RoutePageContextService);
 
   user$: Observable<User | null> = this.store.select(selectUser);
 
