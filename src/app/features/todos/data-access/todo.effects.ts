@@ -3,8 +3,23 @@ import { Store } from "@ngrx/store";
 import { TodoService } from "./todo.service";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import * as AuthSelectors from '@app/features/auth/data-access/auth.selectors';
-import { catchError, exhaustMap, filter, map, of, withLatestFrom } from "rxjs";
+import {
+  catchError,
+  defer,
+  exhaustMap,
+  filter,
+  map,
+  of,
+  retry,
+  withLatestFrom,
+} from 'rxjs';
 import * as TodoActions from './todo.actions';
+
+/**
+ * Retries for read-only API calls (loadTodos). Mutations must not retry.
+ * `count: 2` = 2 retries after the first failure (3 HTTP attempts total).
+ */
+const LOAD_RETRY = { count: 2, delay: 1000 } as const;
 
 @Injectable()
 export class TodoEffects {
@@ -18,11 +33,12 @@ export class TodoEffects {
             withLatestFrom(this.store.select(AuthSelectors.selectUserId)),
             filter(([action, userId]) => userId != null),
             exhaustMap(([action, userId]) =>
-                this.todoService.getTodos(userId!).pipe(
-                    map(todos =>
-                        TodoActions.loadTodosSuccess({todos})
-                    ),
-                    catchError(error => of(TodoActions.loadTodosFailure({error})))
+                defer(() => this.todoService.getTodos(userId!)).pipe(
+                    retry(LOAD_RETRY),
+                    map((todos) => TodoActions.loadTodosSuccess({ todos })),
+                    catchError((error) =>
+                        of(TodoActions.loadTodosFailure({ error }))
+                    )
                 )
             )
         )
