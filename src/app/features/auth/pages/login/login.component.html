@@ -6,50 +6,52 @@
     </div>
   }
 
-  <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" [class.auth-form--busy]="loading()">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    [class.auth-form--busy]="loading()"
+  >
     <div class="form-group">
       <label for="email">Email</label>
       <input
         type="email"
         id="email"
-        name="email"
-        ngModel
-        required
-        email
-        #emailInput="ngModel"
+        formControlName="email"
         [disabled]="loading()"
       />
-      @if (emailInput.invalid && (emailInput.dirty || emailInput.touched)) {
+      @if (form.controls.email.touched && form.controls.email.invalid) {
         <div class="error-message">
-          @if (emailInput.errors?.['required']) {
+          @if (form.controls.email.hasError('required')) {
             <span>Email is required.</span>
           }
-          @if (emailInput.errors?.['email']) {
+          @if (form.controls.email.hasError('email')) {
             <span>Please enter a valid email.</span>
           }
         </div>
       }
     </div>
+
     <div class="form-group">
       <label for="password">Password</label>
       <input
         type="password"
         id="password"
-        name="password"
-        ngModel
-        required
-        #passwordInput="ngModel"
+        formControlName="password"
         [disabled]="loading()"
       />
-      @if (passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)) {
+      @if (form.controls.password.touched && form.controls.password.invalid) {
         <div class="error-message">
-          @if (passwordInput.errors?.['required']) {
+          @if (form.controls.password.hasError('required')) {
             <span>Password is required.</span>
+          }
+          @if (form.controls.password.hasError('minlength')) {
+            <span>Password must be at least 8 characters.</span>
           }
         </div>
       }
     </div>
-    <button type="submit" [disabled]="loginForm.invalid || loading()">
+
+    <button type="submit" [disabled]="form.invalid || loading()">
       {{ loading() ? 'Logging in…' : 'Login' }}
     </button>
   </form>

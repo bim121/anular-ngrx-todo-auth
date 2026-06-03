@@ -1,5 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import {
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -13,23 +17,31 @@ import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink, SpinnerComponent],
+  imports: [ReactiveFormsModule, RouterLink, SpinnerComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
   private store = inject(Store);
+  private fb = inject(NonNullableFormBuilder);
+
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
+  });
 
   loading = toSignal(this.store.select(selectAuthLoading), {
     initialValue: false,
   });
   error = toSignal(this.store.select(selectAuthError), { initialValue: null });
 
-  onSubmit(form: NgForm): void {
-    if (form.invalid) {
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
-    const { email, password } = form.value;
+
+    const { email, password } = this.form.getRawValue();
     this.store.dispatch(
       AuthActions.loginUser({ credentials: { email, password } })
     );

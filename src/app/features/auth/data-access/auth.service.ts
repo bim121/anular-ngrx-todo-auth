@@ -20,7 +20,7 @@ export class AuthService {
 
         const userToSave = {...newUser, password: credentials.password}
 
-        return this.http.get<User[]>(`${this.userUrl}?email=${credentials.email.toLocaleLowerCase()}`).pipe(
+        return this.checkEmailAvailable(credentials.email).pipe(
             switchMap(existingUsers => {
                 if(existingUsers.length > 0) {
                     return throwError(() => new Error('email already exist in DB.'));
@@ -31,6 +31,12 @@ export class AuthService {
                 )
             }),
             catchError(this.handleError)
+        );
+    }
+
+    public checkEmailAvailable(email: string): Observable<User[]> {
+        return this.http.get<User[]>(
+            `${this.userUrl}?email=${email.toLowerCase()}`
         );
     }
 

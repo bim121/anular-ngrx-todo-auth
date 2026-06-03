@@ -151,3 +151,9 @@ button[type='submit']:disabled {
   margin-top: 1rem;
   text-align: center;
 }
+
+.hint-message {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}

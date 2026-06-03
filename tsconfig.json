@@ -19,6 +19,7 @@
     "paths": {
       "@app/core/*": ["src/app/core/*"],
       "@app/shared/*": ["src/app/shared/*"],
+      "@app/shared/validators/*": ["src/app/shared/validators/*"],
       "@app/features/auth/*": ["src/app/features/auth/*"],
       "@app/features/todos/*": ["src/app/features/todos/*"],
       "@app/features/ui/*": ["src/app/features/ui/*"],

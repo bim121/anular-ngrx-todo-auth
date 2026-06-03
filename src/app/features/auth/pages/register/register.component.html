@@ -7,61 +7,88 @@
   }
 
   <form
-    #registerForm="ngForm"
-    (ngSubmit)="onSubmit(registerForm)"
+    [formGroup]="form"
+    (ngSubmit)="submit()"
     [class.auth-form--busy]="loading()"
   >
     <div class="form-group">
       <label for="name">Name (Optional)</label>
-      <input type="text" id="name" name="name" ngModel [disabled]="loading()" />
+      <input type="text" id="name" formControlName="name" [disabled]="loading()" />
     </div>
+
     <div class="form-group">
       <label for="email">Email</label>
       <input
         type="email"
         id="email"
-        name="email"
-        ngModel
-        required
-        email
-        #emailInput="ngModel"
+        formControlName="email"
         [disabled]="loading()"
       />
-      @if (emailInput.invalid && (emailInput.dirty || emailInput.touched)) {
+      @if (form.controls.email.pending) {
+        <div class="hint-message">Checking email availability…</div>
+      }
+      @if (form.controls.email.touched && form.controls.email.invalid) {
         <div class="error-message">
-          @if (emailInput.errors?.['required']) {
-            <span>Email is required</span>
+          @if (form.controls.email.hasError('required')) {
+            <span>Email is required.</span>
           }
-          @if (emailInput.errors?.['email']) {
-            <span>Please enter a valid email</span>
+          @if (form.controls.email.hasError('email')) {
+            <span>Please enter a valid email.</span>
+          }
+          @if (form.controls.email.hasError('emailTaken')) {
+            <span>This email is already registered.</span>
           }
         </div>
       }
     </div>
+
     <div class="form-group">
       <label for="password">Password</label>
       <input
         type="password"
         id="password"
-        name="password"
-        ngModel
-        required
-        minlength="6"
-        #passwordInput="ngModel"
+        formControlName="password"
         [disabled]="loading()"
       />
-      @if (passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)) {
+      @if (form.controls.password.touched && form.controls.password.invalid) {
         <div class="error-message">
-          @if (passwordInput.errors?.['required']) {
-            <span>Password is required</span>
+          @if (form.controls.password.hasError('required')) {
+            <span>Password is required.</span>
           }
-          @if (passwordInput.errors?.['minlength']) {
-            <span>Password must be at least 6 characters.</span>
+          @if (form.controls.password.hasError('minlength')) {
+            <span>Password must be at least 8 characters.</span>
           }
         </div>
       }
     </div>
-    <button type="submit" [disabled]="registerForm.invalid || loading()">
+
+    <div class="form-group">
+      <label for="passwordConfirm">Confirm password</label>
+      <input
+        type="password"
+        id="passwordConfirm"
+        formControlName="passwordConfirm"
+        [disabled]="loading()"
+      />
+      @if (
+        form.controls.passwordConfirm.touched &&
+        (form.controls.passwordConfirm.invalid || form.hasError('passwordMismatch'))
+      ) {
+        <div class="error-message">
+          @if (form.controls.passwordConfirm.hasError('required')) {
+            <span>Please confirm your password.</span>
+          }
+          @if (form.hasError('passwordMismatch')) {
+            <span>Passwords do not match.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="form.invalid || form.pending || loading()"
+    >
       {{ loading() ? 'Registering…' : 'Register' }}
     </button>
   </form>
