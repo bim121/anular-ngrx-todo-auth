@@ -4,6 +4,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable, ReplaySubject, firstValueFrom, take, toArray } from 'rxjs';
 import { AuthEffects } from './auth.effects';
 import { AuthService } from './auth.service';
+import { ToastService } from '@app/shared/ui/toast/toast.service';
 import * as AuthActions from './auth.actions';
 import { AuthResponse } from './auth.model';
 
@@ -27,6 +28,7 @@ describe('AuthEffects', () => {
         provideMockActions(() => actions$ as unknown as Observable<any>),
         { provide: AuthService, useValue: { login: loginMock } },
         { provide: Router, useValue: { navigate: vi.fn() } },
+        { provide: ToastService, useValue: { success: vi.fn(), error: vi.fn() } },
       ],
     });
 

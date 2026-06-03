@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { AuthService } from "./auth.service";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { catchError, exhaustMap, map, of, tap } from "rxjs";
+import { ToastService } from "@app/shared/ui/toast/toast.service";
 import * as fromAuth from './auth.actions';
 
 @Injectable()
@@ -10,6 +11,7 @@ export class AuthEffects {
     private actions$ = inject(Actions);
     private authService = inject(AuthService);
     private router = inject(Router);
+    private toast = inject(ToastService);
 
     registerUser$ = createEffect(() =>
         this.actions$.pipe(
@@ -23,13 +25,17 @@ export class AuthEffects {
         )
     );
 
-    registerSuccess$ = createEffect(() => 
-        this.actions$.pipe(
-            ofType(fromAuth.registerSuccess),
-            tap(() => {
-                alert("Registration successfull! Please Login");
-            })
-        ), {dispatch: false}
+    registerSuccess$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(fromAuth.registerSuccess),
+                tap(() => {
+                    this.toast.success(
+                        'Registration successful! Please log in.'
+                    );
+                })
+            ),
+        { dispatch: false }
     );
 
     loginUser$ = createEffect(() =>
