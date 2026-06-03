@@ -21,16 +21,16 @@ export const authReducer = createReducer(
         error: null,
     })),
 
-    on(AuthActions.registerSuccess, (state, {user}) => ({
+    on(AuthActions.registerSuccess, (state) => ({
         ...state,
-        isLoading: true,
+        isLoading: false,
         isLoggedIn: false,
         error: null,
     })),
 
     on(AuthActions.registerFailure, (state, {error}) => ({
         ...state,
-        isLoading: true,
+        isLoading: false,
         isLoggedIn: false,
         error: error.message || 'Registration failed',
     })),

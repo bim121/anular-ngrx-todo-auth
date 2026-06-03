@@ -31,6 +31,15 @@
     background-color: #a1d4a1;
     cursor: not-allowed;
 }
+.todo-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  color: #31708f;
+}
+
 .loading-message, .error-message, .empty-list-message {
   text-align: center;
   padding: 15px;

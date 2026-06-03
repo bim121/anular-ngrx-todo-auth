@@ -1,31 +1,76 @@
 <div class="auth-container">
-    <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)">
-        <div class="form-group">
-            <label for="name">Name (Optional)</label>
-            <input type="text" id="name" name="name" ngModel>
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" ngModel required email #emailInput="ngModel">
-            <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message">
-                <span *ngIf="emailInput.errors?.['required']">Email is required</span>
-                <span *ngIf="emailInput.errors?.['email']">Please enter a valid email</span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" ngModel required minlength="6" #passwordInput="ngModel">
-            <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)" class="error-message">
-                <span *ngIf="passwordInput.errors?.['required']">Password is required</span>
-                <span *ngIf="passwordInput.errors?.['minlength']">Please must be at least 6 characters.</span>
-            </div>
-        </div>
-        <button type="submit" [disabled]="registerForm.invalid || (isLoading$ | async)">
-            {{ (isLoading$ | async) ? 'Registering...' : 'Register'}}
-        </button>
-    </form>
-    <div *ngIf="error$ | async as error" class="error-message server-error">
-        {{error}}
+  @if (loading()) {
+    <div class="auth-loading" aria-busy="true">
+      <app-spinner />
+      <span>Creating account…</span>
     </div>
-    <p class="switch-form">Already have an account? <a routerLink="/login">Login here</a></p>
+  }
+
+  <form
+    #registerForm="ngForm"
+    (ngSubmit)="onSubmit(registerForm)"
+    [class.auth-form--busy]="loading()"
+  >
+    <div class="form-group">
+      <label for="name">Name (Optional)</label>
+      <input type="text" id="name" name="name" ngModel [disabled]="loading()" />
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        ngModel
+        required
+        email
+        #emailInput="ngModel"
+        [disabled]="loading()"
+      />
+      @if (emailInput.invalid && (emailInput.dirty || emailInput.touched)) {
+        <div class="error-message">
+          @if (emailInput.errors?.['required']) {
+            <span>Email is required</span>
+          }
+          @if (emailInput.errors?.['email']) {
+            <span>Please enter a valid email</span>
+          }
+        </div>
+      }
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        ngModel
+        required
+        minlength="6"
+        #passwordInput="ngModel"
+        [disabled]="loading()"
+      />
+      @if (passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)) {
+        <div class="error-message">
+          @if (passwordInput.errors?.['required']) {
+            <span>Password is required</span>
+          }
+          @if (passwordInput.errors?.['minlength']) {
+            <span>Password must be at least 6 characters.</span>
+          }
+        </div>
+      }
+    </div>
+    <button type="submit" [disabled]="registerForm.invalid || loading()">
+      {{ loading() ? 'Registering…' : 'Register' }}
+    </button>
+  </form>
+
+  @if (error(); as err) {
+    <div class="error-message server-error">{{ err }}</div>
+  }
+
+  <p class="switch-form">
+    Already have an account? <a routerLink="/login">Login here</a>
+  </p>
 </div>
