@@ -1,0 +1,8 @@
+@if (error$ | async; as error) {
+  <div class="global-error-banner" role="alert" aria-live="assertive">
+    <p class="global-error-banner__text">{{ error }}</p>
+    <button type="button" class="global-error-banner__dismiss" (click)="dismiss()">
+      Dismiss
+    </button>
+  </div>
+}

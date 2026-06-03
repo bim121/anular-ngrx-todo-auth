@@ -1,8 +1,10 @@
 import {
   ApplicationConfig,
+  ErrorHandler,
   isDevMode,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
+import { GlobalErrorHandler } from '@app/core/services/global-error.handler';
 import { provideRouter, withPreloading } from '@angular/router';
 import { TodosPreloadStrategy } from '@app/core/routing/todos-preload.strategy';
 import { routes } from './app.routes';
@@ -15,6 +17,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from '@app/core/interceptors/auth.interceptor';
 import { authReducer, authFeatureKey } from '@app/features/auth/data-access/auth.reducer';
 import { todosReducer, todosFeatureKey } from '@app/features/todos/data-access/todo.reducer';
+import { uiReducer, uiFeatureKey } from '@app/features/ui/data-access/ui.reducer';
 import { AuthEffects } from '@app/features/auth/data-access/auth.effects';
 import { TodoEffects } from '@app/features/todos/data-access/todo.effects';
 
@@ -24,9 +27,11 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes, withPreloading(TodosPreloadStrategy)),
     provideClientHydration(withEventReplay()),
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
     provideStore(),
     provideState(authFeatureKey, authReducer),
     provideState(todosFeatureKey, todosReducer),
+    provideState(uiFeatureKey, uiReducer),
     provideEffects(AuthEffects, TodoEffects),
     provideRouterStore(),
     ...(isDevMode()

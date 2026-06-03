@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { RoutePageContextService } from '@app/core/services/route-page-context.service';
+import { GlobalErrorBannerComponent } from '@app/shared/ui/global-error-banner/global-error-banner.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, GlobalErrorBannerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
