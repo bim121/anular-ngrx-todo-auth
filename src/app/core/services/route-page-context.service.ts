@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { distinctUntilChanged, filter, map, merge, of, shareReplay, startWith } from 'rxjs';
+import { distinctUntilChanged, filter, map, merge, of, shareReplay } from 'rxjs';
 import { getLeafRoutePageData } from '@app/core/routing/route-data.util';
 import { RoutePageData } from '@app/core/routing/route-page-data.model';
 

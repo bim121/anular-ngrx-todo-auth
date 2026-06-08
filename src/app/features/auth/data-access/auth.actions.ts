@@ -13,7 +13,7 @@ export const registerSuccess = createAction(
 
 export const registerFailure = createAction(
     '[Auth API] Register Failure',
-    props<{ error: any }>()
+    props<{ error: unknown }>()
 );
 
 export const loginUser = createAction(
@@ -28,7 +28,7 @@ export const loginSuccess = createAction(
 
 export const loginFailure = createAction(
     '[Auth API] Login Failure',
-    props<{error: any}>()
+    props<{error: unknown}>()
 );
 
 export const logoutUser = createAction(

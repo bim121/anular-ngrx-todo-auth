@@ -76,6 +76,15 @@ li.completed .todo-task {
 .todo-task {
   flex-grow: 1;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+.todo-task:disabled {
+  cursor: not-allowed;
 }
 .actions button {
   margin-left: 8px;

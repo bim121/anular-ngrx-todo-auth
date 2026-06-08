@@ -31,8 +31,8 @@ export class TodoEffects {
         this.actions$.pipe(
             ofType(TodoActions.loadTodos),
             withLatestFrom(this.store.select(AuthSelectors.selectUserId)),
-            filter(([action, userId]) => userId != null),
-            exhaustMap(([action, userId]) =>
+            filter(([, userId]) => userId != null),
+            exhaustMap(([, userId]) =>
                 defer(() => this.todoService.getTodos(userId!)).pipe(
                     retry(LOAD_RETRY),
                     map((todos) => TodoActions.loadTodosSuccess({ todos })),
@@ -48,9 +48,9 @@ export class TodoEffects {
         this.actions$.pipe(
             ofType(TodoActions.addTodo),
             withLatestFrom(this.store.select(AuthSelectors.selectUserId)),
-            filter(([action, userId]) => userId != null),
-            exhaustMap(([action, userId]) =>
-                this.todoService.addTodo(action.task, userId!).pipe(
+            filter(([, userId]) => userId != null),
+            exhaustMap(([{ task }, userId]) =>
+                this.todoService.addTodo(task, userId!).pipe(
                     map(todo =>
                         TodoActions.addTodoSuccess({todo})
                     ),
@@ -64,9 +64,9 @@ export class TodoEffects {
         this.actions$.pipe(
             ofType(TodoActions.updateTodo),
             withLatestFrom(this.store.select(AuthSelectors.selectUserId)),
-            filter(([action, userId]) => userId != null),
-            exhaustMap(([action, userId]) =>
-                this.todoService.updateTodo(action.todo, userId!).pipe(
+            filter(([, userId]) => userId != null),
+            exhaustMap(([{ todo }, userId]) =>
+                this.todoService.updateTodo(todo, userId!).pipe(
                     map(todo =>
                         TodoActions.updateTodoSuccess({todo})
                     ),
@@ -80,11 +80,11 @@ export class TodoEffects {
         this.actions$.pipe(
             ofType(TodoActions.deleteTodo),
             withLatestFrom(this.store.select(AuthSelectors.selectUserId)),
-            filter(([action, userId]) => userId != null),
-            exhaustMap(([action, userId]) =>
-                this.todoService.deleteTodo(action.todoId, userId!).pipe(
-                    map(todo =>
-                        TodoActions.deleteTodoSuccess({todoId: action.todoId})
+            filter(([, userId]) => userId != null),
+            exhaustMap(([{ todoId }, userId]) =>
+                this.todoService.deleteTodo(todoId, userId!).pipe(
+                    map(() =>
+                        TodoActions.deleteTodoSuccess({ todoId })
                     ),
                     catchError(error => of(TodoActions.deleteTodoFailure({error})))
                 )

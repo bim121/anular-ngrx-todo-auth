@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { AuthState, AuthResponse } from './auth.model';
+import { AuthState } from './auth.model';
 import * as AuthActions from "./auth.actions";
 
 export const authFeatureKey = "auth";
@@ -32,7 +32,7 @@ export const authReducer = createReducer(
         ...state,
         isLoading: false,
         isLoggedIn: false,
-        error: error.message || 'Registration failed',
+        error: error instanceof Error ? error.message : 'Registration failed',
     })),
 
     on(AuthActions.loginUser, (state) => ({
@@ -56,7 +56,7 @@ export const authReducer = createReducer(
         isLoading: false,
         isLoggedIn: false,
         token: null,
-        error: error.message || 'Login failed',
+        error: error instanceof Error ? error.message : 'Login failed',
     })),
 
     on(AuthActions.logoutUser, () => ({

@@ -12,7 +12,7 @@ export const loadTodosSuccess = createAction(
 
 export const loadTodosFailure = createAction(
     '[To do API] to do list failed',
-    props<{error: any}>()
+    props<{error: unknown}>()
 );
 
 export const addTodo = createAction(
@@ -27,7 +27,7 @@ export const addTodoSuccess = createAction(
 
 export const addTodoFailure = createAction(
     '[To-Do Page] Add to-do Failure',
-    props<{error: any}>()
+    props<{error: unknown}>()
 );
 
 export const updateTodo = createAction(
@@ -42,7 +42,7 @@ export const updateTodoSuccess = createAction(
 
 export const updateTodoFailure = createAction(
     '[To-Do Page] Update to-do Failure',
-    props<{error: any}>()
+    props<{error: unknown}>()
 );
 
 export const deleteTodo = createAction(
@@ -57,5 +57,5 @@ export const deleteTodoSuccess = createAction(
 
 export const deleteTodoFailure = createAction(
     '[To-Do Page] Delete to-do Failure',
-    props<{error: any}>()
+    props<{error: unknown}>()
 );

@@ -19,14 +19,7 @@
       "userId": "user_1",
       "task": "Learn NgRx Effects",
       "completed": false,
-      "createdAt": "iso_string"
-    },
-    {
-      "id": "SssiDORkFTI",
-      "userId": "user_1",
-      "task": "s",
-      "completed": false,
-      "createdAt": "2026-05-21T23:17:10.618Z"
+      "createdAt": "2026-01-01T00:00:00.000Z"
     },
     {
       "id": "todo_user2",

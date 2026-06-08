@@ -36,7 +36,14 @@
                 class="todo-checkbox"
                 [disabled]="loading()"
               />
-              <span (click)="toggleComplete(todo)" class="todo-task">{{ todo.task }}</span>
+              <button
+                type="button"
+                (click)="toggleComplete(todo)"
+                class="todo-task"
+                [disabled]="loading()"
+              >
+                {{ todo.task }}
+              </button>
               <div class="actions">
                 <button
                   type="button"

@@ -45,7 +45,7 @@ export class TodoService {
         );
     }
 
-    public deleteTodo(todoId: string, userId: string): Observable<{}> {
+    public deleteTodo(todoId: string, userId: string): Observable<void> {
         return this.http.get<Todo>(`${this.todoUrl}/${todoId}`).pipe(
             map(todo => {
                 if(todo.userId !== userId) {
@@ -53,13 +53,15 @@ export class TodoService {
                 }
                 return todo;
             }),
-            switchMap(() => this.http.delete<{}>(`${this.todoUrl}/${todoId}`)),
+            switchMap(() => this.http.delete<void>(`${this.todoUrl}/${todoId}`)),
             catchError(this.handleError)
         );
     }
 
-    private handleError(error: any): Observable<never> {
+    private handleError(error: unknown): Observable<never> {
         console.error("TodoService Error:", error);
-        return throwError(() => new Error(error.message || 'Todo service error'));
+        const message =
+            error instanceof Error ? error.message : 'Todo service error';
+        return throwError(() => new Error(message));
     }
 }

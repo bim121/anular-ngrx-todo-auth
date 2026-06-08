@@ -2,7 +2,9 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, map, Observable, switchMap, throwError } from "rxjs";
 import { AuthResponse, User } from "./auth.model";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
+
+type StoredUser = User & { password: string };
 
 @Injectable({
     providedIn: 'root'
@@ -41,12 +43,16 @@ export class AuthService {
     }
 
     public login(credentials: {email: string; password: string}) : Observable<AuthResponse>{
-        return this.http.get<any[]>(`${this.userUrl}?email=${credentials.email.toLowerCase()}&password=${credentials.password}`).pipe(
+        return this.http.get<StoredUser[]>(`${this.userUrl}?email=${credentials.email.toLowerCase()}&password=${credentials.password}`).pipe(
             map(users => {
                 if(users.length > 0) {
                     const user = users[0];
 
-                    const {password, ...userWithoutPassword} = user;
+                    const userWithoutPassword: User = {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                    };
 
                     return {
                         user: userWithoutPassword,
@@ -60,12 +66,17 @@ export class AuthService {
         )
     }
 
-    private handleError(error: any): Observable<never> {
+    private handleError(error: unknown): Observable<never> {
         console.error('AuthService Error', error);
         let errorMessage = "An unknown error occured during authentication.";
-        if(error.message) {
+        if (error instanceof Error) {
             errorMessage = error.message;
-        } else if (error.status) {
+        } else if (
+            typeof error === 'object' &&
+            error !== null &&
+            'status' in error &&
+            typeof error.status === 'number'
+        ) {
             errorMessage = `Server error: ${error.status}`;
         }
         return throwError(() => new Error(errorMessage));

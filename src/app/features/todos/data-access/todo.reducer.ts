@@ -28,7 +28,7 @@ export const todosReducer = createReducer(
 
     on(TodoActions.loadTodosFailure, (state, {error}) => ({
         ...state,
-        error: error.message || 'Failed to load messages',
+        error: error instanceof Error ? error.message : 'Failed to load messages',
         loading: false
     })),
 
@@ -46,7 +46,7 @@ export const todosReducer = createReducer(
 
     on(TodoActions.addTodoFailure, (state, {error}) => ({
         ...state,
-        error: error.message || 'Failed to add messages',
+        error: error instanceof Error ? error.message : 'Failed to add messages',
         loading: false
     })),
 
@@ -66,7 +66,7 @@ export const todosReducer = createReducer(
 
     on(TodoActions.updateTodoFailure, (state, {error}) => ({
         ...state,
-        error: error.message || 'Failed to update messages',
+        error: error instanceof Error ? error.message : 'Failed to update messages',
         loading: false
     })),
 
@@ -84,7 +84,7 @@ export const todosReducer = createReducer(
 
     on(TodoActions.deleteTodoFailure, (state, {error}) => ({
         ...state,
-        error: error.message || 'Failed to delete messages',
+        error: error instanceof Error ? error.message : 'Failed to delete messages',
         loading: false
     })),
 

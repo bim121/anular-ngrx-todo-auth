@@ -1,4 +1,4 @@
-import { createFeature, createFeatureSelector, createSelector } from "@ngrx/store";
+import { createFeatureSelector, createSelector } from "@ngrx/store";
 import * as fromAuth from './auth.reducer';
 import { AuthState } from "./auth.model";
 
