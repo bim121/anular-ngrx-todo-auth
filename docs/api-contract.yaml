@@ -1,0 +1,687 @@
+# Local copy for frontend repo. Canonical source: ../../contracts/openapi.yaml
+# Sync: Copy-Item ..\contracts\openapi.yaml docs\api-contract.yaml
+openapi: 3.1.0
+info:
+  title: Todo Platform API
+  version: 1.0.0
+  description: |
+    Shared contract between Angular frontend (`anular-ngrx-todo-auth`) and ASP.NET backend (`todo-platform-backend`).
+    Single source of truth: `contracts/openapi.yaml` at the `ngrx` workspace root.
+    Backend implements in B-02+; frontend uses json-server mock on port 3000 until Phase 13 (`useRealApi: true`).
+servers:
+  - url: http://localhost:5000/api
+    description: ASP.NET backend (local)
+  - url: http://localhost:3000
+    description: json-server mock (frontend dev default)
+tags:
+  - name: Auth
+    description: Login, register, email availability
+  - name: Todos
+    description: CRUD for user todos (Bearer required on mock)
+  - name: Tenants
+    description: Multi-tenant config (Phase 14+)
+  - name: Admin
+    description: Tenant admin, migrations, blue/green (Phase 14–15)
+paths:
+  /users:
+    get:
+      tags: [Auth]
+      summary: Filter users (json-server mock)
+      description: |
+        **Mock only** (json-server, port 3000). Angular uses this for login (`email` + `password`)
+        and async email-uniqueness check (`email` only). Real backend uses `/auth/login` and `/auth/register`.
+      operationId: listUsersMock
+      security: []
+      parameters:
+        - name: email
+          in: query
+          schema:
+            type: string
+            format: email
+        - name: password
+          in: query
+          description: Optional; when set with email, returns matching user(s) for mock login
+          schema:
+            type: string
+            minLength: 8
+      responses:
+        '200':
+          description: Matching users (empty array = invalid credentials or email available)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserWithPasswordDto'
+    post:
+      tags: [Auth]
+      summary: Register user (json-server mock)
+      description: |
+        **Mock only**. Middleware rejects duplicate email with 409.
+        Real backend uses `POST /auth/register`.
+      operationId: registerUserMock
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserMockRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserWithPasswordDto'
+        '409':
+          description: Email already exists (server middleware)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login (mock / legacy — Keycloak in Phase 17)
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register user
+      operationId: register
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+  /todos:
+    get:
+      tags: [Todos]
+      summary: List todos for current user
+      operationId: getTodos
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantIdHeader'
+        - name: userId
+          in: query
+          required: true
+          description: Filter todos by owner (json-server query param; required by Angular effects)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TodoDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [Todos]
+      summary: Create todo
+      operationId: createTodo
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTodoRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /todos/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags: [Todos]
+      summary: Get todo by id
+      operationId: getTodoById
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantIdHeader'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Todos]
+      summary: Update todo (partial)
+      operationId: updateTodo
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTodoRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      tags: [Todos]
+      summary: Delete todo
+      operationId: deleteTodo
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantIdHeader'
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /tenants/{id}/config:
+    get:
+      tags: [Tenants]
+      summary: Tenant branding and feature config
+      operationId: getTenantConfig
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantConfigDto'
+  /admin/tenants:
+    get:
+      tags: [Admin]
+      summary: List all tenants (admin)
+      operationId: getTenants
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TenantAdminDto'
+  /admin/tenants/{id}:
+    get:
+      tags: [Admin]
+      summary: Tenant detail
+      operationId: getTenantById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantAdminDto'
+  /admin/tenants/{id}/migrations:
+    get:
+      tags: [Admin]
+      summary: Pending and applied migrations
+      operationId: getTenantMigrations
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MigrationDto'
+  /admin/tenants/{id}/switch-track:
+    post:
+      tags: [Admin]
+      summary: Switch tenant blue/green track
+      operationId: switchTenantTrack
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SwitchTrackRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantAdminDto'
+  /admin/tenants/{id}/migrate:
+    post:
+      tags: [Admin]
+      summary: Apply schema migration for tenant
+      operationId: applyTenantMigration
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MigrateTenantRequest'
+      responses:
+        '202':
+          description: Migration started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MigrationJobDto'
+  /admin/tenants/bulk-migrate:
+    post:
+      tags: [Admin]
+      summary: Bulk migrate tenants (Saga B-18)
+      operationId: bulkMigrateTenants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkMigrateRequest'
+      responses:
+        '202':
+          description: Bulk job started
+  /admin/deployment/status:
+    get:
+      tags: [Admin]
+      summary: Global blue/green deployment status
+      operationId: getDeploymentStatus
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentStatusDto'
+  /search:
+    get:
+      tags: [Todos]
+      summary: Full-text search (B-15)
+      operationId: searchTodos
+      parameters:
+        - $ref: '#/components/parameters/TenantIdHeader'
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TodoDto'
+components:
+  parameters:
+    TenantIdHeader:
+      name: X-Tenant-Id
+      in: header
+      required: false
+      schema:
+        type: string
+      description: Tenant identifier (Phase 14+)
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+    RegisterRequest:
+      type: object
+      required: [email, password, name]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        name:
+          type: string
+    AuthResponse:
+      type: object
+      required: [user]
+      properties:
+        token:
+          type: string
+          description: ASP.NET backend field name (B-02)
+        accessToken:
+          type: string
+          description: Angular/json-server mock field name (same value as token)
+        user:
+          $ref: '#/components/schemas/UserDto'
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        name:
+          type: string
+    UserWithPasswordDto:
+      type: object
+      description: json-server user record (password stored in mock db only)
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+    RegisterUserMockRequest:
+      type: object
+      required: [email, password, name]
+      properties:
+        id:
+          type: string
+          description: Client-generated id (Angular uuid)
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        name:
+          type: string
+    ErrorDto:
+      type: object
+      properties:
+        error:
+          type: string
+    TodoDto:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+          description: Backend field name (B-02)
+        task:
+          type: string
+          description: json-server mock field name (same meaning as title)
+        completed:
+          type: boolean
+        userId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [todo, in_progress, done]
+        priority:
+          type: string
+          enum: [low, medium, high]
+    CreateTodoRequest:
+      type: object
+      required: [userId]
+      properties:
+        title:
+          type: string
+        task:
+          type: string
+          description: json-server mock; use title on real backend
+        userId:
+          type: string
+        completed:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+    UpdateTodoRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        task:
+          type: string
+        completed:
+          type: boolean
+        status:
+          type: string
+    TenantConfigDto:
+      type: object
+      properties:
+        branding:
+          type: object
+          properties:
+            logoUrl:
+              type: string
+            primaryColor:
+              type: string
+        features:
+          type: object
+          additionalProperties:
+            type: boolean
+        limits:
+          type: object
+          properties:
+            maxTodos:
+              type: integer
+        schemaVersion:
+          type: string
+    TenantAdminDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        schemaVersion:
+          type: string
+        deploymentTrack:
+          type: string
+          enum: [blue, green]
+        appVersion:
+          type: string
+        status:
+          type: string
+          enum: [active, migrating, error]
+    MigrationDto:
+      type: object
+      properties:
+        version:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [pending, applied, failed]
+        appliedAt:
+          type: string
+          format: date-time
+    SwitchTrackRequest:
+      type: object
+      required: [track]
+      properties:
+        track:
+          type: string
+          enum: [blue, green]
+    MigrateTenantRequest:
+      type: object
+      required: [targetVersion]
+      properties:
+        targetVersion:
+          type: string
+    BulkMigrateRequest:
+      type: object
+      required: [tenantIds, targetVersion]
+      properties:
+        tenantIds:
+          type: array
+          items:
+            type: string
+        targetVersion:
+          type: string
+    MigrationJobDto:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        status:
+          type: string
+    DeploymentStatusDto:
+      type: object
+      properties:
+        blueVersion:
+          type: string
+        greenVersion:
+          type: string
+        tenantsOnBlue:
+          type: integer
+        tenantsOnGreen:
+          type: integer
+        errorRateBlue:
+          type: number
+        errorRateGreen:
+          type: number
+    ProblemDetails:
+      type: object
+      description: RFC 7807
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    NotFound:
+      description: Not Found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    ValidationError:
+      description: Validation Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security: []

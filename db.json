@@ -5,6 +5,12 @@
       "name": "Test User",
       "email": "test@example.com",
       "password": "password123"
+    },
+    {
+      "id": "user_2",
+      "name": "Other User",
+      "email": "other@example.com",
+      "password": "password123"
     }
   ],
   "todos": [
@@ -21,6 +27,13 @@
       "task": "s",
       "completed": false,
       "createdAt": "2026-05-21T23:17:10.618Z"
+    },
+    {
+      "id": "todo_user2",
+      "userId": "user_2",
+      "task": "Other user todo",
+      "completed": false,
+      "createdAt": "2026-05-29T12:00:00.000Z"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -34,6 +34,17 @@ describe('TodoEffects loadTodos$', () => {
     effects = TestBed.inject(TodoEffects);
   });
 
+  it('passes userId from store to getTodos', async () => {
+    getTodosMock.mockReturnValue(
+      of([{ id: '1', userId: 'user-1', task: 'A', completed: false }])
+    );
+
+    actions$.next(TodoActions.loadTodos());
+    await firstValueFrom(effects.loadTodos$);
+
+    expect(getTodosMock).toHaveBeenCalledWith('user-1');
+  });
+
   it('retries getTodos twice then dispatches loadTodosSuccess', async () => {
     getTodosMock
       .mockReturnValueOnce(throwError(() => new Error('network')))
@@ -46,6 +57,7 @@ describe('TodoEffects loadTodos$', () => {
     const action = await firstValueFrom(effects.loadTodos$);
 
     expect(getTodosMock).toHaveBeenCalledTimes(3);
+    expect(getTodosMock).toHaveBeenCalledWith('user-1');
     expect(action.type).toBe(TodoActions.loadTodosSuccess.type);
   });
 
@@ -56,6 +68,37 @@ describe('TodoEffects loadTodos$', () => {
     const action = await firstValueFrom(effects.loadTodos$);
 
     expect(getTodosMock).toHaveBeenCalledTimes(3);
+    expect(getTodosMock).toHaveBeenCalledWith('user-1');
     expect(action.type).toBe(TodoActions.loadTodosFailure.type);
+  });
+
+  it('does not call getTodos when userId is missing', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        TodoEffects,
+        provideMockActions(() => actions$ as Observable<unknown>),
+        { provide: TodoService, useValue: { getTodos: getTodosMock } },
+        {
+          provide: Store,
+          useValue: {
+            select: (selector: unknown) =>
+              selector === selectUserId ? of(null) : of(undefined),
+          },
+        },
+      ],
+    });
+    const effectsWithoutUser = TestBed.inject(TodoEffects);
+
+    let emitted = false;
+    effectsWithoutUser.loadTodos$.subscribe(() => {
+      emitted = true;
+    });
+
+    actions$.next(TodoActions.loadTodos());
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(emitted).toBe(false);
+    expect(getTodosMock).not.toHaveBeenCalled();
   });
 });
