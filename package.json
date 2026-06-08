@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "api": "json-server db.json -p 3000",
+    "api": "node server/index.js",
     "dev": "concurrently \"npm run api\" \"ng serve\"",
     "build": "ng build",
     "build:stats": "ng build --stats-json",

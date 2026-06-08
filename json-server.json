@@ -1,0 +1,8 @@
+{
+  "$schema": "./node_modules/json-server/schema.json",
+  "port": 3000,
+  "host": "localhost",
+  "db": "db.json",
+  "server": "server/index.js",
+  "middleware": "server/middleware.js"
+}
