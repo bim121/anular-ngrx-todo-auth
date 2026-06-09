@@ -10,7 +10,9 @@
     "api": "node server/index.js",
     "dev": "concurrently \"npm run api\" \"ng serve\"",
     "dev:marketing": "npm run dev --workspace=marketing-mfe",
+    "dev:analytics": "npm run dev --workspace=analytics-mfe",
     "build:marketing": "npm run build --workspace=marketing-mfe",
+    "build:analytics": "npm run build --workspace=analytics-mfe",
     "build": "ng build",
     "build:stats": "ng build --stats-json",
     "watch": "ng build --watch --configuration development",
@@ -18,7 +20,7 @@
     "seed": "node scripts/seed-db.js",
     "serve:ssr:anular-ngrx-todo-auth": "node dist/anular-ngrx-todo-auth/server/server.mjs",
     "lint": "ng lint",
-    "typecheck": "tsc -b && npm run typecheck --workspace=marketing-mfe",
+    "typecheck": "tsc -b && npm run typecheck --workspace=marketing-mfe && npm run typecheck --workspace=analytics-mfe",
     "prepare": "husky"
   },
   "private": true,

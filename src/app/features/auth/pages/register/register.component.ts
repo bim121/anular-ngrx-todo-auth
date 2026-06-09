@@ -15,6 +15,8 @@ import { Store } from '@ngrx/store';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
 import { passwordMatchValidator } from '@app/shared/validators/password-match.validator';
 import { emailUniqueValidator } from '@app/shared/validators/email-unique.validator';
+import { emailFormatValidator } from '@app/shared/validators/email-format.validator';
+import { AUTH_VALIDATION_MESSAGES } from '@shared/validators/email';
 
 @Component({
   selector: 'app-register',
@@ -27,12 +29,14 @@ export class RegisterComponent implements OnInit {
   private store = inject(Store);
   private fb = inject(NonNullableFormBuilder);
 
+  readonly messages = AUTH_VALIDATION_MESSAGES;
+
   form = this.fb.group(
     {
       name: [''],
       email: [
         '',
-        [Validators.required, Validators.email],
+        [Validators.required, emailFormatValidator()],
         { asyncValidators: [emailUniqueValidator()], updateOn: 'blur' },
       ],
       password: ['', [Validators.required, Validators.minLength(8)]],

@@ -30,13 +30,13 @@
       @if (form.controls.email.touched && form.controls.email.invalid) {
         <div class="error-message">
           @if (form.controls.email.hasError('required')) {
-            <span>Email is required.</span>
+            <span>{{ messages.emailRequired }}</span>
           }
           @if (form.controls.email.hasError('email')) {
-            <span>Please enter a valid email.</span>
+            <span>{{ messages.emailInvalid }}</span>
           }
           @if (form.controls.email.hasError('emailTaken')) {
-            <span>This email is already registered.</span>
+            <span>{{ messages.emailTaken }}</span>
           }
         </div>
       }

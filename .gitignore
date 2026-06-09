@@ -3,6 +3,7 @@
 # Compiled output
 /dist
 /apps/marketing-mfe/dist
+/apps/analytics-mfe/dist
 /tmp
 /out-tsc
 /bazel-out

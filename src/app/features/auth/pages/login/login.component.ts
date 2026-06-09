@@ -13,6 +13,8 @@ import {
   selectAuthError,
 } from '@app/features/auth/data-access/auth.selectors';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
+import { emailFormatValidator } from '@app/shared/validators/email-format.validator';
+import { AUTH_VALIDATION_MESSAGES } from '@shared/validators/email';
 
 @Component({
   selector: 'app-login',
@@ -25,8 +27,10 @@ export class LoginComponent {
   private store = inject(Store);
   private fb = inject(NonNullableFormBuilder);
 
+  readonly messages = AUTH_VALIDATION_MESSAGES;
+
   form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, emailFormatValidator()]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
