@@ -41,6 +41,24 @@
   margin-top: 1.25rem;
 }
 
+.login-success {
+  margin-top: 1rem;
+}
+
+.login-card__redirect {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+}
+
+.login-card__redirect a {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.login-card__redirect-hint {
+  color: #94a3b8;
+}
+
 .login-form {
   display: grid;
   gap: 1rem;

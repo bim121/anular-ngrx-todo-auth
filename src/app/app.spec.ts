@@ -1,18 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { provideMockStore } from '@ngrx/store/testing';
-import { initialUiState } from '@app/features/ui/data-access/ui.reducer';
-import { uiFeatureKey } from '@app/features/ui/data-access/ui.reducer';
 import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [
-        provideMockStore({ initialState: { [uiFeatureKey]: initialUiState } }),
-        provideRouter([]),
-      ],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 

@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { Store } from '@ngrx/store';
-import { selectGlobalError } from '@app/features/ui/data-access/ui.selectors';
-import { globalErrorCleared } from '@app/features/ui/data-access/ui.actions';
+import { map } from 'rxjs';
+import { GlobalErrorService } from '@app/core/services/global-error.service';
 
 @Component({
   selector: 'app-global-error-banner',
@@ -12,11 +11,11 @@ import { globalErrorCleared } from '@app/features/ui/data-access/ui.actions';
   styleUrl: './global-error-banner.component.css',
 })
 export class GlobalErrorBannerComponent {
-  private store = inject(Store);
+  private readonly globalErrors = inject(GlobalErrorService);
 
-  error$ = this.store.select(selectGlobalError);
+  error$ = this.globalErrors.error$.pipe(map((state) => state?.message ?? null));
 
   dismiss(): void {
-    this.store.dispatch(globalErrorCleared());
+    this.globalErrors.clear();
   }
 }

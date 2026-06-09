@@ -17,7 +17,6 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from '@app/core/interceptors/auth.interceptor';
 import { authReducer, authFeatureKey } from '@app/features/auth/data-access/auth.reducer';
 import { todosReducer, todosFeatureKey } from '@app/features/todos/data-access/todo.reducer';
-import { uiReducer, uiFeatureKey } from '@app/features/ui/data-access/ui.reducer';
 import { AuthEffects } from '@app/features/auth/data-access/auth.effects';
 import { TodoEffects } from '@app/features/todos/data-access/todo.effects';
 
@@ -31,7 +30,6 @@ export const appConfig: ApplicationConfig = {
     provideStore(),
     provideState(authFeatureKey, authReducer),
     provideState(todosFeatureKey, todosReducer),
-    provideState(uiFeatureKey, uiReducer),
     provideEffects(AuthEffects, TodoEffects),
     provideRouterStore(),
     ...(isDevMode()

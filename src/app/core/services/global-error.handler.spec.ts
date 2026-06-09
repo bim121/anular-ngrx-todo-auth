@@ -1,7 +1,7 @@
 import { ErrorHandler } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { globalErrorRaised } from '@app/features/ui/data-access/ui.actions';
+import { firstValueFrom } from 'rxjs';
+import { GlobalErrorService } from './global-error.service';
 import {
   GlobalErrorHandler,
   isNgRxRuntimeError,
@@ -26,36 +26,31 @@ describe('global error helpers', () => {
 
 describe('GlobalErrorHandler', () => {
   let handler: GlobalErrorHandler;
-  let store: MockStore;
+  let globalErrors: GlobalErrorService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        provideMockStore(),
-        { provide: ErrorHandler, useClass: GlobalErrorHandler },
-      ],
+      providers: [{ provide: ErrorHandler, useClass: GlobalErrorHandler }],
     });
 
     handler = TestBed.inject(ErrorHandler) as GlobalErrorHandler;
-    store = TestBed.inject(MockStore);
+    globalErrors = TestBed.inject(GlobalErrorService);
   });
 
-  it('dispatches globalErrorRaised for unhandled app errors', () => {
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
-
+  it('raises a global error for unhandled app errors', async () => {
     handler.handleError(new Error('Something broke'));
 
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      globalErrorRaised({ message: 'Something broke' })
-    );
+    const state = await firstValueFrom(globalErrors.error$);
+    expect(state?.message).toBe('Something broke');
   });
 
-  it('rethrows NgRx runtime errors without dispatching', () => {
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
+  it('rethrows NgRx runtime errors without raising', async () => {
     const ngrxErr = new Error('NgRx effect');
     ngrxErr.stack = 'at x (node_modules/@ngrx/effects/effects.mjs:10:1)';
 
     expect(() => handler.handleError(ngrxErr)).toThrow(ngrxErr);
-    expect(dispatchSpy).not.toHaveBeenCalled();
+
+    const state = await firstValueFrom(globalErrors.error$);
+    expect(state).toBeNull();
   });
 });

@@ -1,6 +1,5 @@
 import { ErrorHandler, inject, Injectable, isDevMode } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { globalErrorRaised } from '@app/features/ui/data-access/ui.actions';
+import { GlobalErrorService } from './global-error.service';
 
 /** NgRx handles its own effect/reducer errors via `catchError` — do not route those here. */
 export function isNgRxRuntimeError(error: unknown): boolean {
@@ -29,7 +28,7 @@ export function toUserFacingMessage(error: unknown): string {
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
-  private readonly store = inject(Store);
+  private readonly globalErrors = inject(GlobalErrorService);
 
   handleError(error: unknown): void {
     if (isNgRxRuntimeError(error)) {
@@ -42,6 +41,6 @@ export class GlobalErrorHandler implements ErrorHandler {
       console.error('[GlobalErrorHandler]', error);
     }
 
-    this.store.dispatch(globalErrorRaised({ message }));
+    this.globalErrors.raise(message);
   }
 }

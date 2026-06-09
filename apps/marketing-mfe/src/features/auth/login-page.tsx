@@ -19,12 +19,7 @@ export function LoginPage() {
 
     try {
       const auth = await loginUser(email, password);
-      const message = `Welcome, ${auth.user.name}! Redirecting to the app…`;
-      setSuccess(message);
-
-      window.setTimeout(() => {
-        window.location.assign(ANGULAR_APP_URL);
-      }, 1500);
+      setSuccess(`Welcome, ${auth.user.name}! Login successful.`);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Login failed. Try again.';
@@ -46,7 +41,16 @@ export function LoginPage() {
         </header>
 
         {success ? (
-          <Toast type="success" message={success} />
+          <div className="login-success">
+            <Toast type="success" message={success} />
+            <p className="login-card__redirect">
+              <a href={ANGULAR_APP_URL}>Open Angular app →</a>
+              <span className="login-card__redirect-hint">
+                {' '}
+                (needs <code>npm start</code> on port 4200)
+              </span>
+            </p>
+          </div>
         ) : null}
 
         {error ? <Toast type="error" message={error} onDismiss={() => setError(null)} /> : null}
