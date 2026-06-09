@@ -7,6 +7,22 @@ describe('todosReducer', () => {
   const t1: Todo = { id: '1', userId: 'u1', task: 'A', completed: false };
   const t2: Todo = { id: '2', userId: 'u1', task: 'B', completed: false };
 
+  it('updateTodo: optimistically updates the matching item', () => {
+    const startState = {
+      ...initialTodoState,
+      items: [t1, t2],
+    };
+
+    const state = todosReducer(
+      startState,
+      TodoActions.updateTodo({ todo: { ...t1, completed: true } })
+    );
+
+    expect(state.items[0].completed).toBe(true);
+    expect(state.items[1]).toEqual(t2);
+    expect(state.loading).toBe(false);
+  });
+
   it('updateTodoSuccess: replaces only the matching item by id', () => {
     const startState = {
       ...initialTodoState,

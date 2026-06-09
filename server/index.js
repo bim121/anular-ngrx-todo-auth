@@ -1,11 +1,8 @@
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { App } from '@tinyhttp/app';
-import { cors } from '@tinyhttp/cors';
 import { JSONFile } from 'lowdb/node';
 import { Low } from 'lowdb';
-import { json } from 'milliparsec';
 import { watch } from 'chokidar';
 import chalk from 'chalk';
 import { NormalizedAdapter } from 'json-server/lib/adapters/normalized-adapter.js';
@@ -29,23 +26,36 @@ const observer = new Observer(new NormalizedAdapter(adapter));
 const db = new Low(observer, {});
 await db.read();
 
-const jsonServer = createApp(db, { logger: false });
+const app = createApp(db, { logger: false });
 const { auth, rejectDuplicateUserEmail } = createApiMiddleware(db);
 
-const app = new App();
+/** Insert custom middleware after body parser, before json-server routes. */
+function preRouteLayer(template, handler) {
+  return {
+    method: undefined,
+    handler,
+    path: '/',
+    fullPath: template.fullPath ?? '',
+    type: 'mw',
+    regex: template.regex,
+    fullPathRegex: template.fullPathRegex,
+  };
+}
 
-app.use((req, res, next) =>
-  cors({
-    allowedHeaders: req.headers['access-control-request-headers']
-      ?.split(',')
-      .map((h) => h.trim()),
-  })(req, res, next)
+const firstRouteIndex = app.middleware.findIndex((layer) => layer.method !== undefined);
+const templateLayer = app.middleware[firstRouteIndex - 1] ?? app.middleware[0];
+
+if (firstRouteIndex === -1) {
+  console.error(chalk.red('Failed to locate json-server route stack'));
+  process.exit(1);
+}
+
+app.middleware.splice(
+  firstRouteIndex,
+  0,
+  preRouteLayer(templateLayer, auth),
+  preRouteLayer(templateLayer, rejectDuplicateUserEmail)
 );
-app.options('*', cors());
-app.use(json());
-app.use(auth);
-app.use(rejectDuplicateUserEmail);
-app.use(jsonServer);
 
 app.listen(port, () => {
   console.log(chalk.bold(`JSON Server + middleware on http://${host}:${port}`));

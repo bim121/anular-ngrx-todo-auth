@@ -18,7 +18,7 @@
       "id": "todo_1",
       "userId": "user_1",
       "task": "Learn NgRx Effects",
-      "completed": false,
+      "completed": true,
       "createdAt": "2026-01-01T00:00:00.000Z"
     },
     {

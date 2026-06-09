@@ -34,26 +34,25 @@ export const todosReducer = createReducer(
 
     on(TodoActions.addTodo, (state) => ({
         ...state,
-        loading: true,
-        error: null
+        error: null,
     })),
 
     on(TodoActions.addTodoSuccess, (state, {todo}) => ({
         ...state,
         items: [...state.items, todo],
-        loading: false
     })),
 
     on(TodoActions.addTodoFailure, (state, {error}) => ({
         ...state,
         error: error instanceof Error ? error.message : 'Failed to add messages',
-        loading: false
     })),
 
-    on(TodoActions.updateTodo, (state) => ({
+    on(TodoActions.updateTodo, (state, { todo }) => ({
         ...state,
-        loading: true,
-        error: null
+        error: null,
+        items: state.items.map((item) =>
+            item.id === todo.id ? { ...item, ...todo } : item
+        ),
     })),
 
     on(TodoActions.updateTodoSuccess, (state, {todo}) => ({
@@ -61,31 +60,26 @@ export const todosReducer = createReducer(
         items: state.items.map((item) =>
             item.id === todo.id ? todo : item
         ),
-        loading: false
     })),
 
     on(TodoActions.updateTodoFailure, (state, {error}) => ({
         ...state,
         error: error instanceof Error ? error.message : 'Failed to update messages',
-        loading: false
     })),
 
     on(TodoActions.deleteTodo, (state) => ({
         ...state,
-        loading: true,
-        error: null
+        error: null,
     })),
 
     on(TodoActions.deleteTodoSuccess, (state, {todoId}) => ({
         ...state,
         items: state.items.filter(item => item.id !== todoId),
-        loading: false
     })),
 
     on(TodoActions.deleteTodoFailure, (state, {error}) => ({
         ...state,
         error: error instanceof Error ? error.message : 'Failed to delete messages',
-        loading: false
     })),
 
     on(AuthActions.logoutUser, () => initialTodoState)

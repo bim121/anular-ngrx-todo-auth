@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { catchError, map, Observable, switchMap, throwError } from "rxjs";
+import { catchError, map, Observable, throwError } from "rxjs";
 import { Todo } from "./todo.model";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -33,27 +33,24 @@ export class TodoService {
     }
 
     public updateTodo(todoUpdate: Partial<Todo> & {id: string}, userId: string): Observable<Todo> {
-        return this.http.get<Todo>(`${this.todoUrl}/${todoUpdate.id}`).pipe(
-            map(todo => {
-                if(todo.userId !== userId) {
-                    throw new Error('Unauthrized to update this Todo')
+        return this.http.patch<Todo>(`${this.todoUrl}/${todoUpdate.id}`, todoUpdate).pipe(
+            map((todo) => {
+                if (todo.userId !== userId) {
+                    throw new Error('Unauthorized to update this todo');
                 }
                 return todo;
             }),
-            switchMap(() => this.http.patch<Todo>(`${this.todoUrl}/${todoUpdate.id}`, todoUpdate)),
             catchError(this.handleError)
         );
     }
 
     public deleteTodo(todoId: string, userId: string): Observable<void> {
-        return this.http.get<Todo>(`${this.todoUrl}/${todoId}`).pipe(
-            map(todo => {
-                if(todo.userId !== userId) {
-                    throw new Error('Unauthrized to update this Todo')
+        return this.http.delete<Todo>(`${this.todoUrl}/${todoId}`).pipe(
+            map((todo) => {
+                if (todo.userId !== userId) {
+                    throw new Error('Unauthorized to delete this todo');
                 }
-                return todo;
             }),
-            switchMap(() => this.http.delete<void>(`${this.todoUrl}/${todoId}`)),
             catchError(this.handleError)
         );
     }
