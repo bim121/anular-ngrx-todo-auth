@@ -18,6 +18,7 @@
     "seed": "node scripts/seed-db.js",
     "serve:ssr:anular-ngrx-todo-auth": "node dist/anular-ngrx-todo-auth/server/server.mjs",
     "lint": "ng lint",
+    "typecheck": "tsc -b && npm run typecheck --workspace=marketing-mfe",
     "prepare": "husky"
   },
   "private": true,
