@@ -11,6 +11,7 @@ import {
   map,
   of,
   retry,
+  switchMap,
   withLatestFrom,
 } from 'rxjs';
 import * as TodoActions from './todo.actions';
@@ -48,15 +49,20 @@ export class TodoEffects {
         this.actions$.pipe(
             ofType(TodoActions.addTodo),
             withLatestFrom(this.store.select(AuthSelectors.selectUserId)),
-            filter(([, userId]) => userId != null),
-            exhaustMap(([{ task }, userId]) =>
-                this.todoService.addTodo(task, userId!).pipe(
-                    map(todo =>
-                        TodoActions.addTodoSuccess({todo})
-                    ),
-                    catchError(error => of(TodoActions.addTodoFailure({error})))
-                )
-            )
+            switchMap(([{ task }, userId]) => {
+                if (userId == null) {
+                    return of(
+                        TodoActions.addTodoFailure({
+                            error: new Error('Not logged in'),
+                        })
+                    );
+                }
+
+                return this.todoService.addTodo(task, userId).pipe(
+                    map((todo) => TodoActions.addTodoSuccess({ todo })),
+                    catchError((error) => of(TodoActions.addTodoFailure({ error })))
+                );
+            })
         )
     );
 
@@ -64,15 +70,20 @@ export class TodoEffects {
         this.actions$.pipe(
             ofType(TodoActions.updateTodo),
             withLatestFrom(this.store.select(AuthSelectors.selectUserId)),
-            filter(([, userId]) => userId != null),
-            exhaustMap(([{ todo }, userId]) =>
-                this.todoService.updateTodo(todo, userId!).pipe(
-                    map(todo =>
-                        TodoActions.updateTodoSuccess({todo})
-                    ),
-                    catchError(error => of(TodoActions.updateTodoFailure({error})))
-                )
-            )
+            switchMap(([{ todo }, userId]) => {
+                if (userId == null) {
+                    return of(
+                        TodoActions.updateTodoFailure({
+                            error: new Error('Not logged in'),
+                        })
+                    );
+                }
+
+                return this.todoService.updateTodo(todo, userId).pipe(
+                    map((updated) => TodoActions.updateTodoSuccess({ todo: updated })),
+                    catchError((error) => of(TodoActions.updateTodoFailure({ error })))
+                );
+            })
         )
     );
 
@@ -80,15 +91,20 @@ export class TodoEffects {
         this.actions$.pipe(
             ofType(TodoActions.deleteTodo),
             withLatestFrom(this.store.select(AuthSelectors.selectUserId)),
-            filter(([, userId]) => userId != null),
-            exhaustMap(([{ todoId }, userId]) =>
-                this.todoService.deleteTodo(todoId, userId!).pipe(
-                    map(() =>
-                        TodoActions.deleteTodoSuccess({ todoId })
-                    ),
-                    catchError(error => of(TodoActions.deleteTodoFailure({error})))
-                )
-            )
+            switchMap(([{ todoId }, userId]) => {
+                if (userId == null) {
+                    return of(
+                        TodoActions.deleteTodoFailure({
+                            error: new Error('Not logged in'),
+                        })
+                    );
+                }
+
+                return this.todoService.deleteTodo(todoId, userId).pipe(
+                    map(() => TodoActions.deleteTodoSuccess({ todoId })),
+                    catchError((error) => of(TodoActions.deleteTodoFailure({ error })))
+                );
+            })
         )
     );
 }

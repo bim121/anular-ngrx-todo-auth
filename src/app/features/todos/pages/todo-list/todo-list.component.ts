@@ -36,8 +36,9 @@ export class TodoListComponent implements OnInit {
   }
 
   addTodo(): void {
-    if (!this.newTask.trim() || this.loading()) return;
-    this.store.dispatch(TodoActions.addTodo({ task: this.newTask.trim() }));
+    if (!this.newTask.trim()) return;
+    const task = this.newTask.trim();
+    this.store.dispatch(TodoActions.addTodo({ task }));
     this.newTask = '';
   }
 

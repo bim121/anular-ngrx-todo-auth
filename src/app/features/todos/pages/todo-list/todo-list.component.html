@@ -8,8 +8,8 @@
       required
       [disabled]="loading()"
     />
-    <button type="submit" [disabled]="!newTask.trim() || loading()">
-      {{ loading() ? 'Saving…' : 'Add Task' }}
+    <button type="submit" [disabled]="!newTask.trim()">
+      Add Task
     </button>
   </form>
 

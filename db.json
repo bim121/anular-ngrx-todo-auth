@@ -18,7 +18,7 @@
       "id": "todo_1",
       "userId": "user_1",
       "task": "Learn NgRx Effects",
-      "completed": true,
+      "completed": false,
       "createdAt": "2026-01-01T00:00:00.000Z"
     },
     {
@@ -27,6 +27,25 @@
       "task": "Other user todo",
       "completed": false,
       "createdAt": "2026-05-29T12:00:00.000Z"
+    },
+    {
+      "id": "PMp4qyw2db4",
+      "userId": "user_1",
+      "task": "New task",
+      "completed": false,
+      "createdAt": "2026-06-09T00:00:00.000Z"
+    },
+    {
+      "id": "YklJHfmNhJs",
+      "userId": "user_1",
+      "task": "Verify",
+      "completed": false
+    },
+    {
+      "userId": "user_1",
+      "task": "ping",
+      "completed": false,
+      "id": "HI2oFOHVYNE"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
