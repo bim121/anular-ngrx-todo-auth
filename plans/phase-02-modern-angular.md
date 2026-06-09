@@ -1,6 +1,6 @@
 # Phase 2 — Modern Angular (signals, zoneless, signal forms)
-> **Теория:** [guides/phase-02-modern-angular-theory.md](./guides/phase-02-modern-angular-theory.md) — статус: placeholder
-
+> **Теория:** [guides/phase-02-modern-angular-theory.md](./guides/phase-02-modern-angular-theory.md) — статус: placeholder  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 5–6 недель (50–60 ч)  
 **Предусловия:** Phase 1  
@@ -16,6 +16,22 @@
 - [ ] `@defer`, `@for` с track
 - [ ] ADR: NgRx vs httpResource
 - [ ] Документ «zoneless caveats»
+
+### React/Next.js (marketing-mfe)
+
+- [ ] Todo list: `useState`, `useEffect`, `useMemo` filtered list
+- [ ] `docs/react/reconciliation-and-fiber.md` — теория reconciliation
+- [ ] Rules of hooks — lint enforced (`eslint-plugin-react-hooks`)
+- [ ] Controlled login form (email/password)
+- [ ] `docs/angular-vs-react-state.md` — signals vs hooks comparison
+
+### Vue 3 (analytics-mfe)
+
+- [ ] Todo list: `ref`, `computed`, `watch` для filter
+- [ ] `docs/vue/proxy-reactivity-deep-dive.md` — Proxy reactivity
+- [ ] `<script setup lang="ts">` login form с v-model
+- [ ] Filter chips: all / active / done через `computed`
+- [ ] CRUD todos через fetch (до Pinia entity в Phase 3)
 
 ---
 
@@ -200,6 +216,102 @@ Todos остаются в NgRx — spike только для secondary data.
 2. ≥50% templates use signals not async pipe.
 3. Login works on both reactive and signal forms paths.
 4. `docs/zoneless-caveats.md` exists.
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> Параллель Angular signals ↔ React hooks. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md) и [guides/react-next-faang-theory.md](./guides/react-next-faang-theory.md).
+
+### R.2.1 — Todo list на hooks
+
+**Файл:** `apps/marketing-mfe/src/features/todos/TodoList.tsx`
+
+```tsx
+const [todos, setTodos] = useState<Todo[]>([]);
+const [filter, setFilter] = useState<'all' | 'active' | 'done'>('all');
+
+useEffect(() => {
+  fetch('http://localhost:3000/todos?userId=...')
+    .then(r => r.json())
+    .then(setTodos);
+}, [userId]);
+
+const filtered = useMemo(() => applyFilter(todos, filter), [todos, filter]);
+```
+
+**Шаги:**
+1. Add / toggle / delete через `setTodos` + fetch mutations.
+2. Loading + error states в UI.
+3. Сравнить re-render count с Angular signals (React DevTools Profiler).
+
+**Критерий:** 3 фильтра работают; нет infinite loop в `useEffect`.
+
+### R.2.2 — Controlled login form
+
+```tsx
+const [email, setEmail] = useState('');
+const [password, setPassword] = useState('');
+// controlled inputs, submit handler, disabled while loading
+```
+
+**Проверка:** invalid email blocked client-side; same validators as Angular Phase 1.
+
+### R.2.3 — Reconciliation doc
+
+**Файл:** `docs/react/reconciliation-and-fiber.md`
+
+- Virtual DOM diff, Fiber, keys in lists.
+- Сравнение с Angular `@for (track todo.id)`.
+- Ссылка на [guides/react-next-faang-theory.md](./guides/react-next-faang-theory.md).
+
+**Критерий:** ADR или doc section «Angular signals vs React useState» в `docs/angular-vs-react-state.md`.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.2.1 — Todo list на reactivity
+
+**Файл:** `apps/analytics-mfe/src/features/todos/TodoListView.vue`
+
+```vue
+<script setup lang="ts">
+const todos = ref<Todo[]>([]);
+const filter = ref<'all' | 'active' | 'done'>('all');
+const filteredTodos = computed(() => applyFilter(todos.value, filter.value));
+
+watch(filter, () => { /* optional analytics log */ });
+
+onMounted(async () => {
+  todos.value = await fetchTodos(userId);
+});
+</script>
+```
+
+**Шаги:**
+1. `<script setup lang="ts">` на всех новых компонентах.
+2. Toggle todo через `todos.value = todos.value.map(...)`.
+3. `@click` filter buttons меняют `filter`.
+
+**Критерий:** UI обновляется без manual `forceUpdate`; Vue DevTools показывает refs.
+
+### V.2.2 — Login form (script setup)
+
+```vue
+const email = ref('');
+const password = ref('');
+const errors = computed(() => validateLogin(email.value, password.value));
+```
+
+**Проверка:** v-model на inputs; submit blocked when invalid.
+
+### V.2.3 — Reactivity deep dive
+
+**Файл:** `docs/vue/proxy-reactivity-deep-dive.md`
+
+- `ref` vs `reactive`, `computed` caching, `watch` vs `watchEffect`.
+- Сравнение с Angular `signal()` / `computed()`.
 
 ---
 

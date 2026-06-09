@@ -7,7 +7,8 @@
 **Предусловия:** Phase 11–12, рабочий custom JWT из Phase 0–3  
 **Цель:** Профессиональный AuthN/AuthZ стек: `angular-oauth2-oidc` → **Keycloak**, RBAC через **CASL**, готово к enterprise и multi-tenant.
 
-> **Зачем отдельная фаза:** FAANG-level фронт = не «свой JWT в localStorage», а стандартные протоколы (OIDC/OAuth2), библиотеки, роли/claims, SSO, logout everywhere, SSR-safe cookies.
+> **Зачем отдельная фаза:** FAANG-level фронт = не «свой JWT в localStorage», а стандартные протоколы (OIDC/OAuth2), библиотеки, роли/claims, SSO, logout everywhere, SSR-safe cookies.  
+> **Multi-stack:** keycloak-angular + next-auth + keycloak-js — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 ---
 
@@ -34,6 +35,23 @@
 - [ ] Роли: `user`, `admin`, `tenant-admin` в token claims
 - [ ] ADR-011: почему oauth2-oidc + Keycloak + CASL
 - [ ] E2E: login через Keycloak (test user)
+
+### React/Next.js (marketing-mfe)
+
+- [ ] `next-auth` с Keycloak provider
+- [ ] Middleware protects `/docs` (authenticated area)
+- [ ] Session token available for TanStack Query / Apollo
+
+### Vue 3 (analytics-mfe)
+
+- [ ] `keycloak-js` init + Pinia sync
+- [ ] Route guards: `beforeEach` checks `keycloak.authenticated`
+- [ ] Silent SSO iframe `silent-check-sso.html`
+
+### Cross-stack auth contract
+
+- [ ] `libs/shared/auth-contract` — `auth:logout` event propagates to all remotes
+- [ ] Same Keycloak realm `todo-app`, clients: `todo-spa`, `marketing-mfe`, `analytics-mfe`
 
 ---
 
@@ -388,6 +406,103 @@ test('login via keycloak', async ({ page }) => {
 - [Keycloak Server Admin](https://www.keycloak.org/docs/latest/server_admin/)
 - [CASL Angular guide](https://casl.js.org/v6/en/package/casl-angular)
 - OAuth 2.0 for Browser-Based Apps (IETF BCP)
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> next-auth — стандартный OIDC bridge для Next App Router. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.17.1 — next-auth Keycloak provider
+
+```bash
+npm i next-auth --workspace=marketing-mfe
+```
+
+**Файл:** `apps/marketing-mfe/src/app/api/auth/[...nextauth]/route.ts`
+
+```typescript
+import KeycloakProvider from 'next-auth/providers/keycloak';
+
+export const authOptions = {
+  providers: [
+    KeycloakProvider({
+      clientId: 'marketing-mfe',
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
+      issuer: `${process.env.KEYCLOAK_URL}/realms/todo-app`,
+    }),
+  ],
+};
+```
+
+**Шаги:**
+1. Keycloak client `marketing-mfe`: public/confidential per env.
+2. `middleware.ts` — protect `/docs/*` routes.
+3. `getServerSession` in server components for SSR auth.
+
+**Проверка:** login on marketing → session cookie → protected `/docs` loads.
+
+### R.17.2 — Token for API clients
+
+**Шаги:**
+1. Expose access token to TanStack Query / Apollo via session callback.
+2. `auth:logout` postMessage to shell on signOut.
+3. E2E: SSO login on marketing subdomain.
+
+**Критерий:** same Keycloak user works on shell + marketing.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.17.1 — keycloak-js integration
+
+```bash
+npm i keycloak-js --workspace=analytics-mfe
+```
+
+**Файл:** `apps/analytics-mfe/src/plugins/keycloak.ts`
+
+```typescript
+const keycloak = new Keycloak({
+  url: import.meta.env.VITE_KEYCLOAK_URL,
+  realm: 'todo-app',
+  clientId: 'analytics-mfe',
+});
+
+await keycloak.init({ onLoad: 'check-sso', silentCheckSsoRedirectUri: '...' });
+```
+
+**Шаги:**
+1. Pinia auth store syncs `keycloak.token` + `keycloak.tokenParsed`.
+2. Router `beforeEach`: `if (!keycloak.authenticated) keycloak.login()`.
+3. `public/silent-check-sso.html` for silent refresh.
+
+**Проверка:** analytics dashboard requires auth; token in API calls.
+
+### V.17.2 — Logout propagation
+
+**Шаги:**
+1. Listen `auth:logout` from shell → `keycloak.logout()`.
+2. Emit same event when user logs out in analytics.
+3. CASL equivalent: hide admin charts for non-admin roles.
+
+**Критерий:** logout in shell clears Vue session without stale token.
+
+---
+
+## Стек Angular (keycloak-angular)
+
+> Основной auth path — `keycloak-angular` в shell + todos-mfe + admin-mfe.
+
+### A.17.1 — keycloak-angular (см. Этап 4 выше)
+
+**Шаги:**
+1. `provideKeycloak` in shell `app.config.ts`.
+2. Broadcast `SESSION_CONTRACT` to Next/Vue remotes on login.
+3. Admin-mfe: `tenant-admin` role from `realm_access.roles`.
+
+**Критерий:** all three stacks share realm `todo-app` and `auth:logout` contract.
 
 ---
 

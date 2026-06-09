@@ -1,7 +1,8 @@
 # Phase 4 — Architecture & patterns
 
 > **Теория:** [guides/phase-04-architecture-patterns-theory.md](./guides/phase-04-architecture-patterns-theory.md) — статус: placeholder  
-> **Backend CQRS:** [../todo-platform-backend/plans/guides/b-00-architecture-and-cqrs-theory.md](../todo-platform-backend/plans/guides/b-00-architecture-and-cqrs-theory.md) — **full**
+> **Backend CQRS:** [../todo-platform-backend/plans/guides/b-00-architecture-and-cqrs-theory.md](../todo-platform-backend/plans/guides/b-00-architecture-and-cqrs-theory.md) — **full**  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 9–10 недели (40–50 ч)  
 **Предусловия:** Phase 3  
@@ -19,6 +20,22 @@
 - [ ] Nx workspace с libs
 - [ ] Interceptor chain complete
 - [ ] ADR-007 layering rules
+
+### React/Next.js (marketing-mfe)
+
+- [ ] `useTodos()` composable — repository behind hook
+- [ ] `TodoRepository` interface + json-server impl
+- [ ] Feature folder boundaries ADR
+- [ ] Pages inject composables, not fetch directly
+- [ ] Mock repository в Vitest tests
+
+### Vue 3 (analytics-mfe)
+
+- [ ] `useTodos()` composable wrapping Pinia + service
+- [ ] Same `TodoRepository` interface (shared TS type)
+- [ ] Service layer отделён от store actions
+- [ ] ADR-007 layering для Vue features
+- [ ] Swap repository impl in tests без HTTP
 
 ---
 
@@ -216,6 +233,7 @@ libs/
 | `TodosFacade.remove()` | `removeTodo` | `DeleteTodoCommand` |
 
 `HttpTodoRepository` — skeleton с `environment.apiUrl`, default still `JsonServerTodoRepository`.  
+В [Phase 13-GraphQL](./phase-13-graphql-client.md) добавится `HybridTodoRepository` (REST write + GraphQL read).  
 См. [integration-map.md](./integration-map.md).
 
 ---
@@ -246,6 +264,108 @@ Layering: data-access → feature → ui → app shell. Запрет цикло�
 
 - [ ] `Comment` entity + `CommentsFacade`
 - [ ] `TodoItem` expandable comments section
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> Repository pattern — зеркало Angular `TodoRepository`. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.4.1 — TodoRepository interface
+
+**Файл:** `libs/shared/data-access/src/todo.repository.ts`
+
+```typescript
+export interface TodoRepository {
+  getAll(userId: string): Promise<Todo[]>;
+  create(dto: CreateTodoDto): Promise<Todo>;
+  update(todo: Todo): Promise<Todo>;
+  delete(id: string): Promise<void>;
+}
+```
+
+**Implementations:**
+- `JsonServerTodoRepository` — fetch к `:3000`
+- `MockTodoRepository` — in-memory для tests
+
+### R.4.2 — useTodos composable
+
+```typescript
+// features/todos/useTodos.ts
+export function useTodos() {
+  const repo = useMemo(() => new JsonServerTodoRepository(), []);
+  const auth = useAuthStore();
+  const query = useQuery({
+    queryKey: ['todos', auth.userId],
+    queryFn: () => repo.getAll(auth.userId!),
+    enabled: !!auth.userId,
+  });
+  return {
+    todos: query.data ?? [],
+    loading: query.isLoading,
+    add: (task: string) => repo.create({ task, userId: auth.userId! }),
+    toggle: (id: string) => { /* mutation via repo */ },
+  };
+}
+```
+
+**Шаги:**
+1. Components import только `useTodos()`, не `@tanstack/react-query` напрямую.
+2. ADR: feature folder boundaries — `features/todos` не импортирует `features/auth` internals.
+
+**Критерий:** swap `MockTodoRepository` в test — UI tests без json-server.
+
+### R.4.3 — Layering ADR
+
+**Файл:** `docs/adr/ADR-007-react-layering.md` — pages → composables → repository → api.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.4.1 — Shared repository type
+
+```typescript
+// libs/shared/data-access — тот же TodoRepository interface
+import type { TodoRepository } from '@shared/data-access';
+```
+
+**Файл:** `apps/analytics-mfe/src/services/json-server-todo.repository.ts`
+
+### V.4.2 — useTodos composable
+
+```typescript
+// composables/useTodos.ts
+export function useTodos() {
+  const store = useTodosStore();
+  const auth = useAuthStore();
+  const repo = inject(TODO_REPOSITORY); // provide/inject или factory
+
+  async function load() {
+    store.setLoading(true);
+    const todos = await repo.getAll(auth.userId!);
+    store.setAll(todos);
+  }
+
+  return {
+    todos: computed(() => store.allTodos),
+    loading: computed(() => store.loading),
+    load,
+    toggle: (id: string) => store.toggleOptimistic(id, repo),
+  };
+}
+```
+
+**Шаги:**
+1. Pinia store — только state + sync mutations.
+2. Repository — HTTP; composable — orchestration.
+3. `TodoListView.vue` inject `useTodos()` only.
+
+**Критерий:** `nx test analytics-mfe` с mock repo — green.
+
+### V.4.3 — Feature boundaries
+
+Запрет: `features/auth` не импортирует `stores/todos` напрямую — только через composable/public API.
 
 ---
 

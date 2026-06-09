@@ -1,6 +1,6 @@
 # Phase 6 — Design System
-> **Теория:** [guides/phase-06-design-system-theory.md](./guides/phase-06-design-system-theory.md) — статус: placeholder
-
+> **Теория:** [guides/phase-06-design-system-theory.md](./guides/phase-06-design-system-theory.md) — статус: placeholder  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 13–14 недели (40–50 ч)  
 **Предусловия:** Phase 5, Nx workspace  
@@ -16,6 +16,22 @@
 - [ ] Storybook 8
 - [ ] a11y pass на компонентах
 - [ ] Auth + Todos UI migrated
+
+### React/Next.js (marketing-mfe)
+
+- [ ] shadcn/ui Button, Card, Input в marketing-mfe
+- [ ] Import `libs/shared/design-tokens` (CSS variables)
+- [ ] Login + todo list на DS components
+- [ ] Dark theme via tokens (match Angular)
+- [ ] Storybook или Ladle для React primitives (optional)
+
+### Vue 3 (analytics-mfe)
+
+- [ ] Dashboard layout: sidebar + chart grid
+- [ ] Shared tokens CSS variables из `libs/shared/design-tokens`
+- [ ] `StatCard`, `ChartPanel` components
+- [ ] Light/dark theme toggle в analytics shell
+- [ ] a11y pass на dashboard route
 
 ---
 
@@ -169,11 +185,109 @@ Chromatic/Percy — 5 stories on PR.
 
 - [ ] CDK drag-drop + DS cards
 - [ ] Columns: todo / in-progress / done
+- [ ] **Подготовка к GraphQL:** Kanban over-fetching → [Phase 13-GraphQL](./phase-13-graphql-client.md)
+- [ ] **Vue analytics layout:** dashboard sidebar + chart grid в `analytics-mfe` — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md) Phase 6
 
 ### PF-3.4 Calendar view (V3)
 
 - [ ] Month grid + todos with `dueDate`
 - [ ] `TagChip`, `PriorityBadge` components
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> shadcn/ui + shared tokens. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.6.1 — shadcn/ui init
+
+```bash
+cd apps/marketing-mfe
+npx shadcn@latest init
+npx shadcn@latest add button card input
+```
+
+**Шаги:**
+1. Tailwind config extends shared token CSS variables.
+2. Import `@shared/design-tokens/styles/tokens.css` в global styles.
+3. Replace raw HTML buttons/inputs in login + todo features.
+
+**Проверка:** visual parity with Angular DS Button/Input (same `--color-primary`).
+
+### R.6.2 — Token integration
+
+**Файл:** `libs/shared/design-tokens/styles/tokens.css`
+
+```css
+:root {
+  --color-primary: #3b82f6;
+  /* shared with Angular libs/shared/ui */
+}
+```
+
+marketing-mfe `globals.css`:
+```css
+@import '@shared/design-tokens/styles/tokens.css';
+```
+
+**Критерий:** toggle dark theme — shadcn components update via `[data-theme="dark"]`.
+
+### R.6.3 — Component migration checklist
+
+| Screen | Components |
+|--------|------------|
+| Login | Button, Input, Card |
+| Todo list | Checkbox (shadcn), Card empty state |
+| Header | Button ghost variant |
+
+**Критерий:** no raw `<button>` / `<input>` in feature templates.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.6.1 — Dashboard layout
+
+**Файл:** `apps/analytics-mfe/src/layouts/DashboardLayout.vue`
+
+```
+┌──────────┬─────────────────────────────┐
+│ Sidebar  │  StatCard  StatCard  StatCard │
+│ nav      ├─────────────────────────────┤
+│          │  ChartPanel (full width)    │
+│          ├──────────────┬──────────────┤
+│          │ ChartPanel   │ Todo summary │
+└──────────┴──────────────┴──────────────┘
+```
+
+**Шаги:**
+1. CSS Grid responsive: sidebar collapses on mobile.
+2. Route `/analytics` uses `DashboardLayout`.
+3. Integrate Phase 5 `StatsChart` into `ChartPanel`.
+
+**Проверка:** axe DevTools 0 critical on dashboard.
+
+### V.6.2 — StatCard & ChartPanel
+
+```vue
+<!-- components/StatCard.vue -->
+<template>
+  <article class="stat-card" :style="{ borderColor: 'var(--color-primary)' }">
+    <h3>{{ title }}</h3>
+    <p class="stat-value">{{ value }}</p>
+  </article>
+</template>
+```
+
+**Tokens:** import shared CSS variables; no hardcoded hex in components.
+
+### V.6.3 — Theme + a11y
+
+- Theme toggle in sidebar footer — `data-theme` on `<html>`.
+- ChartPanel: `aria-label` on canvas wrapper.
+- Focus order: sidebar links → main content.
+
+**Критерий:** dashboard matches design token spec; charts readable in dark mode.
 
 ---
 

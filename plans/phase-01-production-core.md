@@ -1,7 +1,8 @@
 # Phase 1 — Production-grade core
 
 > **Теория:** [guides/phase-01-production-core-theory.md](./guides/phase-01-production-core-theory.md) — статус: placeholder  
-> **Backend:** контракт в [`../../contracts/openapi.yaml`](../../contracts/openapi.yaml) — backend реализует позже (B-02)
+> **Backend:** контракт в [`../../contracts/openapi.yaml`](../../contracts/openapi.yaml) — backend реализует позже (B-02)  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 3–4 недели (30–40 ч)  
 **Предусловия:** [Phase 0](./phase-00-foundation.md) выполнена полностью  
@@ -19,6 +20,22 @@
 - [ ] ESLint + Husky
 - [ ] ADR-001, ADR-002 в `docs/adr/`
 - [ ] OpenAPI draft в [`../../contracts/openapi.yaml`](../../contracts/openapi.yaml) (shared с backend)
+
+### React/Next.js (marketing-mfe)
+
+- [ ] `apps/marketing-mfe/src/features/`, `shared/`, `core/` — feature-based layout
+- [ ] ESLint `eslint-plugin-react-hooks` настроен
+- [ ] Login page stub (client component) — POST json-server `/users`
+- [ ] Shared types из `libs/shared/api-types` (или draft path alias)
+- [ ] `npm run lint` проходит для marketing-mfe
+
+### Vue 3 (analytics-mfe)
+
+- [ ] `src/features/`, `composables/`, `stores/` — зеркало Angular structure
+- [ ] Login view + Pinia auth stub (`login`, `logout` actions)
+- [ ] Shared validators/types из `libs/shared/api-types`
+- [ ] Guest guard на `/analytics` route (redirect `/login`)
+- [ ] ESLint + vue-eslint-parser в CI локально
 
 ---
 
@@ -259,6 +276,109 @@ pre-commit: `npm run lint && npm test`
 
 - [ ] Модель `User` с полем `roles: string[]` (пока mock, Phase 17 — из Keycloak claims)
 - [ ] См. [product-features-expansion.md](./product-features-expansion.md) — пока без крупных фич, только структура
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> Полный Next App Router — Phase 7. Сейчас: структура + login stub. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.1.1 — Feature folders
+
+```
+apps/marketing-mfe/src/
+├── core/           # api client, env
+├── shared/         # ui primitives (minimal)
+└── features/
+    └── auth/
+        └── login-page.tsx
+```
+
+**Шаги:**
+1. Создать папки без изменения Angular app.
+2. `core/api.ts` — `fetch('http://localhost:3000/users', { method: 'POST', ... })`.
+3. Login stub: email/password form, loading state, error message.
+
+**Проверка:** manual login с `test@example.com` / `password123` → success toast или redirect stub.
+
+### R.1.2 — ESLint react-hooks
+
+```bash
+npm install -D eslint-plugin-react-hooks --workspace=marketing-mfe
+```
+
+**.eslintrc:**
+```json
+{
+  "plugins": ["react-hooks"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
+}
+```
+
+**Критерий:** `nx lint marketing-mfe` green.
+
+### R.1.3 — Shared contract types
+
+**Файл:** `libs/shared/api-types/src/login.dto.ts`
+
+```typescript
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+```
+
+Импорт в marketing-mfe и Angular auth feature — один контракт.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.1.1 — Feature structure
+
+```
+apps/analytics-mfe/src/
+├── features/
+│   └── auth/
+│       └── LoginView.vue
+├── composables/
+│   └── useAuth.ts
+└── stores/
+    └── auth.ts
+```
+
+**Шаги:**
+1. Перенести hello в `features/home/`.
+2. Route `/login` → `LoginView.vue`.
+3. `useAuth` composable оборачивает Pinia store.
+
+### V.1.2 — Pinia auth stub
+
+```typescript
+// stores/auth.ts
+export const useAuthStore = defineStore('auth', () => {
+  const token = ref<string | null>(null);
+  async function login(dto: LoginDto) {
+    const res = await fetch('http://localhost:3000/users', { /* find user */ });
+    // set token mock on success
+  }
+  function logout() { token.value = null; }
+  return { token, login, logout };
+});
+```
+
+**Проверка:** login → `router.push('/analytics')`; logout → `/login`.
+
+### V.1.3 — Shared validators
+
+**Файл:** `libs/shared/validators/email.ts` — экспорт функции `isValidEmail`.
+
+Vue login form и Angular reactive form используют одну функцию.
+
+**Критерий:** duplicate email / invalid email — одинаковые сообщения в обоих стеках.
 
 ---
 

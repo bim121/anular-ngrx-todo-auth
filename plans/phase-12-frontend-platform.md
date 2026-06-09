@@ -1,6 +1,6 @@
 # Phase 12 — Frontend platform & observability
-> **Теория:** [guides/phase-12-frontend-platform-theory.md](./guides/phase-12-frontend-platform-theory.md) — статус: placeholder
-
+> **Теория:** [guides/phase-12-frontend-platform-theory.md](./guides/phase-12-frontend-platform-theory.md) — статус: placeholder  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 26–27 недели (30–40 ч)  
 **Предусловия:** Phase 11  
@@ -16,6 +16,20 @@
 - [ ] PWA installable
 - [ ] Feature flags abstraction
 - [ ] OWASP ASVS checklist complete
+
+### React/Next.js (marketing-mfe)
+
+- [ ] CI job `build-test-marketing` — lint, test, build Next
+- [ ] Sentry Next.js SDK + source maps upload
+- [ ] Vercel/Cloudflare preview deploy для marketing-mfe
+- [ ] RUM Web Vitals на `/` и `/pricing`
+
+### Vue 3 (analytics-mfe)
+
+- [ ] CI job `build-test-analytics` — lint, test, federation build
+- [ ] Sentry Vue SDK
+- [ ] Preview deploy analytics remoteEntry artifact
+- [ ] Feature flags: `analytics.beta` в shared flags.json
 
 ---
 
@@ -188,6 +202,80 @@ Mock 429 from json-server → toast + retry-after header display.
 - [ ] PWA install + offline shell
 - [ ] Feature flag toggles UI
 - [ ] Ready for **Phase 17 (Keycloak)** and Phase 13 API
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> Отдельный CI job для marketing-mfe — параллельно Angular pipeline. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.12.1 — CI job marketing-mfe
+
+```yaml
+# .github/workflows/ci.yml
+build-test-marketing:
+  steps:
+    - run: npx nx run marketing-mfe:lint
+    - run: npx nx run marketing-mfe:test
+    - run: npx nx run marketing-mfe:build
+```
+
+**Шаги:**
+1. Affected: `nx affected -t lint test build -p marketing-mfe`.
+2. Upload `.next` или `out/` artifact.
+3. Preview: Vercel project `marketing-mfe` — PR comment with URL.
+
+**Проверка:** PR без изменений marketing — job skipped (affected).
+
+### R.12.2 — Sentry + RUM
+
+```typescript
+// instrumentation.ts
+import * as Sentry from '@sentry/nextjs';
+Sentry.init({ dsn: process.env.NEXT_PUBLIC_SENTRY_DSN });
+```
+
+**Шаги:**
+1. `onLCP` / `onINP` → same RUM endpoint as Angular.
+2. Tag events: `app: marketing-mfe`.
+3. Source maps upload in CI.
+
+**Критерий:** test error appears in Sentry with correct release tag.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.12.1 — CI job analytics-mfe
+
+```yaml
+build-test-analytics:
+  steps:
+    - run: npx nx run analytics-mfe:lint
+    - run: npx nx run analytics-mfe:test
+    - run: npx nx run analytics-mfe:build
+```
+
+**Шаги:**
+1. Federation build produces `remoteEntry.js` — upload artifact.
+2. Preview: static host for remoteEntry (Cloudflare R2 or Pages).
+3. Matrix runs parallel with `build-test-marketing`.
+
+**Проверка:** CI green when only analytics-mfe files change.
+
+### V.12.2 — Sentry Vue + flags
+
+```typescript
+import * as Sentry from '@sentry/vue';
+app.use(Sentry, { dsn: import.meta.env.VITE_SENTRY_DSN });
+```
+
+**Шаги:**
+1. `assets/flags.json` — `analytics.beta: true` toggles chart features.
+2. Correlation ID from shell `SESSION_CONTRACT`.
+3. PWA: optional — analytics remote не требует install prompt.
+
+**Критерий:** feature flag hides beta chart when `false`.
 
 ---
 

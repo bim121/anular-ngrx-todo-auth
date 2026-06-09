@@ -1,35 +1,45 @@
-﻿# Phase 09 — Microfrontends (теория)
+﻿# Phase 09 — Polyglot Microfrontends (теория)
 
-> **Статус:** placeholder — наполняется по запросу.  
-> **Практика:** [../phase-09-microfrontends.md](../phase-09-microfrontends.md)
+> **Статус:** placeholder  
+> **Практика:** [../phase-09-microfrontends.md](../phase-09-microfrontends.md)  
+> **React/Next:** [react-next-faang-theory.md](./react-next-faang-theory.md)  
+> **Vue:** [vue-faang-theory.md](./vue-faang-theory.md)
 
 ---
 
-## 1. Зачем эта тема
+## 1. Зачем polyglot MFE
 
-<!-- Контекст FAANG / frontend interviews -->
+- Team autonomy, independent deploy
+- Best tool per surface: Next SSR for marketing, Vue for dashboards, Angular for app core
+- Netflix/Spotify/Amazon interview patterns
 
-## 2. Базовые концепции
+## 2. Integration patterns
 
-## 3. Глубокое погружение
+| Pattern | Pros | Cons |
+|---------|------|------|
+| Native Federation (Angular) | First-class | Angular only |
+| Vite Federation (Vue) | Fast HMR | Cross-framework manual |
+| Route proxy (Next) | Simple SSR | Edge config |
+| Module Federation 2 | Unified | Complex setup |
+| single-spa | Framework agnostic | Orchestration overhead |
+| iframe | Isolation | UX, perf |
 
-## 4. Примеры кода (TypeScript / Angular)
+## 3. Cross-cutting concerns
 
-\\\	ypescript
-// TODO: примеры для Microfrontends
-\\\
+- Auth: shared cookie vs token bridge vs events
+- Routing: shell vs remote ownership
+- CSS isolation + design tokens
+- Version skew / shared dependencies
+- Error boundaries per remote
 
-## 5. Плюсы / минусы / когда НЕ использовать
+## 4. Interview bank
 
-## 6. Сравнение с альтернативами
+1. Design Netflix-scale MFE platform
+2. How to share auth across React/Vue/Angular?
+3. Independent deploy without breaking shell
+4. When NOT to use microfrontends
 
-## 7. Типичные ошибки
+## 5. Связь с multi-stack
 
-## 8. Вопросы на интервью
-
-## 9. Связь с backend
-
-<!-- См. todo-platform-backend/plans/integration-sync.md -->
-
-## 10. Ресурсы
-
+- [multi-stack-roadmap.md](../multi-stack-roadmap.md) — marketing-mfe (Next)
+- [multi-stack-roadmap.md](../multi-stack-roadmap.md) — analytics-mfe (Vue)

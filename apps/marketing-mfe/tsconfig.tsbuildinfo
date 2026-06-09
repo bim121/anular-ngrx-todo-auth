@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/core/api.ts","./src/core/env.ts","./src/features/auth/login-page.tsx","./src/shared/ui/toast.tsx"],"version":"5.9.3"}

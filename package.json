@@ -1,11 +1,16 @@
 {
   "name": "anular-ngrx-todo-auth",
   "version": "0.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "api": "node server/index.js",
     "dev": "concurrently \"npm run api\" \"ng serve\"",
+    "dev:marketing": "npm run dev --workspace=marketing-mfe",
+    "build:marketing": "npm run build --workspace=marketing-mfe",
     "build": "ng build",
     "build:stats": "ng build --stats-json",
     "watch": "ng build --watch --configuration development",

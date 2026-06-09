@@ -101,7 +101,20 @@ adminFacade.migrationStatus(jobId);
 
 ---
 
-## Backend mapping
+## Optional: GraphQL (Phase 13-GraphQL + B-10, admin fields in B-12)
+
+When `environment.useGraphQL: true`:
+
+| UI action | GraphQL | MediatR |
+|-----------|---------|---------|
+| Load tenants | `query { adminTenants { ... } }` | `GetTenantsQuery` |
+| Switch track | `mutation { switchTenantTrack(...) }` | `SwitchTenantTrackCommand` |
+
+REST admin API (table below) остаётся default.
+
+---
+
+## Backend mapping (REST)
 
 | UI action | HTTP | MediatR |
 |-----------|------|---------|

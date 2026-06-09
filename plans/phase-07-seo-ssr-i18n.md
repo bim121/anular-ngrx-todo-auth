@@ -1,6 +1,6 @@
 # Phase 7 — SEO, SSR, i18n
-> **Теория:** [guides/phase-07-seo-ssr-i18n-theory.md](./guides/phase-07-seo-ssr-i18n-theory.md) — статус: placeholder
-
+> **Теория:** [guides/phase-07-seo-ssr-i18n-theory.md](./guides/phase-07-seo-ssr-i18n-theory.md) — статус: placeholder  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 15–16 недели (40–50 ч)  
 **Предусловия:** Phase 6, SSR уже в angular.json  
@@ -16,6 +16,23 @@
 - [ ] i18n en/ru
 - [ ] sitemap, robots, JSON-LD
 - [ ] ADR-004 cookie auth for SSR
+
+### React/Next.js (marketing-mfe)
+
+- [ ] `npx create-next-app@latest apps/marketing-mfe` — App Router, TypeScript, Tailwind
+- [ ] Страницы `/`, `/pricing`, `/docs` с `generateMetadata` и Open Graph
+- [ ] `sitemap.ts` + `robots.ts` (Next conventions)
+- [ ] i18n: `next-intl` или `[locale]` segment — en/ru
+- [ ] JSON-LD в layout или page metadata
+- [ ] Import `libs/shared/design-tokens` — единый бренд с Angular DS
+- [ ] Lighthouse SEO ≥ 95 на marketing routes
+
+### Vue 3 (analytics-mfe)
+
+- [ ] **ADR-007:** Nuxt 3 vs Vite SPA для analytics — сравнение SSR/SEO (doc-only spike)
+- [ ] Решение: остаёмся на Vite SPA (dashboard не требует SEO); Nuxt — rejected или deferred
+- [ ] `docs/multi-stack/07-nuxt-comparison-adr.md` опубликован
+- [ ] analytics-mfe: client-only meta для `/analytics` (noindex в shell embed)
 
 ---
 
@@ -200,6 +217,98 @@ Build script generates static URLs for prerendered routes.
 - [ ] No duplicate GET todos on first paint (network tab)
 - [ ] `/en` and `/ru` work
 - [ ] Rich results test (Google) valid JSON-LD
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> **Основной SSR-стек фазы:** public pages на Next App Router; Angular SSR — для authenticated `/todos`. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.7.1 — Scaffold Next 15 App Router
+
+```bash
+npx create-next-app@latest apps/marketing-mfe --typescript --app --tailwind --eslint
+```
+
+**Шаги:**
+1. Удалить placeholder из Phase 0; подключить project в Nx workspace.
+2. `app/layout.tsx` — root metadata, `lang`, design tokens CSS import.
+3. `app/page.tsx`, `app/pricing/page.tsx`, `app/docs/page.tsx`.
+
+**Проверка:** `npm run dev:marketing` — три страницы рендерятся.
+
+### R.7.2 — generateMetadata и OG
+
+**Файл:** `app/pricing/page.tsx`
+
+```typescript
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Pricing — Todo Platform',
+    description: 'Plans for teams',
+    openGraph: { title: 'Pricing', images: ['/og-pricing.png'] },
+    twitter: { card: 'summary_large_image' },
+  };
+}
+```
+
+**Шаги:**
+1. Canonical URL через `metadataBase` в root layout.
+2. Per-route `description`, `og:image` для `/`, `/pricing`, `/docs`.
+3. View-source: полный HTML с meta без client JS.
+
+**Критерий:** Lighthouse SEO ≥ 95 на `/` и `/pricing`.
+
+### R.7.3 — i18n и sitemap
+
+**Шаги:**
+1. `app/[locale]/layout.tsx` — `en`, `ru` segments.
+2. `middleware.ts` — locale detection + redirect default `/en`.
+3. `app/sitemap.ts` — static URLs для prerendered marketing pages.
+4. `app/robots.ts` — Allow `/`, `/pricing`; Disallow `/api`.
+
+**Проверка:** `/en/pricing` и `/ru/pricing` — разный контент, hreflang в layout.
+
+### R.7.4 — JSON-LD и design tokens
+
+```typescript
+// app/page.tsx — script type application/ld+json
+{ "@context": "https://schema.org", "@type": "WebApplication", "name": "Todo Platform" }
+```
+
+Import `libs/shared/design-tokens` CSS variables — визуальная согласованность с Angular shell.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+> Dashboard `/analytics` — **не SEO-critical**; сравнение с Nuxt — архитектурное решение, не миграция.
+
+### V.7.1 — ADR: Nuxt 3 vs Vite SPA
+
+**Файл:** `docs/multi-stack/07-nuxt-comparison-adr.md`
+
+| Критерий | Nuxt 3 | Vite SPA (текущий) |
+|----------|--------|---------------------|
+| SSR/SEO | Встроенный | Не нужен для embed MFE |
+| Federation | Сложнее | `@originjs/vite-plugin-federation` готов |
+| Learning curve | Новый фреймворк | Уже в Phase 0–6 |
+
+**Шаги:**
+1. Spike 2–3 ч: `nuxi init` hello-world — только для сравнения, не в monorepo.
+2. Зафиксировать решение: **остаёмся на Vite**; Nuxt — если позже standalone marketing+analytics.
+3. ADR-007 в `docs/adr/`.
+
+**Критерий:** ADR опубликован; команда согласна не мигрировать analytics на Nuxt.
+
+### V.7.2 — Client meta для embed
+
+**Шаги:**
+1. `index.html` или `useHead` из `@unhead/vue`: `<meta name="robots" content="noindex">`.
+2. Shell route `/analytics` — SEO от shell, не от remote.
+3. Документировать в `polyglot-mfe-architecture.md`: какой remote отвечает за SEO.
+
+**Проверка:** view-source shell `/analytics` — корректный title от host; remote не ломает hydration.
 
 ---
 

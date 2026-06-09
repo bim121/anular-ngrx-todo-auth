@@ -23,7 +23,7 @@ flowchart LR
 |---|--------|------|----------|---------|-------|
 | V1 | Collaboration | Real-time sync | 4–5 | B-13 | WebSocket, SignalR |
 | V1 | | Comments | 4 | B-03 | Nested state |
-| V1 | | Share link | 7 | B-02 | SSR public page |
+| V1 | | Share link | 7, **marketing-mfe (Next)** | B-02 | SSR public page |
 | V2 | Search | Full-text | 5, 13 | B-15 | API design |
 | V2 | | Vector search | 13+ | B-29 | Embeddings |
 | V2 | | Saved views | 3 | B-10 | Read models |
@@ -31,13 +31,13 @@ flowchart LR
 | V3 | | Calendar | 6 | B-01 | i18n dates |
 | V3 | | Recurring | 13 | B-03 | Cron API |
 | V3 | | Tags/subtasks | 3–4 | B-03 | Entity trees |
-| V4 | Admin | Admin dashboard | 14, 17 | B-12, B-28 | CASL + CQRS |
+| V4 | Admin | Admin dashboard | 14, **admin-mfe**, 17 | B-12, B-28 | CASL + CQRS |
 | V4 | | Audit log | 14 | B-16 | Kafka stream |
 | V4 | | User mgmt | 17 | B-05 | Keycloak admin |
 | V5 | Integrations | Export | 5 | B-02 | Blob download |
 | V5 | | Webhooks | 13 | B-07, B-16 | Event-driven |
 | V5 | | OpenAPI consumer | 13 | B-02 | Contract-first |
-| V6 | Analytics | Stats dashboard | 5 | B-10 | Charts + SQL |
+| V6 | Analytics | Stats dashboard | 5, **analytics-mfe (Vue)** | B-10 | Charts + SQL |
 | V6 | | Web Vitals | 12 | — | RUM frontend |
 | V7 | Notifications | In-app | 3, 12 | B-07 | NgRx + RabbitMQ |
 | V7 | | Push PWA | 12 | B-17 | Service Worker |
@@ -48,6 +48,11 @@ flowchart LR
 | V9 | | Duplicate detect | 18 | B-29 | Vector similarity |
 | V10 | Workspaces | Teams | 14 | B-11 | Multi-tenant |
 | V10 | | Invite flow | 17 | B-05 | OIDC groups |
+| V11 | **Protocols** | GraphQL Kanban/reads | **13-GraphQL** | **B-10** | Apollo, Hot Chocolate |
+| V11 | | gRPC internal | 13-GraphQL (theory) | **B-17** | System design, .proto |
+| V11 | | Polyglot MFE platform | **9** | — | 2× Angular + Next + Vue |
+| V12 | **Multi-stack** | React/Next в каждой фазе | 0–18 | — | [multi-stack-roadmap.md](./multi-stack-roadmap.md) |
+| V12 | | Vue 3 в каждой фазе | 0–18 | — | секции в phase-XX.md |
 
 См. [integration-map.md](./integration-map.md)
 
@@ -344,7 +349,7 @@ RAG, embeddings — частые темы 2024–2026 frontend/platform intervie
 - AI natural language todo creation
 - Multi-tenant workspaces
 - PWA + Electron offline
-- Microfrontends (Module Federation)
+- Polyglot microfrontends (2× Angular + Next.js + Vue 3) — [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 ```
 
 ---

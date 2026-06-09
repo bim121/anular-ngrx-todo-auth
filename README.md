@@ -123,6 +123,8 @@ src/app/
 
 См. [`plans/`](./plans/) — Phase 1 и далее.
 
+**Polyglot roadmap (Phase 9):** 2× Angular + Next.js + Vue — каждая фаза в [`plans/`](./plans/) содержит три стека. См. [`plans/multi-stack-roadmap.md`](./plans/multi-stack-roadmap.md).
+
 ## Backend (отдельный репозиторий)
 
 ASP.NET Core backend разрабатывается **независимо**:

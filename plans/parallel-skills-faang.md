@@ -42,7 +42,7 @@
 |---|------|---------------|
 | 1 | Design Twitter feed | Phase 5 perf |
 | 2 | Design Google Docs (OT) | optional spike |
-| 3 | Design Netflix MFE | Phase 9 |
+| 3 | Design Netflix **polyglot** MFE | Phase 9 |
 | 4 | Design autocomplete | RxJS debounce |
 | 5 | Design real-time notifications | WebSocket spike |
 | 6 | Multi-tenant SaaS frontend | Phase 14 |
@@ -50,6 +50,11 @@
 | 8 | Observability for SPA | Phase 12 |
 | 9 | Multi-tenant admin panel | Phase 14–15 + backend B-12 |
 | 10 | CQRS end-to-end (Facade → MediatR) | Phase 4 + backend B-03 |
+| 11 | **GraphQL BFF design** | Phase 13-GraphQL + B-10 |
+| 12 | **gRPC microservices internal** | B-17 |
+| 13 | **Polyglot MFE** (Angular+Next+Vue) | Phase 9, [multi-stack-roadmap.md](./multi-stack-roadmap.md) |
+| 14 | **Next.js RSC architecture** | Phase 7 |
+| 15 | **Vue reactivity deep dive** | Phase 2, 5 |
 
 ### Backend system design (parallel track)
 
@@ -61,6 +66,8 @@
 | 4 | Multi-tenant SaaS DB | B-11, B-21 |
 | 5 | Saga order flow | B-18 |
 | 6 | Search at scale | B-15, B-29 |
+| 7 | **GraphQL vs REST BFF** | B-10, Phase 13-GraphQL |
+| 8 | **gRPC service mesh** | B-17 |
 
 Документы: `docs/system-design/backend/` (в backend repo) + `docs/system-design/` (frontend)
 
@@ -151,7 +158,7 @@
 |-----|------|------|
 | IndexedDB | 10 | offline queue |
 | Service Worker | 12 | PWA |
-| BroadcastChannel | 9 | MFE tabs sync |
+| BroadcastChannel | 9 | MFE tabs sync (polyglot) |
 | Web Workers | 5 | filter 10k todos |
 | View Transitions API | 7 | route animations |
 

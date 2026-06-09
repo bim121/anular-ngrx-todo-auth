@@ -1,7 +1,7 @@
 # Frontend Guides — теория по фазам
 
-**Практика** — в [`../phase-*.md`](../README.md).  
-**Теория** — здесь.
+**Практика** — в [`../phase-*.md`](../README.md) — **каждая фаза содержит Angular + React/Next + Vue**.  
+**Матрица:** [`../multi-stack-roadmap.md`](../multi-stack-roadmap.md)
 
 ---
 
@@ -38,15 +38,19 @@
 | 7 | [phase-07-seo-ssr-i18n-theory.md](./phase-07-seo-ssr-i18n-theory.md) | placeholder |
 | 8 | [phase-08-build-webpack-theory.md](./phase-08-build-webpack-theory.md) | placeholder |
 | 9 | [phase-09-microfrontends-theory.md](./phase-09-microfrontends-theory.md) | placeholder |
+| — | [react-next-faang-theory.md](./react-next-faang-theory.md) | placeholder (по фазам) |
+| — | [vue-faang-theory.md](./vue-faang-theory.md) | placeholder (по фазам) |
 | 10 | [phase-10-electron-theory.md](./phase-10-electron-theory.md) | placeholder |
 | 11 | [phase-11-testing-quality-theory.md](./phase-11-testing-quality-theory.md) | placeholder |
 | 12 | [phase-12-frontend-platform-theory.md](./phase-12-frontend-platform-theory.md) | placeholder |
 | 13 | [phase-13-real-api-theory.md](./phase-13-real-api-theory.md) | placeholder |
+| 13g | [phase-13-graphql-theory.md](./phase-13-graphql-theory.md) | placeholder |
 | 14 | [phase-14-multi-tenant-theory.md](./phase-14-multi-tenant-theory.md) | placeholder |
 | 15 | [phase-15-blue-green-theory.md](./phase-15-blue-green-theory.md) | placeholder |
 | 16 | [phase-16-infrastructure-theory.md](./phase-16-infrastructure-theory.md) | placeholder |
 | 17 | [phase-17-auth-oidc-keycloak-theory.md](./phase-17-auth-oidc-keycloak-theory.md) | placeholder |
 | 18 | [phase-18-ai-features-theory.md](./phase-18-ai-features-theory.md) | placeholder |
+| ~~19~~ | [phase-19-graphql-grpc-theory.md](./phase-19-graphql-grpc-theory.md) | → [phase-13-graphql-theory.md](./phase-13-graphql-theory.md) |
 
 ---
 

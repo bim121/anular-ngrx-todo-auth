@@ -1,6 +1,6 @@
 # Phase 18 — AI & Vector features
-> **Теория:** [guides/phase-18-ai-features-theory.md](./guides/phase-18-ai-features-theory.md) — статус: placeholder
-
+> **Теория:** [guides/phase-18-ai-features-theory.md](./guides/phase-18-ai-features-theory.md) — статус: placeholder  
+> **Multi-stack:** Angular primary; Vercel AI SDK (Next) + Vue composable optional — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 33–36 недели (30–40 ч)  
 **Предусловия:** [product-features-expansion.md](./product-features-expansion.md) V2.3, Phase 13 API  
@@ -15,6 +15,18 @@
 - [ ] Duplicate warning при похожих задачах (cosine > 0.9)
 - [ ] ADR-013, ADR-014 (model choice, cost, privacy)
 - [ ] Feature flag `ai.enabled` — off in prod demo if no API key
+
+### React/Next.js (marketing-mfe) — optional
+
+- [ ] Vercel AI SDK spike — «Ask about pricing» chat widget on `/pricing`
+- [ ] Feature flag `ai.marketing.enabled` — off by default
+- [ ] Doc: cost/latency for edge vs API route
+
+### Vue 3 (analytics-mfe) — optional
+
+- [ ] `useAiInsight` composable — natural language summary of weekly stats
+- [ ] Feature flag `ai.analytics.enabled`
+- [ ] Mock LLM in tests; real API behind flag
 
 ---
 
@@ -146,6 +158,79 @@ AI results announced to screen readers.
 1. How vector search works (embeddings, k-NN)
 2. Prompt injection mitigation in UI
 3. Cost/latency tradeoffs for AI features
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> Vercel AI SDK — optional spike для marketing; Angular остаётся primary для todo AI. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.18.1 — Vercel AI SDK spike (optional)
+
+```bash
+npm i ai @ai-sdk/openai --workspace=marketing-mfe
+```
+
+**Файл:** `apps/marketing-mfe/src/app/api/chat/route.ts`
+
+```typescript
+import { streamText } from 'ai';
+import { openai } from '@ai-sdk/openai';
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const result = streamText({ model: openai('gpt-4o-mini'), messages });
+  return result.toDataStreamResponse();
+}
+```
+
+**Шаги:**
+1. Client widget on `/pricing` — «Ask about plans» (behind `ai.marketing.enabled`).
+2. Rate limit: 1 req / 5s; no PII in prompts.
+3. Fallback: static FAQ when flag off or API key missing.
+
+**Проверка:** demo works locally with `OPENAI_API_KEY`; prod flag off.
+
+### R.18.2 — Cost control doc
+
+**Файл:** `docs/ai/marketing-ai-cost.md` — edge vs Node runtime, token budget.
+
+**Критерий:** app fully usable with `ai.marketing.enabled: false`.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.18.1 — useAiInsight composable (optional)
+
+**Файл:** `apps/analytics-mfe/src/composables/useAiInsight.ts`
+
+```typescript
+export function useAiInsight(stats: Ref<WeeklyStats | null>) {
+  const insight = ref<string | null>(null);
+  async function generate() {
+    if (!import.meta.env.VITE_AI_ENABLED) return;
+    insight.value = await fetch('/api/ai/summarize', { ... }).then(r => r.text());
+  }
+  return { insight, generate };
+}
+```
+
+**Шаги:**
+1. Button «Explain my week» on dashboard — behind `ai.analytics.enabled`.
+2. Mock service in Vitest — deterministic summary string.
+3. Prompt: only aggregated stats, no raw todo titles (privacy).
+
+**Проверка:** composable returns null when flag off; UI hides button.
+
+### V.18.2 — Integration with Angular AI
+
+**Шаги:**
+1. Shared `docs/ai/architecture.mmd` — which stack owns which AI feature.
+2. Semantic search stays Angular/todos-mfe; analytics gets summary only.
+3. Interview story: feature flags for AI rollout per MFE.
+
+**Критерий:** optional composable does not block Phase 18 Angular criteria.
 
 ---
 

@@ -17,9 +17,28 @@ export const environment = {
   useKeycloak: false,       // Phase 17 → true когда B-05, B-08
   useRealTime: false,       // Phase 4–5 spike → B-13
   useBackendSearch: false,  // Phase 13+ → B-15
-  admin: { enabled: false } // Phase 14–15 → B-12, B-28
+  admin: { enabled: false }, // Phase 14–15 → B-12, B-28
+  useGraphQL: false,        // Phase 13-GraphQL → B-10 (сразу после REST cutover)
+  mfe: {
+    marketingUrl: 'http://localhost:3000',  // Phase 9 — Next.js
+    analyticsRemote: 'http://localhost:4203/remoteEntry.js',  // Phase 9 — Vue
+  },
 };
 ```
+
+---
+
+## Polyglot MFE matrix
+
+| Remote | Stack | Phase | Route |
+|--------|-------|-------|-------|
+| shell | Angular | 9 | host |
+| todos-mfe | Angular | 9 | `/todos` |
+| admin-mfe | Angular | 9 stub → 14 | `/admin` |
+| marketing-mfe | **Next.js** | 7 scaffold → 9 | `/`, `/pricing` |
+| analytics-mfe | **Vue 3** | 5–6 spike → 9 | `/analytics` |
+
+См. [polyglot-mfe-architecture.md](./polyglot-mfe-architecture.md), [multi-stack-roadmap.md](./multi-stack-roadmap.md).
 
 ---
 
@@ -39,6 +58,8 @@ export const environment = {
 | Admin panel v2 | Phase 15 | B-12, B-28 | Blue/green switch, migrate | `admin.enabled` |
 | Attachments | Phase 13 | B-14 | Presigned upload | per feature |
 | AI / Vector | Phase 18 | B-29 | Semantic search | per feature |
+| **GraphQL** | **Phase 13-GraphQL** | **B-10** | `POST /graphql` | `useGraphQL: true` |
+| **gRPC** | Phase 13-GraphQL (architecture) | **B-17** | internal microservices | — |
 
 ---
 
@@ -71,6 +92,17 @@ export const environment = {
 | V8 Files | 13 | B-14 | Presigned Blob |
 | V9 AI | 18 | B-29 | Embeddings |
 | V10 Workspaces | 14 | B-11 | Tenant + workspace |
+| **V11 Protocols** | **13-GraphQL** | **B-10, B-17** | GraphQL Kanban/admin; gRPC internal |
+
+---
+
+## API protocols (REST / GraphQL / gRPC)
+
+| Протокол | Contract | Frontend | Backend |
+|----------|----------|----------|---------|
+| REST | `contracts/openapi.yaml` | Phase 13 default | B-01…B-03 |
+| GraphQL | `contracts/graphql/schema.graphql` | Phase 13-GraphQL Apollo | B-10 Hot Chocolate |
+| gRPC | `src/contracts/proto/*.proto` | System design (Phase 13-GraphQL) | B-17 service-to-service |
 
 ---
 

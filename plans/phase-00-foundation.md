@@ -1,6 +1,6 @@
 # Phase 0 — Стабильный фундамент
-> **Теория:** [guides/phase-00-foundation-theory.md](./guides/phase-00-foundation-theory.md) — статус: placeholder
-
+> **Теория:** [guides/phase-00-foundation-theory.md](./guides/phase-00-foundation-theory.md) — статус: placeholder  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 1–2 недели (10–20 ч)  
 **Предусловия:** Node 20+, `npm install`  
@@ -15,6 +15,22 @@
 - [ ] Все известные баги из аудита исправлены
 - [ ] Минимум 5 unit-тестов зелёные
 - [ ] README с инструкцией запуска
+
+### React/Next.js (marketing-mfe)
+
+- [ ] `apps/marketing-mfe/package.json` — placeholder в Nx/monorepo workspace
+- [ ] Общий `tsconfig.base.json` со strict для всех apps
+- [ ] `docs/multi-stack/00-monorepo-layout.md` — схема apps и libs
+- [ ] Скрипт `npm run dev:marketing` (placeholder: echo или `next dev` stub)
+- [ ] README: marketing-mfe будет Next в Phase 7, сейчас только slot
+
+### Vue 3 (analytics-mfe)
+
+- [ ] `apps/analytics-mfe` — `npm create vue@latest` minimal hello
+- [ ] Pinia + Vue Router установлены (пустые stores/routes)
+- [ ] Hello-компонент делает fetch к json-server `/todos` (smoke test)
+- [ ] `npm run dev:analytics` в корневом package.json
+- [ ] Порт analytics не конфликтует с Angular (например `:5173`)
 
 ---
 
@@ -251,6 +267,112 @@ throw new Error(`Server error: ${error.status}`);
 | Effects не бегут | Нет `provideEffects` |
 | Пустой todos | Неверный URL / userId filter |
 | Двойная навигация | Дублирующие effects |
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> Placeholder в monorepo; полный Next scaffold — [Phase 7](./phase-07-seo-ssr-i18n.md). См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.0.1 — Слот в monorepo
+
+**Цель:** зарезервировать `apps/marketing-mfe` без полноценного Next до Phase 7.
+
+**Шаги:**
+1. Создать `apps/marketing-mfe/package.json` с `"name": "marketing-mfe"`, `"private": true`.
+2. Минимальный `src/index.ts` или README: «Next.js marketing site — Phase 7».
+3. Добавить project в `nx.json` / workspace config с tag `scope:marketing`.
+
+**Проверка:** `nx show projects` включает `marketing-mfe`.
+
+### R.0.2 — Общий strict TypeScript
+
+**Файл:** `tsconfig.base.json` (корень workspace)
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true
+  }
+}
+```
+
+**Шаги:**
+1. Убедиться, что Angular app extends base config.
+2. marketing-mfe tsconfig extends base — даже для placeholder.
+
+**Критерий:** `nx run-many -t typecheck` (или `tsc -b`) без ошибок на всех apps.
+
+### R.0.3 — Документация layout
+
+**Файл:** `docs/multi-stack/00-monorepo-layout.md`
+
+- Таблица apps: shell (Angular), todos-mfe, admin-mfe, marketing-mfe, analytics-mfe.
+- Порты dev-серверов, json-server `:3000`.
+- Ссылка на [polyglot-mfe-architecture.md](./polyglot-mfe-architecture.md).
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+> Первая рабочая MFE помимо Angular; dashboard и charts — Phase 5–6.
+
+### V.0.1 — Scaffold analytics-mfe
+
+```bash
+cd apps
+npm create vue@latest analytics-mfe -- --typescript --router --pinia
+```
+
+**Шаги:**
+1. Router: единственный route `/` → `HelloAnalytics.vue`.
+2. Удалить demo-контент, оставить минимальный layout.
+3. `vite.config.ts`: proxy `/api` → `http://localhost:3000` (опционально).
+
+**Проверка:** `npm run dev` в `apps/analytics-mfe` — страница «Analytics MFE».
+
+### V.0.2 — Pinia + Router (пустые)
+
+**Файлы:**
+- `src/stores/auth.ts` — `{ token: null, userId: null }` stub
+- `src/router/index.ts` — `/`, `/login` (redirect stub)
+
+```typescript
+// stores/auth.ts
+export const useAuthStore = defineStore('auth', () => ({
+  token: ref<string | null>(null),
+  userId: ref<string | null>(null),
+}));
+```
+
+**Критерий:** DevTools Pinia видит store; login route рендерит placeholder.
+
+### V.0.3 — Smoke fetch json-server
+
+```typescript
+// composables/useHealthCheck.ts
+export function useHealthCheck() {
+  const status = ref<'ok' | 'error' | 'loading'>('loading');
+  onMounted(async () => {
+    try {
+      await fetch('http://localhost:3000/todos');
+      status.value = 'ok';
+    } catch {
+      status.value = 'error';
+    }
+  });
+  return { status };
+}
+```
+
+**Проверка:** при `npm run api` + dev analytics — badge «API ok».
+
+**Команда (корень):** добавить в `package.json`:
+```json
+"dev:analytics": "npm run dev --workspace=analytics-mfe"
+```
 
 ---
 

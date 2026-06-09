@@ -1,7 +1,8 @@
 # Phase 11 — Testing & quality at scale
 
 > **Теория:** [guides/phase-11-testing-quality-theory.md](./guides/phase-11-testing-quality-theory.md) — статус: placeholder  
-> **Pact provider:** [`../todo-platform-backend`](../todo-platform-backend) (optional until B-02 ready)
+> **Pact provider:** [`../todo-platform-backend`](../todo-platform-backend) (optional until B-02 ready)  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 24–25 недели (40–50 ч)  
 **Предусловия:** Phase 10 (или Phase 8 if Electron skipped)  
@@ -16,6 +17,23 @@
 - [ ] axe in CI
 - [ ] Pact consumer tests
 - [ ] PR gate: lint + unit + e2e
+
+### React/Next.js (marketing-mfe)
+
+- [ ] Vitest + `@testing-library/react` — login page, pricing metadata helper
+- [ ] MSW — mock json-server / API в unit tests
+- [ ] Coverage target: `features/` ≥ 70%
+
+### Vue 3 (analytics-mfe)
+
+- [ ] Vitest + `@vue/test-utils` — dashboard components, Pinia stores
+- [ ] MSW или `vi.mock` для fetch composables
+- [ ] Coverage target: stores + composables ≥ 80%
+
+### Polyglot E2E (все стеки)
+
+- [ ] Playwright: shell → marketing `/`, analytics `/analytics`, todos CRUD
+- [ ] Logout propagates across remotes
 
 ---
 
@@ -101,9 +119,15 @@ Target: `auth.reducer.ts`, `todo.reducer.ts`.
 
 Playwright trace + measure navigation timing budget.
 
-### 11.3.3 MFE E2E
+### 11.3.3 Polyglot MFE E2E
 
-Shell loads remote — assert todo list from remote chunk.
+- [ ] Shell → todos-mfe (Angular)
+- [ ] Shell → admin-mfe stub (Angular)
+- [ ] Shell → `/` marketing-mfe (Next SSR content)
+- [ ] Shell → `/analytics` analytics-mfe (Vue chart)
+- [ ] Logout clears session in all remotes
+
+См. [polyglot-mfe-architecture.md](./polyglot-mfe-architecture.md).
 
 ---
 
@@ -163,6 +187,88 @@ Require: lint, unit, e2e.
 - [ ] E2E runs < 5 min
 - [ ] No critical a11y violations
 - [ ] Pact publishes pact file artifact
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> Vitest + RTL + MSW — стандарт для Next client components. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.11.1 — Vitest + Testing Library
+
+```bash
+npm i -D vitest @testing-library/react @testing-library/jest-dom jsdom --workspace=marketing-mfe
+```
+
+**Файлы:**
+- `apps/marketing-mfe/vitest.config.ts`
+- `src/features/auth/login-page.test.tsx`
+
+**Шаги:**
+1. Render login form — assert validation errors.
+2. Mock `fetch` или MSW handler `POST /users`.
+3. `nx test marketing-mfe --coverage`.
+
+**Проверка:** ≥ 3 unit tests green.
+
+### R.11.2 — MSW setup
+
+**Файл:** `apps/marketing-mfe/src/mocks/handlers.ts`
+
+```typescript
+http.post('http://localhost:3000/users', () => HttpResponse.json({ id: '1' }))
+```
+
+**Шаги:**
+1. `setupServer` in `vitest.setup.ts`.
+2. Test pricing page metadata helper без Next server.
+3. CI: `nx test marketing-mfe` в quality job.
+
+**Критерий:** MSW isolates tests from json-server.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.11.1 — Vitest + vue-test-utils
+
+```bash
+npm i -D vitest @vue/test-utils happy-dom --workspace=analytics-mfe
+```
+
+**Шаги:**
+1. `stores/auth.spec.ts` — login/logout actions.
+2. `DashboardChart.spec.ts` — mount + assert props.
+3. Pinia testing: `createTestingPinia()`.
+
+**Проверка:** `nx test analytics-mfe --coverage` ≥ 80% stores.
+
+### V.11.2 — Composable tests
+
+**Файл:** `composables/useWeeklyStats.spec.ts`
+
+**Шаги:**
+1. Mock `fetch` with deterministic stats JSON.
+2. Test loading/error states.
+3. Integrate in CI matrix alongside Angular tests.
+
+---
+
+## Polyglot E2E (все remotes)
+
+### P.11.1 — Playwright polyglot suite
+
+**Файл:** `e2e/polyglot-mfe.spec.ts`
+
+| Step | Assert |
+|------|--------|
+| Login shell | redirect `/todos` |
+| Navigate `/` | Next marketing H1 visible |
+| Navigate `/analytics` | Vue chart canvas |
+| Navigate `/admin` | Angular admin stub |
+| Logout | all routes require auth |
+
+**Критерий:** E2E < 5 min; runs in CI after `nx build` all MFEs.
 
 ---
 

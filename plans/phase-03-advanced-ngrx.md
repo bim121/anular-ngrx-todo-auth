@@ -1,6 +1,6 @@
 # Phase 3 — Advanced NgRx
-> **Теория:** [guides/phase-03-advanced-ngrx-theory.md](./guides/phase-03-advanced-ngrx-theory.md) — статус: placeholder
-
+> **Теория:** [guides/phase-03-advanced-ngrx-theory.md](./guides/phase-03-advanced-ngrx-theory.md) — статус: placeholder  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 7–8 недель (60–80 ч)  
 **Предусловия:** Phase 2  
@@ -18,6 +18,22 @@
 - [ ] Store DevTools + sanitizers
 - [ ] Marble tests для всех effects
 - [ ] ADR-003: Store vs ComponentStore vs SignalStore
+
+### React/Next.js (marketing-mfe)
+
+- [ ] TanStack Query: `useQuery` getTodos, `useMutation` CRUD
+- [ ] Zustand: auth slice (token, userId)
+- [ ] Optimistic toggle + rollback при ошибке API
+- [ ] Query cache invalidate on logout
+- [ ] DevTools: React Query Devtools в dev
+
+### Vue 3 (analytics-mfe)
+
+- [ ] Pinia `useTodosStore` + `useAuthStore`
+- [ ] Optimistic PATCH с rollback
+- [ ] Normalized todos в store (`Record<id, Todo>`)
+- [ ] Persistence auth token в localStorage (как Angular meta-reducer)
+- [ ] Unit-тесты store actions (Vitest)
 
 ---
 
@@ -288,6 +304,114 @@ Mock load from `assets/config.json` в APP_INITIALIZER.
 ### PF-7.1 Notifications entity (V7)
 
 - [ ] Slice `notifications` + `adapter.addOne` on `todoAssigned` mock event
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> Server state → TanStack Query; client auth → Zustand. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.3.1 — TanStack Query setup
+
+```bash
+npm install @tanstack/react-query --workspace=marketing-mfe
+```
+
+**Файл:** `apps/marketing-mfe/src/features/todos/useTodosQuery.ts`
+
+```typescript
+export function useTodosQuery(userId: string) {
+  return useQuery({
+    queryKey: ['todos', userId],
+    queryFn: () => fetchTodos(userId),
+  });
+}
+
+export function useToggleTodoMutation() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: patchTodo,
+    onMutate: async (todo) => { /* optimistic */ },
+    onError: (_err, _todo, context) => { /* rollback */ },
+    onSettled: () => qc.invalidateQueries({ queryKey: ['todos'] }),
+  });
+}
+```
+
+**Шаги:**
+1. `QueryClientProvider` в root layout.
+2. CRUD: create, update, delete mutations.
+3. React Query Devtools только в development.
+
+**Критерий:** toggle optimistic — UI мгновенный; при mock 500 — rollback.
+
+### R.3.2 — Zustand auth slice
+
+```typescript
+// stores/authStore.ts
+export const useAuthStore = create<AuthState>((set) => ({
+  token: null,
+  userId: null,
+  login: (token, userId) => set({ token, userId }),
+  logout: () => set({ token: null, userId: null }),
+}));
+```
+
+**Проверка:** logout очищает Query cache (`queryClient.clear()`).
+
+### R.3.3 — ADR: Query vs Zustand boundaries
+
+**Файл:** `docs/adr/ADR-003-react-state.md` — mirror Angular ADR-003.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.3.1 — Pinia todos store (normalized)
+
+```typescript
+// stores/todos.ts
+export const useTodosStore = defineStore('todos', () => {
+  const entities = ref<Record<string, Todo>>({});
+  const ids = ref<string[]>([]);
+  const loading = ref(false);
+
+  async function loadAll(userId: string) { /* fetch + normalize */ }
+  async function toggleOptimistic(id: string) {
+    const prev = entities.value[id].completed;
+    entities.value[id].completed = !prev;
+    try {
+      await patchTodo(entities.value[id]);
+    } catch {
+      entities.value[id].completed = prev;
+    }
+  }
+  return { entities, ids, loading, loadAll, toggleOptimistic };
+});
+```
+
+**Шаги:**
+1. Getter `allTodos` из `ids.map(id => entities[id])`.
+2. Filter в composable или getter с param.
+3. Auth store sync с localStorage (`pinia-plugin-persistedstate` опционально).
+
+**Критерий:** refresh сохраняет session; toggle rollback при ошибке.
+
+### V.3.2 — Auth store integration
+
+```typescript
+export const useAuthStore = defineStore('auth', () => {
+  const token = ref(localStorage.getItem('token'));
+  watch(token, (t) => t ? localStorage.setItem('token', t) : localStorage.removeItem('token'));
+  // ...
+});
+```
+
+**Проверка:** logout → todos store `$reset()`.
+
+### V.3.3 — Store tests
+
+**Файл:** `stores/todos.spec.ts` — Vitest: load, optimistic toggle rollback.
 
 ---
 

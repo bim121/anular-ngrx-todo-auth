@@ -2,11 +2,13 @@
 
 > **Теория:** [guides/phase-13-real-api-theory.md](./guides/phase-13-real-api-theory.md) — статус: placeholder  
 > **Backend:** ASP.NET [`../todo-platform-backend`](../todo-platform-backend) — pred: **B-03, B-05** complete  
-> **Cutover:** [integration-map.md](./integration-map.md)
+> **Cutover:** [integration-map.md](./integration-map.md)  
+> **Multi-stack:** Angular + React/Next + Vue — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 28–31 недели (40–60 ч)  
 **Предусловия:** Phase 12, [Phase 17](./phase-17-auth-oidc-keycloak.md), backend B-03 + B-05 в sibling repo  
-**Цель:** OpenAPI client → **TodoPlatform.Api**, Keycloak JWT, `environment.useRealApi = true`
+**Цель:** OpenAPI client → **TodoPlatform.Api**, Keycloak JWT, `environment.useRealApi = true`  
+> **Следующий шаг сразу после REST:** [Phase 13-GraphQL](./phase-13-graphql-client.md) + backend [B-10 GraphQL](../../todo-platform-backend/plans/backend-phase-10-complex-sql-readmodels.md).
 
 ---
 
@@ -19,6 +21,20 @@
 - [ ] API versioning header
 - [ ] Contract tests against **todo-platform-backend** (Pact provider URL in CI)
 - [ ] Cutover checklist from [integration-map.md](./integration-map.md)
+
+### React/Next.js (marketing-mfe)
+
+- [ ] TanStack Query — real API hooks для pricing stats / public metrics
+- [ ] `useTodos` или marketing-specific queries с Keycloak Bearer
+- [ ] RFC 7807 errors → toast в client components
+- [ ] `environment.useRealApi` switch
+
+### Vue 3 (analytics-mfe)
+
+- [ ] Pinia store `stats` — real API `GET /analytics/weekly`
+- [ ] Auth interceptor: Keycloak JWT + refresh
+- [ ] Chart data from real stats endpoint (не mock)
+- [ ] Error boundary + retry на dashboard
 
 ---
 
@@ -175,7 +191,82 @@ Run against staging API in scheduled CI (nightly).
 
 ---
 
+## Стек React / Next.js (marketing-mfe)
+
+> TanStack Query — тот же паттерн, что Phase 3–4 mock; теперь real API. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.13.1 — TanStack Query real API
+
+```bash
+npm i @tanstack/react-query --workspace=marketing-mfe
+```
+
+**Файл:** `apps/marketing-mfe/src/features/metrics/usePublicStats.ts`
+
+```typescript
+export function usePublicStats() {
+  return useQuery({
+    queryKey: ['public-stats'],
+    queryFn: () => fetch(`${API_URL}/metrics/public`).then(r => r.json()),
+  });
+}
+```
+
+**Шаги:**
+1. `QueryClientProvider` в root layout (client boundary).
+2. Bearer token from next-auth session (Phase 17) или public endpoint.
+3. RFC 7807: `onError` → toast component.
+
+**Проверка:** Network tab — real `todo-platform-backend` URL.
+
+### R.13.2 — useRealApi switch
+
+**Шаги:**
+1. `NEXT_PUBLIC_USE_REAL_API=true` in staging `.env`.
+2. MSW disabled when real API on.
+3. Pact consumer test for public stats endpoint.
+
+**Критерий:** toggle mock ↔ real without code change.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.13.1 — Pinia real stats API
+
+**Файл:** `apps/analytics-mfe/src/stores/stats.ts`
+
+```typescript
+export const useStatsStore = defineStore('stats', () => {
+  const weekly = ref<WeeklyStats | null>(null);
+  async function fetchWeekly() {
+    const res = await api.get('/analytics/weekly');
+    weekly.value = res.data;
+  }
+  return { weekly, fetchWeekly };
+});
+```
+
+**Шаги:**
+1. Replace mock Chart.js data with store fetch on mount.
+2. JWT interceptor adds Bearer from keycloak-js (Phase 17).
+3. Loading skeleton + error retry UI.
+
+**Проверка:** dashboard shows real numbers from backend B-05.
+
+### V.13.2 — Error handling
+
+**Шаги:**
+1. Map RFC 7807 `detail` to user-facing message.
+2. `watch` store error → toast via shared composable.
+3. E2E: analytics chart renders with real API in CI (testcontainers or mock provider).
+
+**Критерий:** json-server fully disabled for analytics when `VITE_USE_REAL_API=true`.
+
+---
+
 ## Следующие фазы
 
+→ **[Phase 13-GraphQL](./phase-13-graphql-client.md)** — сразу после REST (нед 31–33)  
 → [phase-14-multi-tenant.md](./phase-14-multi-tenant.md)  
 → [phase-18-ai-features.md](./phase-18-ai-features.md)

@@ -2,7 +2,8 @@
 
 > **Теория:** [guides/phase-15-blue-green-theory.md](./guides/phase-15-blue-green-theory.md) — статус: placeholder  
 > **Backend:** B-28 — gateway routing, admin commands  
-> **Admin UI v2:** [admin-panel-spec.md](./admin-panel-spec.md)
+> **Admin UI v2:** [admin-panel-spec.md](./admin-panel-spec.md)  
+> **Multi-stack:** manifest URLs для всех remotes — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)
 
 **Длительность:** 36–39 недели (50–70 ч)  
 **Предусловия:** Phase 14, infrastructure access (staging)  
@@ -18,6 +19,23 @@
 - [ ] Per-tenant version routing (canary)
 - [ ] Automated smoke gate before switch
 - [ ] Rollback drill completed once
+
+### React/Next.js (marketing-mfe)
+
+- [ ] `mf-manifest.json` — `marketing` slot: blue/green URLs
+- [ ] Per-tenant manifest override: `/tenants/{id}/mf-manifest.json`
+- [ ] Smoke test hits green marketing URL before switch
+
+### Vue 3 (analytics-mfe)
+
+- [ ] `analytics` remoteEntry blue/green CDN URLs in manifest
+- [ ] Version pin per tenant in admin UI
+- [ ] Rollback: manifest pointer flip only (no rebuild)
+
+### Все remotes (manifest)
+
+- [ ] Manifest lists all 4 remotes: todos, admin, marketing, analytics
+- [ ] Shell bootstrap validates `minRemoteVersion` matrix
 
 ---
 
@@ -201,6 +219,89 @@ Postmortem: timeline, root cause, action items.
 - [ ] One expand/contract migration applied
 - [ ] Canary tenant on green while others on blue
 - [ ] Rollback runbook tested < 15 min
+
+---
+
+## Стек React / Next.js (marketing-mfe)
+
+> Manifest URLs — runtime switch без redeploy shell. См. [multi-stack-roadmap.md](./multi-stack-roadmap.md).
+
+### R.15.1 — Marketing manifest slots
+
+**Файл:** `cdn/mf-manifest.staging.json`
+
+```json
+{
+  "remotes": {
+    "marketing": {
+      "blue": "https://cdn.example.com/marketing/blue/",
+      "green": "https://cdn.example.com/marketing/green/"
+    }
+  }
+}
+```
+
+**Шаги:**
+1. Shell loader reads tenant track → picks blue or green URL.
+2. Deploy green marketing to green URL — 0% traffic until switch.
+3. Smoke `scripts/smoke-green.sh` includes `curl green/pricing`.
+
+**Проверка:** flip manifest → shell serves new marketing without shell rebuild.
+
+### R.15.2 — Per-tenant override
+
+**Шаги:**
+1. `/tenants/acme/mf-manifest.json` — acme on green, beta on blue.
+2. Admin UI (Phase 15.3) triggers manifest CDN invalidation.
+3. Document rollback: revert manifest pointer < 15 min.
+
+**Критерий:** canary tenant on green marketing while others on blue.
+
+---
+
+## Стек Vue 3 (analytics-mfe)
+
+### V.15.1 — analytics remoteEntry URLs
+
+```json
+"analytics": {
+  "blue": "https://cdn.example.com/analytics/blue/remoteEntry.js",
+  "green": "https://cdn.example.com/analytics/green/remoteEntry.js"
+}
+```
+
+**Шаги:**
+1. Federation build uploads both blue and green artifacts.
+2. Shell dynamic import uses manifest URL.
+3. Version compatibility matrix includes analytics semver.
+
+**Проверка:** switch tenant to green → Vue chart from green CDN.
+
+---
+
+## Manifest (все 4 remotes)
+
+### M.15.1 — Complete mf-manifest.json
+
+```json
+{
+  "shell": "1.1.0",
+  "remotes": {
+    "todos": { "blue": "...", "green": "..." },
+    "admin": { "blue": "...", "green": "..." },
+    "marketing": { "blue": "...", "green": "..." },
+    "analytics": { "blue": "...", "green": "..." }
+  },
+  "minApiVersion": "v2"
+}
+```
+
+**Шаги:**
+1. Shell bootstrap validates all remotes reachable.
+2. Mismatch → block UI with upgrade message.
+3. Blue-green runbook references manifest paths.
+
+**Критерий:** staging drill switches all 4 remotes via manifest only.
 
 ---
 
