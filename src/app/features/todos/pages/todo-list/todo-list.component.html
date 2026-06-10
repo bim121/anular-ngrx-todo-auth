@@ -21,18 +21,45 @@
   } @else if (error(); as err) {
     <div class="error-message">{{ err }}</div>
   } @else {
+    <div class="filter-bar" role="group" aria-label="Filter tasks">
+      <button
+        type="button"
+        class="filter-btn"
+        [class.active]="filter() === 'all'"
+        (click)="setFilter('all')"
+      >
+        All
+      </button>
+      <button
+        type="button"
+        class="filter-btn"
+        [class.active]="filter() === 'active'"
+        (click)="setFilter('active')"
+      >
+        Active
+      </button>
+      <button
+        type="button"
+        class="filter-btn"
+        [class.active]="filter() === 'done'"
+        (click)="setFilter('done')"
+      >
+        Done
+      </button>
+    </div>
+
     <ul>
-      @if (todos().length === 0) {
+      @if (filteredTodos().length === 0) {
         <li class="empty-list-message">No tasks yet! Add one above.</li>
       }
-      @for (todo of todos(); track trackById($index, todo)) {
+      @for (todo of filteredTodos(); track todo.id) {
         <li [class.completed]="todo.completed">
           @if (editingTodo?.id !== todo.id) {
             <div class="view-mode">
               <input
                 type="checkbox"
                 [checked]="todo.completed"
-                (change)="toggleComplete(todo)"
+                (change)="onTodoToggled(todo.id)"
                 class="todo-checkbox"
                 [disabled]="loading()"
               />

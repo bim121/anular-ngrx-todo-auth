@@ -1,4 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -7,25 +15,43 @@ import * as TodoActions from '@app/features/todos/data-access/todo.actions';
 import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
 
+type TodoFilter = 'all' | 'active' | 'done';
+
 @Component({
   selector: 'app-todo-list',
   standalone: true,
   imports: [FormsModule, SpinnerComponent],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoListComponent implements OnInit {
-  private store = inject(Store);
+  private readonly store = inject(Store);
 
-  todos = toSignal(this.store.select(TodoSelectors.selectAllTodos), {
+  readonly todos = toSignal(this.store.select(TodoSelectors.selectAllTodos), {
     initialValue: [] as Todo[],
   });
-  loading = toSignal(this.store.select(TodoSelectors.selectTodosLoading), {
+  readonly loading = toSignal(this.store.select(TodoSelectors.selectTodosLoading), {
     initialValue: false,
   });
-  error = toSignal(this.store.select(TodoSelectors.selectTodosError), {
+  readonly error = toSignal(this.store.select(TodoSelectors.selectTodosError), {
     initialValue: null,
   });
+  readonly filter = signal<TodoFilter>('all');
+  readonly filteredTodos = computed(() => {
+    const items = this.todos();
+    const f = this.filter();
+
+    switch (f) {
+      case 'active':
+        return items.filter((todo) => !todo.completed);
+      case 'done':
+        return items.filter((todo) => todo.completed);
+      default:
+        return items;
+    }
+  });
+  readonly todoToggled = output<string>();
 
   newTask = '';
   editingTodo: Todo | null = null;
@@ -42,10 +68,23 @@ export class TodoListComponent implements OnInit {
     this.newTask = '';
   }
 
-  toggleComplete(todo: Todo): void {
+  setFilter(value: TodoFilter): void {
+    this.filter.set(value);
+  }
+
+  onTodoToggled(todoId: string): void {
     if (this.loading()) return;
+
+    const todo = this.todos().find((item) => item.id === todoId);
+    if (!todo) return;
+
     const updatedTodo = { ...todo, completed: !todo.completed };
     this.store.dispatch(TodoActions.updateTodo({ todo: updatedTodo }));
+    this.todoToggled.emit(todoId);
+  }
+
+  toggleComplete(todo: Todo): void {
+    this.onTodoToggled(todo.id);
   }
 
   deleteTodo(todoId: string): void {
@@ -78,7 +117,4 @@ export class TodoListComponent implements OnInit {
     }
   }
 
-  trackById(_index: number, item: Todo): string {
-    return item.id;
-  }
 }
