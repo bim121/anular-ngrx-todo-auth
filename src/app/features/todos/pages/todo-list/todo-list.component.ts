@@ -3,6 +3,7 @@ import {
   Component,
   OnInit,
   computed,
+  effect,
   inject,
   output,
   signal,
@@ -15,6 +16,7 @@ import * as TodoActions from '@app/features/todos/data-access/todo.actions';
 import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
 import { TodoItemComponent } from '@app/features/todos/ui/todo-item/todo-item.component';
+import { ToastService } from '@app/shared/ui/toast/toast.service';
 
 type TodoFilter = 'all' | 'active' | 'done';
 
@@ -28,6 +30,7 @@ type TodoFilter = 'all' | 'active' | 'done';
 })
 export class TodoListComponent implements OnInit {
   private readonly store = inject(Store);
+  private readonly toast = inject(ToastService);
 
   readonly todos = toSignal(this.store.select(TodoSelectors.selectAllTodos), {
     initialValue: [] as Todo[],
@@ -57,6 +60,15 @@ export class TodoListComponent implements OnInit {
   newTask = '';
   editingTodo: Todo | null = null;
   updatedTask = '';
+
+  constructor() {
+    effect(() => {
+      const err = this.error();
+      if (err) {
+        this.toast.error(err);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.store.dispatch(TodoActions.loadTodos());
