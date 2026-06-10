@@ -1,0 +1,42 @@
+:host {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.view-mode {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+:host-context(li.completed) .todo-task {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+.todo-checkbox {
+  margin-right: 10px;
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.todo-task {
+  flex-grow: 1;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.todo-task:disabled {
+  cursor: not-allowed;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}

@@ -1,0 +1,20 @@
+<div class="view-mode">
+  <input
+    type="checkbox"
+    [checked]="todo().completed"
+    (change)="onToggle()"
+    class="todo-checkbox"
+    [disabled]="disabled()"
+  />
+  <button
+    type="button"
+    (click)="onToggle()"
+    class="todo-task"
+    [disabled]="disabled()"
+  >
+    {{ todo().task }}
+  </button>
+  <div class="actions">
+    <ng-content />
+  </div>
+</div>

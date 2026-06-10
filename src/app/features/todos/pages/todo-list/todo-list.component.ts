@@ -14,13 +14,14 @@ import { Todo } from '@app/features/todos/data-access/todo.model';
 import * as TodoActions from '@app/features/todos/data-access/todo.actions';
 import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
+import { TodoItemComponent } from '@app/features/todos/ui/todo-item/todo-item.component';
 
 type TodoFilter = 'all' | 'active' | 'done';
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [FormsModule, SpinnerComponent],
+  imports: [FormsModule, SpinnerComponent, TodoItemComponent],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,10 +82,6 @@ export class TodoListComponent implements OnInit {
     const updatedTodo = { ...todo, completed: !todo.completed };
     this.store.dispatch(TodoActions.updateTodo({ todo: updatedTodo }));
     this.todoToggled.emit(todoId);
-  }
-
-  toggleComplete(todo: Todo): void {
-    this.onTodoToggled(todo.id);
   }
 
   deleteTodo(todoId: string): void {

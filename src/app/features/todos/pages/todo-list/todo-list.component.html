@@ -55,41 +55,28 @@
       @for (todo of filteredTodos(); track todo.id) {
         <li [class.completed]="todo.completed">
           @if (editingTodo?.id !== todo.id) {
-            <div class="view-mode">
-              <input
-                type="checkbox"
-                [checked]="todo.completed"
-                (change)="onTodoToggled(todo.id)"
-                class="todo-checkbox"
-                [disabled]="loading()"
-              />
+            <app-todo-item
+              [todo]="todo"
+              [disabled]="loading()"
+              (toggled)="onTodoToggled(todo.id)"
+            >
               <button
                 type="button"
-                (click)="toggleComplete(todo)"
-                class="todo-task"
+                (click)="startEdit(todo)"
+                class="edit-btn"
                 [disabled]="loading()"
               >
-                {{ todo.task }}
+                Edit
               </button>
-              <div class="actions">
-                <button
-                  type="button"
-                  (click)="startEdit(todo)"
-                  class="edit-btn"
-                  [disabled]="loading()"
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  (click)="deleteTodo(todo.id)"
-                  class="delete-btn"
-                  [disabled]="loading()"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
+              <button
+                type="button"
+                (click)="deleteTodo(todo.id)"
+                class="delete-btn"
+                [disabled]="loading()"
+              >
+                Delete
+              </button>
+            </app-todo-item>
           } @else {
             <div class="edit-mode">
               <input
