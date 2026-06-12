@@ -2,7 +2,7 @@
   <header class="main-header">
     <div class="main-header__start">
       <a routerLink="/todos" class="brand">Todo App</a>
-      @if (pageContext.activePage$ | async; as page) {
+      @if (pageContext.activePage(); as page) {
         <nav class="breadcrumbs" aria-label="Breadcrumb">
           <a routerLink="/todos">Home</a>
           <span class="breadcrumbs__sep" aria-hidden="true">/</span>
@@ -12,7 +12,7 @@
     </div>
 
     <div class="main-header__actions">
-      @if (user$ | async; as user) {
+      @if (user(); as user) {
         <span class="user-label">{{ user.name }}</span>
       }
       <button type="button" class="logout-btn" (click)="logout()">Logout</button>
@@ -20,7 +20,7 @@
   </header>
 
   <main class="main-content">
-    @if (pageContext.activePage$ | async; as page) {
+    @if (pageContext.activePage(); as page) {
       <div class="page-heading">
         <h1>{{ page.title }}</h1>
       </div>

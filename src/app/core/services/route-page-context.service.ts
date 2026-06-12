@@ -1,6 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { effect, inject, Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { distinctUntilChanged, filter, map, merge, of, shareReplay } from 'rxjs';
 import { getLeafRoutePageData } from '@app/core/routing/route-data.util';
 import { RoutePageData } from '@app/core/routing/route-page-data.model';
@@ -12,8 +13,7 @@ export class RoutePageContextService {
   private readonly router = inject(Router);
   private readonly title = inject(Title);
 
-  /** Current leaf route page metadata (title + breadcrumb). */
-  readonly activePage$ = merge(
+  private readonly activePageSource$ = merge(
     of(void 0),
     this.router.events.pipe(filter((e) => e instanceof NavigationEnd))
   ).pipe(
@@ -24,8 +24,15 @@ export class RoutePageContextService {
     shareReplay({ bufferSize: 1, refCount: true })
   );
 
+  /** Current leaf route page metadata (title + breadcrumb). */
+  readonly activePage = toSignal(this.activePageSource$, {
+    initialValue: null as RoutePageData | null,
+  });
+
   constructor() {
-    this.activePage$.subscribe((page) => this.syncDocumentTitle(page));
+    effect(() => {
+      this.syncDocumentTitle(this.activePage());
+    });
   }
 
   private syncDocumentTitle(page: RoutePageData | null): void {
