@@ -3,6 +3,7 @@ import {
   ErrorHandler,
   isDevMode,
   provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
 } from '@angular/core';
 import { GlobalErrorHandler } from '@app/core/services/global-error.handler';
 import { provideRouter, withPreloading } from '@angular/router';
@@ -22,6 +23,7 @@ import { TodoEffects } from '@app/features/todos/data-access/todo.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes, withPreloading(TodosPreloadStrategy)),
