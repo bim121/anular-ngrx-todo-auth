@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router, Routes } from '@angular/router';
 import { RoutePageContextService } from './route-page-context.service';
 
-@Component({ standalone: true, template: '' })
+@Component({
+  standalone: true,
+  template: '',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
 class DummyPageComponent {}
 
 const routes: Routes = [

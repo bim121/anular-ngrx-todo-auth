@@ -1,68 +1,59 @@
-import { Component, inject, OnInit } from '@angular/core';
-import {
-  NonNullableFormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { form } from '@angular/forms/signals';
+import { Store } from '@ngrx/store';
 import {
   selectAuthLoading,
   selectAuthError,
 } from '@app/features/auth/data-access/auth.selectors';
 import * as AuthActions from '@app/features/auth/data-access/auth.actions';
-import { Store } from '@ngrx/store';
+import {
+  applyRegisterFieldRules,
+  markRegisterFieldsTouched,
+  RegisterFormModel,
+} from '@app/features/auth/data-access/auth-signal-form.schema';
+import { FormFieldComponent } from '@app/shared/ui/form-field/form-field.component';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
-import { passwordMatchValidator } from '@app/shared/validators/password-match.validator';
-import { emailUniqueValidator } from '@app/shared/validators/email-unique.validator';
-import { emailFormatValidator } from '@app/shared/validators/email-format.validator';
-import { AUTH_VALIDATION_MESSAGES } from '@shared/validators/email';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, RouterLink, SpinnerComponent],
+  imports: [RouterLink, SpinnerComponent, FormFieldComponent],
   templateUrl: './register.component.html',
   standalone: true,
   styleUrl: './register.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RegisterComponent implements OnInit {
-  private store = inject(Store);
-  private fb = inject(NonNullableFormBuilder);
+export class RegisterComponent {
+  private readonly store = inject(Store);
 
-  readonly messages = AUTH_VALIDATION_MESSAGES;
+  private readonly model = signal<RegisterFormModel>({
+    name: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+  });
 
-  form = this.fb.group(
-    {
-      name: [''],
-      email: [
-        '',
-        [Validators.required, emailFormatValidator()],
-        { asyncValidators: [emailUniqueValidator()], updateOn: 'blur' },
-      ],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      passwordConfirm: ['', [Validators.required]],
-    },
-    { validators: passwordMatchValidator() }
-  );
-
-  loading = toSignal(this.store.select(selectAuthLoading), {
+  readonly loading = toSignal(this.store.select(selectAuthLoading), {
     initialValue: false,
   });
-  error = toSignal(this.store.select(selectAuthError), { initialValue: null });
+  readonly error = toSignal(this.store.select(selectAuthError), {
+    initialValue: null,
+  });
 
-  ngOnInit(): void {
-    this.form.get('password')?.valueChanges.subscribe(() => {
-      this.form.updateValueAndValidity();
-    });
-  }
+  readonly registerForm = form(this.model, (fields) => {
+    applyRegisterFieldRules(fields, () => this.loading());
+  });
 
-  submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+  submit(event: Event): void {
+    event.preventDefault();
+
+    if (this.registerForm().invalid()) {
+      markRegisterFieldsTouched(this.registerForm);
       return;
     }
 
-    const { name, email, password } = this.form.getRawValue();
+    const { name, email, password } = this.registerForm().value();
     this.store.dispatch(
       AuthActions.registerUser({ credentials: { name, email, password } })
     );

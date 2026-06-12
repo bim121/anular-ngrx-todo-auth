@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { ToastService } from './toast.service';
 
@@ -8,6 +8,7 @@ import { ToastService } from './toast.service';
   imports: [AsyncPipe],
   templateUrl: './toast-container.component.html',
   styleUrl: './toast-container.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastContainerComponent {
   readonly toastService = inject(ToastService);

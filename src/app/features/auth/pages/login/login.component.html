@@ -7,51 +7,25 @@
   }
 
   <form
-    [formGroup]="form"
-    (ngSubmit)="submit()"
+    novalidate
+    (submit)="submit($event)"
     [class.auth-form--busy]="loading()"
   >
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input
-        type="email"
-        id="email"
-        formControlName="email"
-        [disabled]="loading()"
-      />
-      @if (form.controls.email.touched && form.controls.email.invalid) {
-        <div class="error-message">
-          @if (form.controls.email.hasError('required')) {
-            <span>{{ messages.emailRequired }}</span>
-          }
-          @if (form.controls.email.hasError('email')) {
-            <span>{{ messages.emailInvalid }}</span>
-          }
-        </div>
-      }
-    </div>
+    <app-form-field
+      label="Email"
+      controlId="email"
+      type="email"
+      [field]="loginForm.email"
+    />
 
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input
-        type="password"
-        id="password"
-        formControlName="password"
-        [disabled]="loading()"
-      />
-      @if (form.controls.password.touched && form.controls.password.invalid) {
-        <div class="error-message">
-          @if (form.controls.password.hasError('required')) {
-            <span>Password is required.</span>
-          }
-          @if (form.controls.password.hasError('minlength')) {
-            <span>Password must be at least 8 characters.</span>
-          }
-        </div>
-      }
-    </div>
+    <app-form-field
+      label="Password"
+      controlId="password"
+      type="password"
+      [field]="loginForm.password"
+    />
 
-    <button type="submit" [disabled]="form.invalid || loading()">
+    <button type="submit" [disabled]="loginForm().invalid() || loading()">
       {{ loading() ? 'Logging in…' : 'Login' }}
     </button>
   </form>

@@ -7,87 +7,42 @@
   }
 
   <form
-    [formGroup]="form"
-    (ngSubmit)="submit()"
+    novalidate
+    (submit)="submit($event)"
     [class.auth-form--busy]="loading()"
   >
-    <div class="form-group">
-      <label for="name">Name (Optional)</label>
-      <input type="text" id="name" formControlName="name" [disabled]="loading()" />
-    </div>
+    <app-form-field
+      label="Name (Optional)"
+      controlId="name"
+      [field]="registerForm.name"
+    />
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input
-        type="email"
-        id="email"
-        formControlName="email"
-        [disabled]="loading()"
-      />
-      @if (form.controls.email.pending) {
-        <div class="hint-message">Checking email availability…</div>
-      }
-      @if (form.controls.email.touched && form.controls.email.invalid) {
-        <div class="error-message">
-          @if (form.controls.email.hasError('required')) {
-            <span>{{ messages.emailRequired }}</span>
-          }
-          @if (form.controls.email.hasError('email')) {
-            <span>{{ messages.emailInvalid }}</span>
-          }
-          @if (form.controls.email.hasError('emailTaken')) {
-            <span>{{ messages.emailTaken }}</span>
-          }
-        </div>
-      }
-    </div>
+    <app-form-field
+      label="Email"
+      controlId="email"
+      type="email"
+      [field]="registerForm.email"
+      [showPendingHint]="true"
+      pendingMessage="Checking email availability…"
+    />
 
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input
-        type="password"
-        id="password"
-        formControlName="password"
-        [disabled]="loading()"
-      />
-      @if (form.controls.password.touched && form.controls.password.invalid) {
-        <div class="error-message">
-          @if (form.controls.password.hasError('required')) {
-            <span>Password is required.</span>
-          }
-          @if (form.controls.password.hasError('minlength')) {
-            <span>Password must be at least 8 characters.</span>
-          }
-        </div>
-      }
-    </div>
+    <app-form-field
+      label="Password"
+      controlId="password"
+      type="password"
+      [field]="registerForm.password"
+    />
 
-    <div class="form-group">
-      <label for="passwordConfirm">Confirm password</label>
-      <input
-        type="password"
-        id="passwordConfirm"
-        formControlName="passwordConfirm"
-        [disabled]="loading()"
-      />
-      @if (
-        form.controls.passwordConfirm.touched &&
-        (form.controls.passwordConfirm.invalid || form.hasError('passwordMismatch'))
-      ) {
-        <div class="error-message">
-          @if (form.controls.passwordConfirm.hasError('required')) {
-            <span>Please confirm your password.</span>
-          }
-          @if (form.hasError('passwordMismatch')) {
-            <span>Passwords do not match.</span>
-          }
-        </div>
-      }
-    </div>
+    <app-form-field
+      label="Confirm password"
+      controlId="passwordConfirm"
+      type="password"
+      [field]="registerForm.passwordConfirm"
+    />
 
     <button
       type="submit"
-      [disabled]="form.invalid || form.pending || loading()"
+      [disabled]="registerForm().invalid() || registerForm().pending() || loading()"
     >
       {{ loading() ? 'Registering…' : 'Register' }}
     </button>

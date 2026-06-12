@@ -1,0 +1,22 @@
+<div class="form-field">
+  <label class="form-field__label" [for]="controlId()">{{ label() }}</label>
+  <input
+    class="form-field__control"
+    [id]="controlId()"
+    [type]="type()"
+    [formField]="field()"
+    [attr.placeholder]="placeholder() || null"
+  />
+
+  @if (showPendingHint() && fieldState().pending()) {
+    <p class="form-field__hint">{{ pendingMessage() }}</p>
+  }
+
+  @if (fieldState().touched() && fieldState().invalid()) {
+    <div class="form-field__errors" role="alert">
+      @for (error of fieldState().errors(); track error.kind) {
+        <span>{{ error.message }}</span>
+      }
+    </div>
+  }
+</div>
