@@ -13,7 +13,7 @@
 
     <div class="main-header__actions">
       @if (user(); as user) {
-        <span class="user-label">{{ user.name }}</span>
+        <a routerLink="/profile" class="profile-link">{{ user.name }}</a>
       }
       <button type="button" class="logout-btn" (click)="logout()">Logout</button>
     </div>

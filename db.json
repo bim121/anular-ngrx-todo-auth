@@ -13,6 +13,30 @@
       "password": "password123"
     }
   ],
+  "profiles": [
+    {
+      "userId": "user_1",
+      "displayName": "Test User",
+      "bio": "Building Angular apps with NgRx and signals.",
+      "avatarUrl": "https://api.dicebear.com/9.x/initials/svg?seed=TU",
+      "memberSince": "2026-01-01",
+      "stats": {
+        "todosCompleted": 0,
+        "loginCount": 42
+      }
+    },
+    {
+      "userId": "user_2",
+      "displayName": "Other User",
+      "bio": "Exploring zoneless Angular and httpResource.",
+      "avatarUrl": "https://api.dicebear.com/9.x/initials/svg?seed=OU",
+      "memberSince": "2026-02-15",
+      "stats": {
+        "todosCompleted": 0,
+        "loginCount": 7
+      }
+    }
+  ],
   "todos": [
     {
       "id": "todo_1",

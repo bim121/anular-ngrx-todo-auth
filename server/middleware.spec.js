@@ -32,9 +32,20 @@ describe('createApiMiddleware', () => {
     read: vi.fn(async () => {}),
     data: {
       users: [{ id: '1', email: 'taken@example.com', password: 'x' }],
+      profiles: [
+        {
+          userId: 'user_1',
+          displayName: 'Test User',
+          bio: 'Bio',
+          avatarUrl: 'https://example.com/a.svg',
+          memberSince: '2026-01-01',
+          stats: { todosCompleted: 0, loginCount: 1 },
+        },
+      ],
     },
   };
-  const { auth, rejectDuplicateUserEmail } = createApiMiddleware(db);
+  const { auth, getCurrentUserProfile, rejectDuplicateUserEmail } =
+    createApiMiddleware(db);
 
   it('auth allows GET /users without Authorization', () => {
     const req = mockReq({ url: '/users?email=a@b.com' });
@@ -68,6 +79,42 @@ describe('createApiMiddleware', () => {
     const next = vi.fn();
 
     auth(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('getCurrentUserProfile rejects /users/me without Bearer token', async () => {
+    const req = mockReq({ url: '/users/me' });
+    const res = mockRes();
+    const next = vi.fn();
+
+    await getCurrentUserProfile(req, res, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(res.statusCode).toBe(401);
+  });
+
+  it('getCurrentUserProfile returns profile for valid token', async () => {
+    const req = mockReq({
+      url: '/users/me',
+      headers: { authorization: 'Bearer mockToken=user_1-1234567890' },
+    });
+    const res = mockRes();
+    const next = vi.fn();
+
+    await getCurrentUserProfile(req, res, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(res.statusCode).toBe(200);
+    expect(res.body.displayName).toBe('Test User');
+  });
+
+  it('getCurrentUserProfile passes through other routes', async () => {
+    const req = mockReq({ url: '/users?email=a@b.com' });
+    const res = mockRes();
+    const next = vi.fn();
+
+    await getCurrentUserProfile(req, res, next);
 
     expect(next).toHaveBeenCalled();
   });

@@ -27,7 +27,7 @@ const db = new Low(observer, {});
 await db.read();
 
 const app = createApp(db, { logger: false });
-const { auth, rejectDuplicateUserEmail } = createApiMiddleware(db);
+const { auth, getCurrentUserProfile, rejectDuplicateUserEmail } = createApiMiddleware(db);
 
 /** Insert custom middleware after body parser, before json-server routes. */
 function preRouteLayer(template, handler) {
@@ -54,13 +54,14 @@ app.middleware.splice(
   firstRouteIndex,
   0,
   preRouteLayer(templateLayer, auth),
+  preRouteLayer(templateLayer, getCurrentUserProfile),
   preRouteLayer(templateLayer, rejectDuplicateUserEmail)
 );
 
 app.listen(port, () => {
   console.log(chalk.bold(`JSON Server + middleware on http://${host}:${port}`));
   console.log(chalk.gray(`Database: ${dbFile}`));
-  console.log(chalk.gray('Middleware: Authorization mock on /todos, duplicate email guard on POST /users'));
+  console.log(chalk.gray('Middleware: Authorization mock on /todos, GET /users/me profile, duplicate email guard on POST /users'));
 });
 
 if (process.env.NODE_ENV !== 'production') {

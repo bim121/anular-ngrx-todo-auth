@@ -39,18 +39,19 @@ describe('MainLayoutComponent (NgRx + zoneless)', () => {
     fixture.detectChanges();
   });
 
-  it('renders user name when store emits user via toSignal', () => {
+  it('renders profile link when store emits user via toSignal', () => {
     user$.next({ id: 'u1', name: 'Alice', email: 'alice@example.com' });
     fixture.detectChanges();
 
-    const label = fixture.nativeElement.querySelector('.user-label');
-    expect(label?.textContent).toContain('Alice');
+    const link = fixture.nativeElement.querySelector('.profile-link');
+    expect(link?.textContent).toContain('Alice');
+    expect(link?.getAttribute('href')).toBe('/profile');
   });
 
-  it('hides user label when store user is null', () => {
+  it('hides profile link when store user is null', () => {
     user$.next(null);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.user-label')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.profile-link')).toBeNull();
   });
 });

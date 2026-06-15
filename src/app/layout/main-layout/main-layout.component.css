@@ -67,9 +67,18 @@
   gap: 1rem;
 }
 
-.user-label {
+.profile-link {
   font-size: 0.9rem;
   color: #4b5563;
+}
+
+.profile-link {
+  text-decoration: none;
+}
+
+.profile-link:hover {
+  color: #2563eb;
+  text-decoration: underline;
 }
 
 .logout-btn {

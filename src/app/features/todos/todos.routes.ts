@@ -22,6 +22,18 @@ export const TODOS_ROUTES: Routes = [
           breadcrumb: 'Todos',
         } satisfies RoutePageData,
       },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('@app/features/auth/ui/user-profile/user-profile.component').then(
+            (m) => m.UserProfileComponent
+          ),
+        canActivate: [authGuard],
+        data: {
+          title: 'My Profile',
+          breadcrumb: 'Profile',
+        } satisfies RoutePageData,
+      },
     ],
   },
 ];

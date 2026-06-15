@@ -1,0 +1,41 @@
+<section class="user-profile" aria-labelledby="profile-heading">
+  @if (profile.isLoading()) {
+    <div class="user-profile__loading" aria-busy="true">
+      <app-spinner />
+      <span>Loading profile…</span>
+    </div>
+  } @else if (profile.error(); as err) {
+    <p class="user-profile__error" role="alert">
+      Could not load profile. {{ err.message }}
+    </p>
+  } @else if (profile.value(); as profileValue) {
+    <header class="user-profile__header">
+      <img
+        class="user-profile__avatar"
+        [src]="profileValue.avatarUrl"
+        [alt]="profileValue.displayName + ' avatar'"
+        width="72"
+        height="72"
+      />
+      <div>
+        <h2 id="profile-heading">{{ profileValue.displayName }}</h2>
+        <p class="user-profile__meta">
+          Member since {{ profileValue.memberSince }}
+        </p>
+      </div>
+    </header>
+
+    <p class="user-profile__bio">{{ profileValue.bio }}</p>
+
+    <dl class="user-profile__stats">
+      <div>
+        <dt>Todos completed</dt>
+        <dd>{{ profileValue.stats.todosCompleted }}</dd>
+      </div>
+      <div>
+        <dt>Logins</dt>
+        <dd>{{ profileValue.stats.loginCount }}</dd>
+      </div>
+    </dl>
+  }
+</section>
