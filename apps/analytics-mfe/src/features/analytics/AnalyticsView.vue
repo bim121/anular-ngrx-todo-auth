@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 
 const router = useRouter();
@@ -18,6 +18,9 @@ function handleLogout(): void {
       <h1>Analytics dashboard</h1>
       <p v-if="userName">Welcome, {{ userName }}!</p>
       <p class="hint">Charts and Web Vitals — Phase 5–6.</p>
+      <nav class="links">
+        <RouterLink to="/todos">My Todos</RouterLink>
+      </nav>
       <button type="button" @click="handleLogout">Logout</button>
     </section>
   </main>
@@ -56,6 +59,16 @@ h1 {
 
 .hint {
   color: #94a3b8;
+}
+
+.links {
+  margin-top: 1rem;
+}
+
+.links a {
+  color: #c4b5fd;
+  font-weight: 600;
+  text-decoration: none;
 }
 
 button {

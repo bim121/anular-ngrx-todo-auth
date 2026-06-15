@@ -21,6 +21,12 @@ const router = createRouter({
       component: () => import('@/features/analytics/AnalyticsView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/todos',
+      name: 'todos',
+      component: () => import('@/features/todos/TodoListView.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 });
 
@@ -32,7 +38,7 @@ router.beforeEach((to) => {
   }
 
   if (to.meta['guestOnly'] && auth.token) {
-    return { name: 'analytics' };
+    return { name: 'todos' };
   }
 
   return true;

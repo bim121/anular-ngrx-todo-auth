@@ -1,47 +1,32 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import {
-  AUTH_VALIDATION_MESSAGES,
-  isValidEmail,
-} from '@shared/validators/email';
 import { useAuth } from '@/composables/useAuth';
+import {
+  isLoginValid,
+  validateLogin,
+} from '@/features/auth/validate-login';
 
 const router = useRouter();
 const { login, loading, error } = useAuth();
 
 const email = ref('');
 const password = ref('');
-const emailError = ref<string | null>(null);
-const passwordError = ref<string | null>(null);
+const submitted = ref(false);
 
-function validate(): boolean {
-  emailError.value = null;
-  passwordError.value = null;
-
-  if (!email.value.trim()) {
-    emailError.value = AUTH_VALIDATION_MESSAGES.emailRequired;
-  } else if (!isValidEmail(email.value)) {
-    emailError.value = AUTH_VALIDATION_MESSAGES.emailInvalid;
-  }
-
-  if (!password.value) {
-    passwordError.value = 'Password is required.';
-  } else if (password.value.length < 8) {
-    passwordError.value = 'Password must be at least 8 characters.';
-  }
-
-  return !emailError.value && !passwordError.value;
-}
+const errors = computed(() => validateLogin(email.value, password.value));
+const isValid = computed(() => isLoginValid(errors.value));
 
 async function handleSubmit(): Promise<void> {
-  if (!validate()) {
+  submitted.value = true;
+
+  if (!isValid.value) {
     return;
   }
 
   try {
     await login({ email: email.value, password: password.value });
-    await router.push('/analytics');
+    await router.push('/todos');
   } catch {
     // store.error is shown below
   }
@@ -62,8 +47,11 @@ async function handleSubmit(): Promise<void> {
             type="email"
             autocomplete="email"
             :disabled="loading"
+            :aria-invalid="submitted && errors.email ? 'true' : undefined"
           />
-          <span v-if="emailError" class="error">{{ emailError }}</span>
+          <span v-if="submitted && errors.email" class="error">
+            {{ errors.email }}
+          </span>
         </label>
 
         <label>
@@ -73,11 +61,14 @@ async function handleSubmit(): Promise<void> {
             type="password"
             autocomplete="current-password"
             :disabled="loading"
+            :aria-invalid="submitted && errors.password ? 'true' : undefined"
           />
-          <span v-if="passwordError" class="error">{{ passwordError }}</span>
+          <span v-if="submitted && errors.password" class="error">
+            {{ errors.password }}
+          </span>
         </label>
 
-        <button type="submit" :disabled="loading">
+        <button type="submit" :disabled="loading || (submitted && !isValid)">
           {{ loading ? 'Signing in…' : 'Sign in' }}
         </button>
       </form>

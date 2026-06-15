@@ -10,6 +10,7 @@ import { RouterLink } from 'vue-router';
       <p>Vue 3 + Pinia stub — dashboard charts in Phase 5–6.</p>
       <nav class="links">
         <RouterLink to="/login">Sign in</RouterLink>
+        <RouterLink to="/todos">Todos (auth)</RouterLink>
         <RouterLink to="/analytics">Analytics (auth)</RouterLink>
       </nav>
     </section>
