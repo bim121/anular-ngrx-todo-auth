@@ -1,0 +1,22 @@
+@if (computing()) {
+  <p class="stats-computing">Computing statistics…</p>
+} @else if (stats(); as s) {
+  <div class="stats-panel" aria-label="Todo statistics">
+    <div class="stat">
+      <span class="stat-value">{{ s.total }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">{{ s.active }}</span>
+      <span class="stat-label">Active</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">{{ s.done }}</span>
+      <span class="stat-label">Done</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">{{ s.avgTaskLength }}</span>
+      <span class="stat-label">Avg length</span>
+    </div>
+  </div>
+}

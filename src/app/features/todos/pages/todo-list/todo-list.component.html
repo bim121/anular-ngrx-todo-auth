@@ -21,6 +21,12 @@
   } @else if (error(); as err) {
     <div class="error-message">{{ err }}</div>
   } @else {
+    @defer (on viewport) {
+      <app-todo-stats-panel [todos]="todos()" />
+    } @placeholder {
+      <div class="skeleton"></div>
+    }
+
     <div class="filter-bar" role="group" aria-label="Filter tasks">
       <button
         type="button"
@@ -48,10 +54,10 @@
       </button>
     </div>
 
+    @let count = filteredTodos().length;
+    <span class="todo-count">{{ count }} items</span>
+
     <ul>
-      @if (filteredTodos().length === 0) {
-        <li class="empty-list-message">No tasks yet! Add one above.</li>
-      }
       @for (todo of filteredTodos(); track todo.id) {
         <li [class.completed]="todo.completed">
           @if (editingTodo?.id !== todo.id) {
@@ -109,6 +115,8 @@
             </div>
           }
         </li>
+      } @empty {
+        <li class="empty-list-message">No todos</li>
       }
     </ul>
   }

@@ -16,6 +16,7 @@ import * as TodoActions from '@app/features/todos/data-access/todo.actions';
 import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
 import { TodoItemComponent } from '@app/features/todos/ui/todo-item/todo-item.component';
+import { TodoStatsPanelComponent } from '@app/features/todos/ui/todo-stats-panel/todo-stats-panel.component';
 import { ToastService } from '@app/shared/ui/toast/toast.service';
 
 type TodoFilter = 'all' | 'active' | 'done';
@@ -23,7 +24,7 @@ type TodoFilter = 'all' | 'active' | 'done';
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [FormsModule, SpinnerComponent, TodoItemComponent],
+  imports: [FormsModule, SpinnerComponent, TodoItemComponent, TodoStatsPanelComponent],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
