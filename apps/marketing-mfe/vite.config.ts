@@ -12,6 +12,7 @@ export default defineConfig({
       '@marketing/core': resolve(__dirname, 'src/core'),
       '@marketing/shared': resolve(__dirname, 'src/shared'),
       '@marketing/features': resolve(__dirname, 'src/features'),
+      '@shared/validators': resolve(__dirname, '../../libs/shared/validators'),
     },
   },
   server: {

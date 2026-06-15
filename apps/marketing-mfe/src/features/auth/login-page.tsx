@@ -1,25 +1,67 @@
 import { FormEvent, useState } from 'react';
-import { loginUser } from '@marketing/core/api';
+import {
+  AUTH_VALIDATION_MESSAGES,
+  isValidEmail,
+} from '@shared/validators/email';
+import { AuthResponse, loginUser } from '@marketing/core/api';
 import { ANGULAR_APP_URL } from '@marketing/core/env';
 import { Toast } from '@marketing/shared/ui/toast';
 import './login-page.css';
 
-export function LoginPage() {
+interface LoginPageProps {
+  onLoginSuccess: (auth: AuthResponse) => void;
+}
+
+export function LoginPage({ onLoginSuccess }: LoginPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  function validateForm(): boolean {
+    let valid = true;
+
+    if (!email.trim()) {
+      setEmailError(AUTH_VALIDATION_MESSAGES.emailRequired);
+      valid = false;
+    } else if (!isValidEmail(email)) {
+      setEmailError(AUTH_VALIDATION_MESSAGES.emailInvalid);
+      valid = false;
+    } else {
+      setEmailError(null);
+    }
+
+    if (!password) {
+      setPasswordError('Password is required.');
+      valid = false;
+    } else if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters.');
+      valid = false;
+    } else {
+      setPasswordError(null);
+    }
+
+    return valid;
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     setSuccess(null);
+
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
 
     try {
       const auth = await loginUser(email, password);
       setSuccess(`Welcome, ${auth.user.name}! Login successful.`);
+      onLoginSuccess(auth);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Login failed. Try again.';
@@ -36,7 +78,7 @@ export function LoginPage() {
           <p className="login-card__eyebrow">marketing-mfe</p>
           <h1>Sign in</h1>
           <p className="login-card__hint">
-            React login stub — same json-server as the Angular app.
+            React hooks todo list — same json-server as the Angular app.
           </p>
         </header>
 
@@ -53,7 +95,9 @@ export function LoginPage() {
           </div>
         ) : null}
 
-        {error ? <Toast type="error" message={error} onDismiss={() => setError(null)} /> : null}
+        {error ? (
+          <Toast type="error" message={error} onDismiss={() => setError(null)} />
+        ) : null}
 
         <form className="login-form" onSubmit={handleSubmit} noValidate>
           <label className="login-form__field">
@@ -63,11 +107,22 @@ export function LoginPage() {
               name="email"
               autoComplete="email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                if (emailError) {
+                  setEmailError(null);
+                }
+              }}
               placeholder="test@example.com"
-              required
+              aria-invalid={emailError ? 'true' : undefined}
+              aria-describedby={emailError ? 'email-error' : undefined}
               disabled={loading}
             />
+            {emailError ? (
+              <span id="email-error" className="login-form__error" role="alert">
+                {emailError}
+              </span>
+            ) : null}
           </label>
 
           <label className="login-form__field">
@@ -77,15 +132,33 @@ export function LoginPage() {
               name="password"
               autoComplete="current-password"
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                if (passwordError) {
+                  setPasswordError(null);
+                }
+              }}
               placeholder="password123"
-              minLength={8}
-              required
+              aria-invalid={passwordError ? 'true' : undefined}
+              aria-describedby={passwordError ? 'password-error' : undefined}
               disabled={loading}
             />
+            {passwordError ? (
+              <span
+                id="password-error"
+                className="login-form__error"
+                role="alert"
+              >
+                {passwordError}
+              </span>
+            ) : null}
           </label>
 
-          <button type="submit" className="login-form__submit" disabled={loading}>
+          <button
+            type="submit"
+            className="login-form__submit"
+            disabled={loading}
+          >
             {loading ? 'Signing in…' : 'Sign in'}
           </button>
         </form>

@@ -83,6 +83,11 @@
   opacity: 0.7;
 }
 
+.login-form__error {
+  font-size: 0.8rem;
+  color: #b91c1c;
+}
+
 .login-form__submit {
   margin-top: 0.25rem;
   padding: 0.8rem 1rem;

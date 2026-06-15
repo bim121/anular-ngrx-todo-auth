@@ -19,7 +19,8 @@
     "paths": {
       "@marketing/core/*": ["src/core/*"],
       "@marketing/shared/*": ["src/shared/*"],
-      "@marketing/features/*": ["src/features/*"]
+      "@marketing/features/*": ["src/features/*"],
+      "@shared/validators/*": ["../../libs/shared/validators/*"]
     }
   },
   "include": ["src"]
