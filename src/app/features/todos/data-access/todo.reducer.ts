@@ -1,86 +1,92 @@
-import { TodosState } from './todo.model';
-import * as TodoActions from './todo.actions';
-import * as AuthActions from '@app/features/auth/data-access/auth.actions';
+import { createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
+import * as AuthActions from '@app/features/auth/data-access/auth.actions';
+import { Todo, TodosState } from './todo.model';
+import * as TodoActions from './todo.actions';
 
 export const todosFeatureKey = 'todos';
 
-export const initialTodoState: TodosState = {
-    items: [],
-    loading: false,
-    error: null
-}
+export const todosAdapter = createEntityAdapter<Todo>({
+  selectId: (todo) => todo.id,
+});
+
+export const initialTodoState: TodosState = todosAdapter.getInitialState({
+  loading: false,
+  error: null,
+});
 
 export const todosReducer = createReducer(
-    initialTodoState,
-    
-    on(TodoActions.loadTodos, (state) => ({
-        ...state,
-        loading: true,
-        error: null
-    })),
+  initialTodoState,
 
-    on(TodoActions.loadTodosSuccess, (state, {todos}) => ({
-        ...state,
-        items: todos,
-        loading: false
-    })),
+  on(TodoActions.loadTodos, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
 
-    on(TodoActions.loadTodosFailure, (state, {error}) => ({
-        ...state,
-        error: error instanceof Error ? error.message : 'Failed to load messages',
-        loading: false
-    })),
+  on(TodoActions.loadTodosSuccess, (state, { todos }) =>
+    todosAdapter.setAll(todos, {
+      ...state,
+      loading: false,
+    })
+  ),
 
-    on(TodoActions.addTodo, (state) => ({
-        ...state,
-        error: null,
-    })),
+  on(TodoActions.loadTodosFailure, (state, { error }) => ({
+    ...state,
+    error: error instanceof Error ? error.message : 'Failed to load messages',
+    loading: false,
+  })),
 
-    on(TodoActions.addTodoSuccess, (state, {todo}) => ({
-        ...state,
-        items: [...state.items, todo],
-    })),
+  on(TodoActions.addTodo, (state) => ({
+    ...state,
+    error: null,
+  })),
 
-    on(TodoActions.addTodoFailure, (state, {error}) => ({
-        ...state,
-        error: error instanceof Error ? error.message : 'Failed to add messages',
-    })),
+  on(TodoActions.addTodoSuccess, (state, { todo }) =>
+    todosAdapter.addOne(todo, state)
+  ),
 
-    on(TodoActions.updateTodo, (state, { todo }) => ({
-        ...state,
-        error: null,
-        items: state.items.map((item) =>
-            item.id === todo.id ? { ...item, ...todo } : item
-        ),
-    })),
+  on(TodoActions.addTodoFailure, (state, { error }) => ({
+    ...state,
+    error: error instanceof Error ? error.message : 'Failed to add messages',
+  })),
 
-    on(TodoActions.updateTodoSuccess, (state, {todo}) => ({
-        ...state,
-        items: state.items.map((item) =>
-            item.id === todo.id ? todo : item
-        ),
-    })),
+  on(TodoActions.updateTodo, (state, { todo }) =>
+    todosAdapter.updateOne(
+      { id: todo.id, changes: todo },
+      { ...state, error: null }
+    )
+  ),
 
-    on(TodoActions.updateTodoFailure, (state, {error}) => ({
-        ...state,
-        error: error instanceof Error ? error.message : 'Failed to update messages',
-    })),
+  on(TodoActions.updateTodoSuccess, (state, { todo }) =>
+    todosAdapter.updateOne({ id: todo.id, changes: todo }, state)
+  ),
 
-    on(TodoActions.deleteTodo, (state) => ({
-        ...state,
-        error: null,
-    })),
+  on(TodoActions.updateTodoFailure, (state, { error }) => ({
+    ...state,
+    error: error instanceof Error ? error.message : 'Failed to update messages',
+  })),
 
-    on(TodoActions.deleteTodoSuccess, (state, {todoId}) => ({
-        ...state,
-        items: state.items.filter(item => item.id !== todoId),
-    })),
+  on(TodoActions.deleteTodo, (state) => ({
+    ...state,
+    error: null,
+  })),
 
-    on(TodoActions.deleteTodoFailure, (state, {error}) => ({
-        ...state,
-        error: error instanceof Error ? error.message : 'Failed to delete messages',
-    })),
+  on(TodoActions.deleteTodoSuccess, (state, { todoId }) =>
+    todosAdapter.removeOne(todoId, state)
+  ),
 
-    on(AuthActions.logoutUser, () => initialTodoState)
-)
+  on(TodoActions.deleteTodoFailure, (state, { error }) => ({
+    ...state,
+    error: error instanceof Error ? error.message : 'Failed to delete messages',
+  })),
+
+  on(AuthActions.logoutUser, () => initialTodoState)
+);
+
+export const {
+  selectAll,
+  selectEntities,
+  selectIds,
+  selectTotal,
+} = todosAdapter.getSelectors();

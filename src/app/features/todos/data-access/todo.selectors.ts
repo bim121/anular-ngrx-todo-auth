@@ -1,20 +1,36 @@
-import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { TodosState } from "./todo.model";
-import { todosFeatureKey } from "./todo.reducer";
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { TodosState } from './todo.model';
+import {
+  selectAll,
+  selectEntities,
+  selectIds,
+  selectTotal,
+  todosAdapter,
+  todosFeatureKey,
+} from './todo.reducer';
 
-export const selectTodosState = createFeatureSelector<TodosState>(todosFeatureKey);
+export { todosAdapter };
 
-export const selectAllTodos = createSelector(
-    selectTodosState,
-    (state) => state.items
+export const selectTodosState =
+  createFeatureSelector<TodosState>(todosFeatureKey);
+
+export const selectAllTodos = createSelector(selectTodosState, selectAll);
+
+export const selectTodoEntities = createSelector(
+  selectTodosState,
+  selectEntities
 );
 
+export const selectTodoIds = createSelector(selectTodosState, selectIds);
+
+export const selectTodosTotal = createSelector(selectTodosState, selectTotal);
+
 export const selectTodosLoading = createSelector(
-    selectTodosState,
-    (state) => state.loading
+  selectTodosState,
+  (state) => state.loading
 );
 
 export const selectTodosError = createSelector(
-    selectTodosState,
-    (state) => state.error
+  selectTodosState,
+  (state) => state.error
 );
