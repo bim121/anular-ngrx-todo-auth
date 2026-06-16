@@ -16,7 +16,7 @@ import { provideRouterStore } from '@ngrx/router-store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from '@app/core/interceptors/auth.interceptor';
-import { authReducer, authFeatureKey } from '@app/features/auth/data-access/auth.reducer';
+import { authFeature } from '@app/features/auth/data-access/auth.feature';
 import { todosReducer, todosFeatureKey } from '@app/features/todos/data-access/todo.reducer';
 import { AuthEffects } from '@app/features/auth/data-access/auth.effects';
 import { TodoEffects } from '@app/features/todos/data-access/todo.effects';
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     provideStore(),
-    provideState(authFeatureKey, authReducer),
+    provideState(authFeature.name, authFeature.reducer),
     provideState(todosFeatureKey, todosReducer),
     provideEffects(AuthEffects, TodoEffects),
     provideRouterStore(),
