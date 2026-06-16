@@ -34,3 +34,6 @@ export const selectTodosError = createSelector(
   selectTodosState,
   (state) => state.error
 );
+
+export const selectTodoById = (id: string) =>
+  createSelector(selectTodoEntities, (entities) => entities[id]);
