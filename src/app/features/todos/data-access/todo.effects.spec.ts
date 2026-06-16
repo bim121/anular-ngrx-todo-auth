@@ -1,6 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { firstValueFrom, Observable, of, ReplaySubject, throwError } from 'rxjs';
+import {
+  firstValueFrom,
+  Observable,
+  of,
+  ReplaySubject,
+  Subject,
+  throwError,
+} from 'rxjs';
+import { EffectsLifecycleService } from '@app/core/effects/effects-lifecycle.service';
 import { TodoEffects } from './todo.effects';
 import { TodoService } from './todo.service';
 import { Store } from '@ngrx/store';
@@ -11,6 +19,7 @@ describe('TodoEffects loadTodos$', () => {
   let actions$: ReplaySubject<unknown>;
   let effects: TodoEffects;
   let getTodosMock: ReturnType<typeof vi.fn>;
+  let lifecycle: EffectsLifecycleService;
 
   beforeEach(() => {
     actions$ = new ReplaySubject(1);
@@ -32,6 +41,7 @@ describe('TodoEffects loadTodos$', () => {
     });
 
     effects = TestBed.inject(TodoEffects);
+    lifecycle = TestBed.inject(EffectsLifecycleService);
   });
 
   it('passes userId from store to getTodos', async () => {
@@ -100,5 +110,29 @@ describe('TodoEffects loadTodos$', () => {
 
     expect(emitted).toBe(false);
     expect(getTodosMock).not.toHaveBeenCalled();
+  });
+
+  it('does not dispatch loadTodosSuccess when load is cancelled on logout', async () => {
+    const pendingTodos$ = new Subject<
+      { id: string; userId: string; task: string; completed: boolean }[]
+    >();
+    getTodosMock.mockReturnValue(pendingTodos$.asObservable());
+
+    let emitted: unknown;
+    const sub = effects.loadTodos$.subscribe((action) => {
+      emitted = action;
+    });
+
+    actions$.next(TodoActions.loadTodos());
+    lifecycle.notifyCancelPendingRequests();
+    pendingTodos$.next([
+      { id: '1', userId: 'user-1', task: 'A', completed: false },
+    ]);
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(getTodosMock).toHaveBeenCalledWith('user-1');
+    expect(emitted).toBeUndefined();
+    sub.unsubscribe();
   });
 });

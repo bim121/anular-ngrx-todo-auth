@@ -11,7 +11,9 @@ import {
   of,
   retry,
   switchMap,
+  takeUntil,
 } from 'rxjs';
+import { EffectsLifecycleService } from '@app/core/effects/effects-lifecycle.service';
 import * as AuthSelectors from '@app/features/auth/data-access/auth.selectors';
 import { TodoService } from './todo.service';
 import * as TodoActions from './todo.actions';
@@ -27,6 +29,7 @@ export class TodoEffects {
   private readonly actions$ = inject(Actions);
   private readonly todoService = inject(TodoService);
   private readonly store = inject(Store);
+  private readonly lifecycle = inject(EffectsLifecycleService);
 
   loadTodos$ = createEffect(() =>
     this.actions$.pipe(
@@ -35,6 +38,7 @@ export class TodoEffects {
       filter(([, userId]) => userId != null),
       switchMap(([, userId]) =>
         defer(() => this.todoService.getTodos(userId!)).pipe(
+          takeUntil(this.lifecycle.cancelPendingRequests),
           retry(LOAD_RETRY),
           map((todos) => TodoActions.loadTodosSuccess({ todos })),
           catchError((error) => of(TodoActions.loadTodosFailure({ error })))

@@ -44,6 +44,21 @@ this.actions$.pipe(
 - **`concatMap`** — queue inner observables; order preserved (add todo).
 - **`mergeMap`** — parallel; use when order does not matter and concurrency is OK (not used here).
 
+### Cancel on logout
+
+`loadTodos$` inner HTTP uses `takeUntil(EffectsLifecycleService.cancelPendingRequests)`.  
+`authNavigation$` calls `notifyCancelPendingRequests()` on `logoutUser` so in-flight loads do not dispatch after session ends.
+
+---
+
+## Non-dispatching effects (`auth.effects.ts`)
+
+| Effect | Role |
+|--------|------|
+| `registerSuccess$` | Toast after registration |
+| `authNavigation$` | Navigate to `/todos` or `/login`; cancel pending todo loads on logout |
+| `analyticsLog$` | Dev-only `console.info('[analytics mock]', action.type)` |
+
 ---
 
 ## Read retries
@@ -58,3 +73,4 @@ this.actions$.pipe(
 |---------|------|
 | Auth effects | `src/app/features/auth/data-access/auth.effects.ts` |
 | Todo effects | `src/app/features/todos/data-access/todo.effects.ts` |
+| Logout cancel bus | `src/app/core/effects/effects-lifecycle.service.ts` |
