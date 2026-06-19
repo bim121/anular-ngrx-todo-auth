@@ -12,9 +12,12 @@ import {
   retry,
   switchMap,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { EffectsLifecycleService } from '@app/core/effects/effects-lifecycle.service';
+import { ToastService } from '@app/shared/ui/toast/toast.service';
 import * as AuthSelectors from '@app/features/auth/data-access/auth.selectors';
+import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
 import { TodoService } from './todo.service';
 import * as TodoActions from './todo.actions';
 
@@ -30,6 +33,7 @@ export class TodoEffects {
   private readonly todoService = inject(TodoService);
   private readonly store = inject(Store);
   private readonly lifecycle = inject(EffectsLifecycleService);
+  private readonly toast = inject(ToastService);
 
   loadTodos$ = createEffect(() =>
     this.actions$.pipe(
@@ -66,6 +70,60 @@ export class TodoEffects {
         );
       })
     )
+  );
+
+  toggleTodo$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TodoActions.toggleTodo),
+      concatLatestFrom(() => [
+        this.store.select(AuthSelectors.selectUserId),
+        this.store.select(TodoSelectors.selectTodoEntities),
+      ]),
+      switchMap(([{ id }, userId, entities]) => {
+        const todo = entities[id];
+        const previousCompleted = todo ? !todo.completed : false;
+
+        if (userId == null || !todo) {
+          return of(
+            TodoActions.toggleTodoFailure({
+              id,
+              previousCompleted,
+              error: new Error('Not logged in'),
+            })
+          );
+        }
+
+        return this.todoService
+          .updateTodo({ id, completed: todo.completed }, userId)
+          .pipe(
+            map((updated) => TodoActions.toggleTodoSuccess({ todo: updated })),
+            catchError((error) =>
+              of(
+                TodoActions.toggleTodoFailure({
+                  id,
+                  previousCompleted,
+                  error,
+                })
+              )
+            )
+          );
+      })
+    )
+  );
+
+  toggleTodoFailureToast$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(TodoActions.toggleTodoFailure),
+        tap(({ error }) => {
+          const message =
+            error instanceof Error
+              ? `${error.message} — changes reverted`
+              : 'Could not update task — changes reverted';
+          this.toast.error(message);
+        })
+      ),
+    { dispatch: false }
   );
 
   updateTodo$ = createEffect(() =>

@@ -35,5 +35,13 @@ export const selectTodosError = createSelector(
   (state) => state.error
 );
 
+export const selectPendingToggleIds = createSelector(
+  selectTodosState,
+  (state) => state.pendingToggleIds
+);
+
+export const selectIsTodoTogglePending = (id: string) =>
+  createSelector(selectPendingToggleIds, (ids) => ids.includes(id));
+
 export const selectTodoById = (id: string) =>
   createSelector(selectTodoEntities, (entities) => entities[id]);

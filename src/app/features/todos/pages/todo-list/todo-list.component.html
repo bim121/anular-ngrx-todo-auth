@@ -63,7 +63,7 @@
           @if (editingTodo?.id !== todo.id) {
             <app-todo-item
               [todo]="todo"
-              [disabled]="loading()"
+              [disabled]="loading() || isTogglePending(todo.id)"
               (toggled)="onTodoToggled(todo.id)"
             >
               <button

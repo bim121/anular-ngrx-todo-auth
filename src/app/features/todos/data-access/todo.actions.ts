@@ -59,3 +59,23 @@ export const deleteTodoFailure = createAction(
     '[To-Do Page] Delete to-do Failure',
     props<{error: unknown}>()
 );
+
+export const toggleTodoOptimistic = createAction(
+    '[To-Do Page] Toggle to-do Optimistic',
+    props<{ id: string }>()
+);
+
+export const toggleTodo = createAction(
+    '[To-Do Page] Toggle to-do',
+    props<{ id: string }>()
+);
+
+export const toggleTodoSuccess = createAction(
+    '[To-Do Page] Toggle to-do Success',
+    props<{ todo: Todo }>()
+);
+
+export const toggleTodoFailure = createAction(
+    '[To-Do Page] Toggle to-do Failure',
+    props<{ id: string; previousCompleted: boolean; error: unknown }>()
+);

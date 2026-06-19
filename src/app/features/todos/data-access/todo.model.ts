@@ -11,4 +11,6 @@ export interface Todo {
 export interface TodosState extends EntityState<Todo> {
   loading: boolean;
   error: string | null;
+  /** Todo ids with in-flight toggle HTTP requests (checkbox disabled). */
+  pendingToggleIds: string[];
 }

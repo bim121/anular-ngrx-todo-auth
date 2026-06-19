@@ -42,6 +42,10 @@ export class TodoListComponent implements OnInit {
   readonly error = toSignal(this.store.select(TodoSelectors.selectTodosError), {
     initialValue: null,
   });
+  readonly pendingToggleIds = toSignal(
+    this.store.select(TodoSelectors.selectPendingToggleIds),
+    { initialValue: [] as string[] }
+  );
   readonly filter = signal<TodoFilter>('all');
   readonly filteredTodos = computed(() => {
     const items = this.todos();
@@ -86,14 +90,16 @@ export class TodoListComponent implements OnInit {
     this.filter.set(value);
   }
 
+  isTogglePending(todoId: string): boolean {
+    return this.pendingToggleIds().includes(todoId);
+  }
+
   onTodoToggled(todoId: string): void {
     if (this.loading()) return;
+    if (this.pendingToggleIds().includes(todoId)) return;
 
-    const todo = this.todos().find((item) => item.id === todoId);
-    if (!todo) return;
-
-    const updatedTodo = { ...todo, completed: !todo.completed };
-    this.store.dispatch(TodoActions.updateTodo({ todo: updatedTodo }));
+    this.store.dispatch(TodoActions.toggleTodoOptimistic({ id: todoId }));
+    this.store.dispatch(TodoActions.toggleTodo({ id: todoId }));
     this.todoToggled.emit(todoId);
   }
 

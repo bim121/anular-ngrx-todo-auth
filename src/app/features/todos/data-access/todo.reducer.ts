@@ -13,6 +13,7 @@ export const todosAdapter = createEntityAdapter<Todo>({
 export const initialTodoState: TodosState = todosAdapter.getInitialState({
   loading: false,
   error: null,
+  pendingToggleIds: [],
 });
 
 export const todosReducer = createReducer(
@@ -80,6 +81,48 @@ export const todosReducer = createReducer(
     ...state,
     error: error instanceof Error ? error.message : 'Failed to delete messages',
   })),
+
+  on(TodoActions.toggleTodoOptimistic, (state, { id }) => {
+    const todo = state.entities[id];
+    if (!todo) {
+      return state;
+    }
+
+    return todosAdapter.updateOne(
+      { id, changes: { completed: !todo.completed } },
+      {
+        ...state,
+        error: null,
+        pendingToggleIds: state.pendingToggleIds.includes(id)
+          ? state.pendingToggleIds
+          : [...state.pendingToggleIds, id],
+      }
+    );
+  }),
+
+  on(TodoActions.toggleTodoSuccess, (state, { todo }) =>
+    todosAdapter.updateOne(
+      { id: todo.id, changes: todo },
+      {
+        ...state,
+        pendingToggleIds: state.pendingToggleIds.filter(
+          (pendingId) => pendingId !== todo.id
+        ),
+      }
+    )
+  ),
+
+  on(TodoActions.toggleTodoFailure, (state, { id, previousCompleted }) =>
+    todosAdapter.updateOne(
+      { id, changes: { completed: previousCompleted } },
+      {
+        ...state,
+        pendingToggleIds: state.pendingToggleIds.filter(
+          (pendingId) => pendingId !== id
+        ),
+      }
+    )
+  ),
 
   on(AuthActions.logoutUser, () => initialTodoState)
 );
