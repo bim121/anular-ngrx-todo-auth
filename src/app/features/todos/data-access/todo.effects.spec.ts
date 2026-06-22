@@ -16,6 +16,7 @@ import { selectTodoEntities } from '@app/features/todos/data-access/todo.selecto
 import { TodoEffects } from './todo.effects';
 import { TodoService } from './todo.service';
 import { Store } from '@ngrx/store';
+import { routerNavigatedAction } from '@ngrx/router-store';
 import * as TodoActions from './todo.actions';
 
 describe('TodoEffects loadTodos$', () => {
@@ -145,6 +146,106 @@ describe('TodoEffects loadTodos$', () => {
     expect(getTodosMock).toHaveBeenCalledWith('user-1');
     expect(emitted).toBeUndefined();
     sub.unsubscribe();
+  });
+});
+
+describe('TodoEffects loadTodosOnNavigation$', () => {
+  let actions$: ReplaySubject<unknown>;
+  let effects: TodoEffects;
+
+  function setup(userId: string | null): void {
+    actions$ = new ReplaySubject(1);
+
+    TestBed.configureTestingModule({
+      providers: [
+        TodoEffects,
+        provideMockActions(() => actions$ as Observable<unknown>),
+        { provide: TodoService, useValue: {} },
+        {
+          provide: Store,
+          useValue: {
+            select: (selector: unknown) =>
+              selector === selectUserId ? of(userId) : of(undefined),
+          },
+        },
+        {
+          provide: ToastService,
+          useValue: { success: vi.fn(), error: vi.fn() },
+        },
+      ],
+    });
+
+    effects = TestBed.inject(TodoEffects);
+  }
+
+  it('dispatches loadTodos when navigated to /todos and user is authenticated', async () => {
+    setup('user-1');
+
+    actions$.next(
+      routerNavigatedAction({
+        payload: {
+          routerState: {
+            url: '/todos',
+            params: {},
+            queryParams: {},
+          } as never,
+          event: { id: 1 } as never,
+        },
+      })
+    );
+
+    const action = await firstValueFrom(effects.loadTodosOnNavigation$);
+    expect(action).toEqual(TodoActions.loadTodos());
+  });
+
+  it('does not dispatch when user is not authenticated', async () => {
+    setup(null);
+
+    let emitted = false;
+    effects.loadTodosOnNavigation$.subscribe(() => {
+      emitted = true;
+    });
+
+    actions$.next(
+      routerNavigatedAction({
+        payload: {
+          routerState: {
+            url: '/todos',
+            params: {},
+            queryParams: {},
+          } as never,
+          event: { id: 1 } as never,
+        },
+      })
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(emitted).toBe(false);
+  });
+
+  it('does not dispatch when navigation target is not todos', async () => {
+    setup('user-1');
+
+    let emitted = false;
+    effects.loadTodosOnNavigation$.subscribe(() => {
+      emitted = true;
+    });
+
+    actions$.next(
+      routerNavigatedAction({
+        payload: {
+          routerState: {
+            url: '/profile',
+            params: {},
+            queryParams: {},
+          } as never,
+          event: { id: 1 } as never,
+        },
+      })
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(emitted).toBe(false);
   });
 });
 

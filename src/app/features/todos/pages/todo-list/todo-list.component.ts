@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
   computed,
   effect,
   inject,
@@ -28,7 +27,7 @@ import { TodoListUiStore } from './todo-list-ui.store';
   styleUrls: ['./todo-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TodoListComponent implements OnInit {
+export class TodoListComponent {
   private readonly store = inject(Store);
   private readonly toast = inject(ToastService);
   readonly uiStore = inject(TodoListUiStore);
@@ -71,10 +70,6 @@ export class TodoListComponent implements OnInit {
         this.toast.error(err);
       }
     });
-  }
-
-  ngOnInit(): void {
-    this.store.dispatch(TodoActions.loadTodos());
   }
 
   addTodo(): void {

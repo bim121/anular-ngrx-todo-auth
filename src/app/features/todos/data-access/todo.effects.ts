@@ -14,6 +14,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { routerNavigatedAction } from '@ngrx/router-store';
 import { EffectsLifecycleService } from '@app/core/effects/effects-lifecycle.service';
 import { ToastService } from '@app/shared/ui/toast/toast.service';
 import * as AuthSelectors from '@app/features/auth/data-access/auth.selectors';
@@ -34,6 +35,18 @@ export class TodoEffects {
   private readonly store = inject(Store);
   private readonly lifecycle = inject(EffectsLifecycleService);
   private readonly toast = inject(ToastService);
+
+  loadTodosOnNavigation$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(routerNavigatedAction),
+      concatLatestFrom(() => this.store.select(AuthSelectors.selectUserId)),
+      filter(
+        ([action, userId]) =>
+          userId != null && action.payload.routerState.url.includes('/todos')
+      ),
+      map(() => TodoActions.loadTodos())
+    )
+  );
 
   loadTodos$ = createEffect(() =>
     this.actions$.pipe(
