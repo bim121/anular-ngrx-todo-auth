@@ -4,7 +4,7 @@
 
 **Темп:** 18+ месяцев, 5–10 ч/нед.  
 **Три стека в каждой фазе:** Angular (core) + **React/Next.js** (`marketing-mfe`) + **Vue 3** (`analytics-mfe`) — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md)  
-**Backend:** [`../todo-platform-backend`](../todo-platform-backend) — независимо, cutover Phase 13.  
+**Backend:** [`../todo-platform-backend`](../todo-platform-backend) (.NET) + [`../todo-platform-java`](../todo-platform-java) (Java) — независимо, cutover Phase 13.  
 **Интеграция:** [integration-map.md](./integration-map.md) | **MFE:** [polyglot-mfe-architecture.md](./polyglot-mfe-architecture.md)
 
 ---
@@ -14,8 +14,11 @@
 | Трек | Репозиторий | Планы |
 |------|-------------|-------|
 | **Frontend (3 stacks)** | `anular-ngrx-todo-auth` | `plans/phase-*.md` — в каждом Angular + React/Next + Vue |
-| **Backend** | `todo-platform-backend` | `plans/backend-phase-*.md` |
+| **Backend (.NET)** | `todo-platform-backend` | `plans/backend-phase-*.md` — B-00…B-33 |
+| **Backend (Java)** | `todo-platform-java` | `plans/java-phase-*.md` — **J-00…J-33** (паритет с .NET) |
 | Contract | [`../../contracts/openapi.yaml`](../../contracts/openapi.yaml) | + [`graphql/schema.graphql`](../../contracts/graphql/schema.graphql) |
+
+Стек-маппинг: [stack-equivalents.md](../todo-platform-java/plans/stack-equivalents.md)
 
 ---
 
@@ -73,7 +76,7 @@
 | 12 | 12 + 17: Keycloak **все стеки** | B-05, B-12 |
 | 13–14 | 13 REST → 13g GraphQL **все стеки** | B-17 gRPC |
 | 15–16 | 14–15 Admin | B-12, B-28 |
-| 18+ | 16 CDN 4 remotes | B-20 → B-31 |
+| 18+ | 16 CDN 4 remotes | B-20 → B-31, **B-33** | J-20 → J-33 (паритет) |
 
 ---
 

@@ -6,7 +6,6 @@ import {
   effect,
   inject,
   output,
-  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -18,13 +17,13 @@ import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
 import { TodoItemComponent } from '@app/features/todos/ui/todo-item/todo-item.component';
 import { TodoStatsPanelComponent } from '@app/features/todos/ui/todo-stats-panel/todo-stats-panel.component';
 import { ToastService } from '@app/shared/ui/toast/toast.service';
-
-type TodoFilter = 'all' | 'active' | 'done';
+import { TodoListUiStore } from './todo-list-ui.store';
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
   imports: [FormsModule, SpinnerComponent, TodoItemComponent, TodoStatsPanelComponent],
+  providers: [TodoListUiStore],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +31,7 @@ type TodoFilter = 'all' | 'active' | 'done';
 export class TodoListComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly toast = inject(ToastService);
+  readonly uiStore = inject(TodoListUiStore);
 
   readonly todos = toSignal(this.store.select(TodoSelectors.selectAllTodos), {
     initialValue: [] as Todo[],
@@ -46,10 +46,9 @@ export class TodoListComponent implements OnInit {
     this.store.select(TodoSelectors.selectPendingToggleIds),
     { initialValue: [] as string[] }
   );
-  readonly filter = signal<TodoFilter>('all');
   readonly filteredTodos = computed(() => {
     const items = this.todos();
-    const f = this.filter();
+    const f = this.uiStore.filter();
 
     switch (f) {
       case 'active':
@@ -63,7 +62,6 @@ export class TodoListComponent implements OnInit {
   readonly todoToggled = output<string>();
 
   newTask = '';
-  editingTodo: Todo | null = null;
   updatedTask = '';
 
   constructor() {
@@ -84,10 +82,6 @@ export class TodoListComponent implements OnInit {
     const task = this.newTask.trim();
     this.store.dispatch(TodoActions.addTodo({ task }));
     this.newTask = '';
-  }
-
-  setFilter(value: TodoFilter): void {
-    this.filter.set(value);
   }
 
   isTogglePending(todoId: string): boolean {
@@ -112,25 +106,31 @@ export class TodoListComponent implements OnInit {
 
   startEdit(todo: Todo): void {
     if (this.loading()) return;
-    this.editingTodo = { ...todo };
+    this.uiStore.startEdit(todo.id);
     this.updatedTask = todo.task;
   }
 
   cancelEdit(): void {
-    this.editingTodo = null;
+    this.uiStore.cancelEdit();
     this.updatedTask = '';
   }
 
   saveEdit(): void {
     if (this.loading()) return;
-    if (this.editingTodo && this.updatedTask.trim()) {
+    const editingId = this.uiStore.editingId();
+    if (editingId && this.updatedTask.trim()) {
+      const todo = this.todos().find((item) => item.id === editingId);
+      if (!todo) {
+        this.cancelEdit();
+        return;
+      }
+
       const todoToUpdate = {
-        ...this.editingTodo,
+        ...todo,
         task: this.updatedTask.trim(),
       };
       this.store.dispatch(TodoActions.updateTodo({ todo: todoToUpdate }));
       this.cancelEdit();
     }
   }
-
 }

@@ -31,24 +31,24 @@
       <button
         type="button"
         class="filter-btn"
-        [class.active]="filter() === 'all'"
-        (click)="setFilter('all')"
+        [class.active]="uiStore.filter() === 'all'"
+        (click)="uiStore.setFilter('all')"
       >
         All
       </button>
       <button
         type="button"
         class="filter-btn"
-        [class.active]="filter() === 'active'"
-        (click)="setFilter('active')"
+        [class.active]="uiStore.filter() === 'active'"
+        (click)="uiStore.setFilter('active')"
       >
         Active
       </button>
       <button
         type="button"
         class="filter-btn"
-        [class.active]="filter() === 'done'"
-        (click)="setFilter('done')"
+        [class.active]="uiStore.filter() === 'done'"
+        (click)="uiStore.setFilter('done')"
       >
         Done
       </button>
@@ -60,7 +60,7 @@
     <ul>
       @for (todo of filteredTodos(); track todo.id) {
         <li [class.completed]="todo.completed">
-          @if (editingTodo?.id !== todo.id) {
+          @if (uiStore.editingId() !== todo.id) {
             <app-todo-item
               [todo]="todo"
               [disabled]="loading() || isTogglePending(todo.id)"
