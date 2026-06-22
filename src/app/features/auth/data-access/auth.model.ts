@@ -15,4 +15,6 @@ export interface AuthState {
     isLoggedIn: boolean;
     isLoading: boolean;
     error: string | null;
+    /** null until localStorage rehydrate completes; guards wait before reading auth (plan 3.5.3). */
+    _persistedAt: number | null;
 }

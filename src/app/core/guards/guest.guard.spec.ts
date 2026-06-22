@@ -3,7 +3,10 @@ import { Router, UrlTree } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, firstValueFrom, isObservable, of } from 'rxjs';
 import { guestGuard } from './guest.guard';
-import { selectIsAuthenticated } from '@app/features/auth/data-access/auth.selectors';
+import {
+  selectAuthPersistenceReady,
+  selectIsAuthenticated,
+} from '@app/features/auth/data-access/auth.selectors';
 
 const runGuard = () =>
   TestBed.runInInjectionContext(() => guestGuard({} as any, {} as any));
@@ -25,8 +28,15 @@ describe('guestGuard', () => {
         {
           provide: Store,
           useValue: {
-            select: (selector: unknown) =>
-              selector === selectIsAuthenticated ? isLoggedIn$ : of(undefined),
+            select: (selector: unknown) => {
+              if (selector === selectAuthPersistenceReady) {
+                return of(true);
+              }
+              if (selector === selectIsAuthenticated) {
+                return isLoggedIn$;
+              }
+              return of(undefined);
+            },
           },
         },
         {

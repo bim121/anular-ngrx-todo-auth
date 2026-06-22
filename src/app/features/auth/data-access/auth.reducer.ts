@@ -9,7 +9,8 @@ export const initialState: AuthState = {
     token: null,
     isLoggedIn: false,
     isLoading: false,
-    error: null
+    error: null,
+    _persistedAt: null,
 };
 
 export const authReducer = createReducer(

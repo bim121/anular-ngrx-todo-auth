@@ -20,3 +20,8 @@ export const selectUserId = createSelector(
   selectUser,
   (user) => user?.id
 );
+
+export const selectAuthPersistenceReady = createSelector(
+  selectAuthState,
+  (state) => state._persistedAt != null
+);

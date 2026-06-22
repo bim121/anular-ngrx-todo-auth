@@ -1,4 +1,5 @@
 import {
+  selectAuthPersistenceReady,
   selectIsAuthenticated,
   selectIsLoggedIn,
 } from './auth.selectors';
@@ -38,5 +39,15 @@ describe('auth selectors', () => {
       token: 'abc',
     });
     expect(selectIsAuthenticated(authenticated)).toBe(true);
+  });
+
+  it('selectAuthPersistenceReady is true when _persistedAt is set', () => {
+    expect(selectAuthPersistenceReady(buildRootState(initialState))).toBe(false);
+
+    expect(
+      selectAuthPersistenceReady(
+        buildRootState({ ...initialState, _persistedAt: Date.now() })
+      )
+    ).toBe(true);
   });
 });
