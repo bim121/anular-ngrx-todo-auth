@@ -374,3 +374,189 @@ describe('TodoEffects toggleTodoFailureToast$', () => {
     sub.unsubscribe();
   });
 });
+
+describe('TodoEffects marbles', () => {
+  const todo = { id: '1', userId: 'user-1', task: 'A', completed: false };
+
+  function runTodoMarble(config: {
+    actionsMarble: string;
+    actionsValues: Record<string, unknown>;
+    effectKey: keyof TodoEffects;
+    expectedMarble: string;
+    expectedValues?: Record<string, unknown>;
+    todoService: Record<string, ReturnType<typeof vi.fn>>;
+    userId?: string | null;
+    entities?: Record<string, typeof todo>;
+  }): void {
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    testScheduler.run(({ hot, expectObservable }) => {
+      const actions$ = hot(config.actionsMarble, config.actionsValues);
+      const userId = config.userId === undefined ? 'user-1' : config.userId;
+
+      TestBed.configureTestingModule({
+        providers: [
+          TodoEffects,
+          provideMockActions(() => actions$ as Observable<unknown>),
+          { provide: TodoService, useValue: config.todoService },
+          {
+            provide: Store,
+            useValue: {
+              select: (selector: unknown) => {
+                if (selector === selectUserId) {
+                  return of(userId);
+                }
+                if (selector === selectTodoEntities) {
+                  return of(config.entities ?? { [todo.id]: todo });
+                }
+                return of(undefined);
+              },
+            },
+          },
+          {
+            provide: ToastService,
+            useValue: { success: vi.fn(), error: vi.fn() },
+          },
+        ],
+      });
+
+      const effects = TestBed.inject(TodoEffects);
+      expectObservable(effects[config.effectKey] as Observable<unknown>).toBe(
+        config.expectedMarble,
+        config.expectedValues ?? {}
+      );
+    });
+  }
+
+  it('loadTodos$: dispatches loadTodosSuccess', () => {
+    runTodoMarble({
+      actionsMarble: '-a',
+      actionsValues: { a: TodoActions.loadTodos() },
+      effectKey: 'loadTodos$',
+      expectedMarble: '-b',
+      expectedValues: {
+        b: TodoActions.loadTodosSuccess({ todos: [todo] }),
+      },
+      todoService: {
+        getTodos: vi.fn(() => of([todo])),
+      },
+    });
+  });
+
+  it('loadTodosOnNavigation$: dispatches loadTodos', () => {
+    runTodoMarble({
+      actionsMarble: '-a',
+      actionsValues: {
+        a: routerNavigatedAction({
+          payload: {
+            routerState: { url: '/todos', params: {}, queryParams: {} } as never,
+            event: { id: 1 } as never,
+          },
+        }),
+      },
+      effectKey: 'loadTodosOnNavigation$',
+      expectedMarble: '-b',
+      expectedValues: { b: TodoActions.loadTodos() },
+      todoService: {},
+    });
+  });
+
+  it('addTodo$: dispatches addTodoSuccess', () => {
+    runTodoMarble({
+      actionsMarble: '-a',
+      actionsValues: { a: TodoActions.addTodo({ task: 'New task' }) },
+      effectKey: 'addTodo$',
+      expectedMarble: '-b',
+      expectedValues: {
+        b: TodoActions.addTodoSuccess({ todo }),
+      },
+      todoService: {
+        addTodo: vi.fn(() => of(todo)),
+      },
+    });
+  });
+
+  it('addTodo$: dispatches addTodoFailure when not logged in', () => {
+    runTodoMarble({
+      actionsMarble: '-a',
+      actionsValues: { a: TodoActions.addTodo({ task: 'New task' }) },
+      effectKey: 'addTodo$',
+      expectedMarble: '-b',
+      expectedValues: {
+        b: TodoActions.addTodoFailure({
+          error: new Error('Not logged in'),
+        }),
+      },
+      todoService: {},
+      userId: null,
+    });
+  });
+
+  it('updateTodo$: dispatches updateTodoSuccess', () => {
+    const updated = { ...todo, task: 'Updated' };
+
+    runTodoMarble({
+      actionsMarble: '-a',
+      actionsValues: { a: TodoActions.updateTodo({ todo: updated }) },
+      effectKey: 'updateTodo$',
+      expectedMarble: '-b',
+      expectedValues: {
+        b: TodoActions.updateTodoSuccess({ todo: updated }),
+      },
+      todoService: {
+        updateTodo: vi.fn(() => of(updated)),
+      },
+    });
+  });
+
+  it('deleteTodo$: dispatches deleteTodoSuccess', () => {
+    runTodoMarble({
+      actionsMarble: '-a',
+      actionsValues: { a: TodoActions.deleteTodo({ todoId: todo.id }) },
+      effectKey: 'deleteTodo$',
+      expectedMarble: '-b',
+      expectedValues: {
+        b: TodoActions.deleteTodoSuccess({ todoId: todo.id }),
+      },
+      todoService: {
+        deleteTodo: vi.fn(() => of(undefined)),
+      },
+    });
+  });
+
+  it('toggleTodoFailureToast$: shows toast (non-dispatching)', () => {
+    const toastError = vi.fn();
+    const action = TodoActions.toggleTodoFailure({
+      id: todo.id,
+      previousCompleted: false,
+      error: new Error('network'),
+    });
+    const testScheduler = new TestScheduler((actual, expected) => {
+      expect(actual).toEqual(expected);
+    });
+
+    testScheduler.run(({ hot, expectObservable }) => {
+      const actions$ = hot('-a', { a: action });
+
+      TestBed.configureTestingModule({
+        providers: [
+          TodoEffects,
+          provideMockActions(() => actions$ as Observable<unknown>),
+          { provide: TodoService, useValue: {} },
+          { provide: Store, useValue: { select: () => of(undefined) } },
+          {
+            provide: ToastService,
+            useValue: { success: vi.fn(), error: toastError },
+          },
+        ],
+      });
+
+      const effects = TestBed.inject(TodoEffects);
+      expectObservable(effects.toggleTodoFailureToast$).toBe('-a', { a: action });
+    });
+
+    expect(toastError).toHaveBeenCalledWith('network — changes reverted');
+  });
+});

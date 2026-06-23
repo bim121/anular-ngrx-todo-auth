@@ -17,6 +17,9 @@ import { CustomRouterSerializer } from '@app/core/routing/custom-router.serializ
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { metaReducers } from '@app/core/store/store.meta-reducers';
+import { devtoolsConfig } from '@app/core/store/devtools-config';
+import { appConfigReducer, appConfigFeatureKey } from '@app/core/config/app-config.reducer';
+import { provideAppConfigInitializer } from '@app/core/config/app-config.initializer';
 import { authInterceptor } from '@app/core/interceptors/auth.interceptor';
 import { authFeature } from '@app/features/auth/data-access/auth.feature';
 import { todosReducer, todosFeatureKey } from '@app/features/todos/data-access/todo.reducer';
@@ -49,11 +52,13 @@ export const appConfig: ApplicationConfig = {
     ),
     provideState(authFeature.name, authFeature.reducer),
     provideState(todosFeatureKey, todosReducer),
+    provideState(appConfigFeatureKey, appConfigReducer),
     provideState('router', routerReducer),
+    provideAppConfigInitializer(),
     provideEffects(AuthEffects, TodoEffects),
     provideRouterStore({ serializer: CustomRouterSerializer }),
     ...(isDevMode()
-      ? [provideStoreDevtools({ maxAge: 25 })]
+      ? [provideStoreDevtools(devtoolsConfig)]
       : []),
   ],
 };

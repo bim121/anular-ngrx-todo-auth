@@ -7,8 +7,63 @@ describe('authReducer', () => {
   const authResponse: AuthResponse = { user, accessToken: 'token-123' };
 
   it('returns initial state for unknown action', () => {
-    const state = authReducer(undefined, { type: 'NOOP' } as any);
+    const state = authReducer(undefined, { type: 'NOOP' } as never);
     expect(state).toEqual(initialState);
+  });
+
+  it('registerUser: sets loading and clears error', () => {
+    const state = authReducer(
+      { ...initialState, error: 'old' },
+      AuthActions.registerUser({
+        credentials: { name: 'N', email: 'n@e.com', password: 'pw' },
+      })
+    );
+
+    expect(state.isLoading).toBe(true);
+    expect(state.error).toBeNull();
+  });
+
+  it('registerSuccess: clears loading and keeps user logged out', () => {
+    const state = authReducer(
+      { ...initialState, isLoading: true },
+      AuthActions.registerSuccess({ user })
+    );
+
+    expect(state.isLoading).toBe(false);
+    expect(state.isLoggedIn).toBe(false);
+    expect(state.error).toBeNull();
+  });
+
+  it('registerFailure: stores Error message', () => {
+    const state = authReducer(
+      { ...initialState, isLoading: true },
+      AuthActions.registerFailure({ error: new Error('Email taken') })
+    );
+
+    expect(state.isLoading).toBe(false);
+    expect(state.isLoggedIn).toBe(false);
+    expect(state.error).toBe('Email taken');
+  });
+
+  it('registerFailure: falls back when error is not Error', () => {
+    const state = authReducer(
+      initialState,
+      AuthActions.registerFailure({ error: 'fail' })
+    );
+
+    expect(state.error).toBe('Registration failed');
+  });
+
+  it('loginUser: sets loading and clears error', () => {
+    const state = authReducer(
+      { ...initialState, error: 'old' },
+      AuthActions.loginUser({
+        credentials: { email: 'test@example.com', password: 'pw' },
+      })
+    );
+
+    expect(state.isLoading).toBe(true);
+    expect(state.error).toBeNull();
   });
 
   it('loginSuccess: writes user + token and sets isLoggedIn', () => {
@@ -24,7 +79,7 @@ describe('authReducer', () => {
     expect(state.error).toBeNull();
   });
 
-  it('loginFailure: stays logged out and stores error message', () => {
+  it('loginFailure: stores Error message', () => {
     const state = authReducer(
       { ...initialState, isLoading: true },
       AuthActions.loginFailure({ error: new Error('Invalid creds') })
@@ -35,6 +90,15 @@ describe('authReducer', () => {
     expect(state.token).toBeNull();
     expect(state.isLoading).toBe(false);
     expect(state.error).toBe('Invalid creds');
+  });
+
+  it('loginFailure: falls back when error is not Error', () => {
+    const state = authReducer(
+      initialState,
+      AuthActions.loginFailure({ error: 'fail' })
+    );
+
+    expect(state.error).toBe('Login failed');
   });
 
   it('logoutUser: resets state back to initial', () => {

@@ -12,6 +12,83 @@ describe('todosReducer', () => {
   const t1: Todo = { id: '1', userId: 'u1', task: 'A', completed: false };
   const t2: Todo = { id: '2', userId: 'u1', task: 'B', completed: false };
 
+  it('returns initial state for unknown action', () => {
+    const state = todosReducer(undefined, { type: 'NOOP' } as never);
+    expect(state).toEqual(initialTodoState);
+  });
+
+  it('loadTodos: sets loading and clears error', () => {
+    const state = todosReducer(
+      { ...initialTodoState, error: 'old' },
+      TodoActions.loadTodos()
+    );
+
+    expect(state.loading).toBe(true);
+    expect(state.error).toBeNull();
+  });
+
+  it('loadTodosSuccess: replaces entity collection', () => {
+    const state = todosReducer(
+      { ...initialTodoState, loading: true },
+      TodoActions.loadTodosSuccess({ todos: [t1, t2] })
+    );
+
+    expect(selectAll(state)).toEqual([t1, t2]);
+    expect(state.loading).toBe(false);
+  });
+
+  it('loadTodosFailure: stores Error message', () => {
+    const state = todosReducer(
+      { ...initialTodoState, loading: true },
+      TodoActions.loadTodosFailure({ error: new Error('network') })
+    );
+
+    expect(state.loading).toBe(false);
+    expect(state.error).toBe('network');
+  });
+
+  it('loadTodosFailure: falls back when error is not Error', () => {
+    const state = todosReducer(
+      initialTodoState,
+      TodoActions.loadTodosFailure({ error: 'fail' })
+    );
+
+    expect(state.error).toBe('Failed to load messages');
+  });
+
+  it('addTodo: clears error', () => {
+    const state = todosReducer(
+      { ...initialTodoState, error: 'old' },
+      TodoActions.addTodo({ task: 'New' })
+    );
+
+    expect(state.error).toBeNull();
+  });
+
+  it('addTodoSuccess: adds entity', () => {
+    const state = todosReducer(initialTodoState, TodoActions.addTodoSuccess({ todo: t1 }));
+
+    expect(selectAll(state)).toEqual([t1]);
+  });
+
+  it('addTodoFailure: stores Error message', () => {
+    const state = todosReducer(
+      initialTodoState,
+      TodoActions.addTodoFailure({ error: new Error('denied') })
+    );
+
+    expect(state.error).toBe('denied');
+  });
+
+  it('addTodoFailure: falls back when error is not Error', () => {
+    const state = todosReducer(
+      initialTodoState,
+      TodoActions.addTodoFailure({ error: 'fail' })
+    );
+
+    expect(state.error).toBe('Failed to add messages');
+  });
+
   it('updateTodo: optimistically updates the matching item', () => {
     const startState = todosAdapter.setAll([t1, t2], initialTodoState);
 
@@ -24,6 +101,7 @@ describe('todosReducer', () => {
     expect(items[0].task).toBe('A edited');
     expect(items[1]).toEqual(t2);
     expect(state.loading).toBe(false);
+    expect(state.error).toBeNull();
   });
 
   it('updateTodoSuccess: replaces only the matching item by id', () => {
@@ -42,6 +120,61 @@ describe('todosReducer', () => {
     expect(state.loading).toBe(false);
   });
 
+  it('updateTodoFailure: stores Error message', () => {
+    const state = todosReducer(
+      initialTodoState,
+      TodoActions.updateTodoFailure({ error: new Error('conflict') })
+    );
+
+    expect(state.error).toBe('conflict');
+  });
+
+  it('updateTodoFailure: falls back when error is not Error', () => {
+    const state = todosReducer(
+      initialTodoState,
+      TodoActions.updateTodoFailure({ error: 'fail' })
+    );
+
+    expect(state.error).toBe('Failed to update messages');
+  });
+
+  it('deleteTodo: clears error', () => {
+    const state = todosReducer(
+      { ...initialTodoState, error: 'old' },
+      TodoActions.deleteTodo({ todoId: t1.id })
+    );
+
+    expect(state.error).toBeNull();
+  });
+
+  it('deleteTodoSuccess: removes entity', () => {
+    const startState = todosAdapter.setAll([t1, t2], initialTodoState);
+    const state = todosReducer(
+      startState,
+      TodoActions.deleteTodoSuccess({ todoId: t1.id })
+    );
+
+    expect(selectAll(state)).toEqual([t2]);
+  });
+
+  it('deleteTodoFailure: stores Error message', () => {
+    const state = todosReducer(
+      initialTodoState,
+      TodoActions.deleteTodoFailure({ error: new Error('forbidden') })
+    );
+
+    expect(state.error).toBe('forbidden');
+  });
+
+  it('deleteTodoFailure: falls back when error is not Error', () => {
+    const state = todosReducer(
+      initialTodoState,
+      TodoActions.deleteTodoFailure({ error: 'fail' })
+    );
+
+    expect(state.error).toBe('Failed to delete messages');
+  });
+
   it('toggleTodoOptimistic: flips completed and tracks pending id', () => {
     const startState = todosAdapter.setAll([t1, t2], initialTodoState);
 
@@ -53,6 +186,29 @@ describe('todosReducer', () => {
     const items = selectAll(state);
     expect(items[0].completed).toBe(true);
     expect(items[1]).toEqual(t2);
+    expect(state.pendingToggleIds).toEqual([t1.id]);
+  });
+
+  it('toggleTodoOptimistic: returns same state when todo is missing', () => {
+    const state = todosReducer(
+      initialTodoState,
+      TodoActions.toggleTodoOptimistic({ id: 'missing' })
+    );
+
+    expect(state).toBe(initialTodoState);
+  });
+
+  it('toggleTodoOptimistic: does not duplicate pending id', () => {
+    const startState = {
+      ...todosAdapter.setAll([t1], initialTodoState),
+      pendingToggleIds: [t1.id],
+    };
+
+    const state = todosReducer(
+      startState,
+      TodoActions.toggleTodoOptimistic({ id: t1.id })
+    );
+
     expect(state.pendingToggleIds).toEqual([t1.id]);
   });
 
