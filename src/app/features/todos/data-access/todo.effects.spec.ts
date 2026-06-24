@@ -18,6 +18,7 @@ import { TodoService } from './todo.service';
 import { Store } from '@ngrx/store';
 import { routerNavigatedAction } from '@ngrx/router-store';
 import * as TodoActions from './todo.actions';
+import { Todo } from './todo.model';
 
 describe('TodoEffects loadTodos$', () => {
   let actions$: ReplaySubject<unknown>;
@@ -54,7 +55,7 @@ describe('TodoEffects loadTodos$', () => {
 
   it('passes userId from store to getTodos', async () => {
     getTodosMock.mockReturnValue(
-      of([{ id: '1', userId: 'user-1', task: 'A', completed: false }])
+      of([{ id: '1', userId: 'user-1', task: 'A', completed: false, tags: [], priority: 'medium' as const }])
     );
 
     actions$.next(TodoActions.loadTodos());
@@ -68,7 +69,7 @@ describe('TodoEffects loadTodos$', () => {
       .mockReturnValueOnce(throwError(() => new Error('network')))
       .mockReturnValueOnce(throwError(() => new Error('network')))
       .mockReturnValueOnce(
-        of([{ id: '1', userId: 'user-1', task: 'A', completed: false }])
+        of([{ id: '1', userId: 'user-1', task: 'A', completed: false, tags: [], priority: 'medium' as const }])
       );
 
     actions$.next(TodoActions.loadTodos());
@@ -125,9 +126,7 @@ describe('TodoEffects loadTodos$', () => {
   });
 
   it('does not dispatch loadTodosSuccess when load is cancelled on logout', async () => {
-    const pendingTodos$ = new Subject<
-      { id: string; userId: string; task: string; completed: boolean }[]
-    >();
+    const pendingTodos$ = new Subject<Todo[]>();
     getTodosMock.mockReturnValue(pendingTodos$.asObservable());
 
     let emitted: unknown;
@@ -138,7 +137,7 @@ describe('TodoEffects loadTodos$', () => {
     actions$.next(TodoActions.loadTodos());
     lifecycle.notifyCancelPendingRequests();
     pendingTodos$.next([
-      { id: '1', userId: 'user-1', task: 'A', completed: false },
+      { id: '1', userId: 'user-1', task: 'A', completed: false, tags: [], priority: 'medium' as const },
     ]);
 
     await new Promise((resolve) => setTimeout(resolve, 50));
@@ -255,6 +254,8 @@ describe('TodoEffects toggleTodo$ (marble)', () => {
     userId: 'user-1',
     task: 'A',
     completed: true,
+    tags: [] as string[],
+    priority: 'medium' as const,
   };
 
   function runToggleMarble(
@@ -376,7 +377,14 @@ describe('TodoEffects toggleTodoFailureToast$', () => {
 });
 
 describe('TodoEffects marbles', () => {
-  const todo = { id: '1', userId: 'user-1', task: 'A', completed: false };
+  const todo = {
+    id: '1',
+    userId: 'user-1',
+    task: 'A',
+    completed: false,
+    tags: [] as string[],
+    priority: 'medium' as const,
+  };
 
   function runTodoMarble(config: {
     actionsMarble: string;

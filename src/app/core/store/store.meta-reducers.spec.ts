@@ -114,7 +114,7 @@ describe('store meta-reducers', () => {
     state = reducer(
       state,
       TodoActions.loadTodosSuccess({
-        todos: [{ id: '1', userId: 'u1', task: 'A', completed: false }],
+        todos: [{ id: '1', userId: 'u1', task: 'A', completed: false, tags: [], priority: 'medium' as const }],
       })
     );
 

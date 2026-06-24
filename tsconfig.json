@@ -22,6 +22,7 @@
       "@app/shared/validators/*": ["src/app/shared/validators/*"],
       "@app/features/auth/*": ["src/app/features/auth/*"],
       "@app/features/todos/*": ["src/app/features/todos/*"],
+      "@app/features/notifications/*": ["src/app/features/notifications/*"],
       "@app/features/ui/*": ["src/app/features/ui/*"],
       "@app/layout/*": ["src/app/layout/*"]
     }

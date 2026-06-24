@@ -42,9 +42,32 @@
   font-size: 0.9rem;
 }
 .filter-btn.active {
-  background: #337ab7;
-  border-color: #337ab7;
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.tag-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tag-filter-btn {
+  padding: 4px 10px;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.tag-filter-btn.active {
+  background: #3730a3;
   color: #fff;
+  border-color: #3730a3;
 }
 
 .add-todo-form {

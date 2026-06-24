@@ -8,6 +8,8 @@
   display: flex;
   width: 100%;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 :host-context(li.completed) .todo-task {
@@ -34,6 +36,47 @@
 
 .todo-task:disabled {
   cursor: not-allowed;
+}
+
+.todo-task.priority-high {
+  font-weight: 600;
+}
+
+.todo-task.priority-low {
+  color: #6b7280;
+}
+
+.todo-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tag-chip {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.priority-badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.priority-badge[data-priority='high'] {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.priority-badge[data-priority='low'] {
+  background: #ecfdf5;
+  color: #047857;
 }
 
 .actions {

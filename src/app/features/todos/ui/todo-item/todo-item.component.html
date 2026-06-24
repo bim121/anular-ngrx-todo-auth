@@ -10,10 +10,22 @@
     type="button"
     (click)="onToggle()"
     class="todo-task"
+    [class.priority-high]="todo().priority === 'high'"
+    [class.priority-low]="todo().priority === 'low'"
     [disabled]="disabled()"
   >
     {{ todo().task }}
   </button>
+  @if (todo().tags.length > 0) {
+    <div class="todo-tags" aria-label="Tags">
+      @for (tag of todo().tags; track tag) {
+        <span class="tag-chip">{{ tag }}</span>
+      }
+    </div>
+  }
+  <span class="priority-badge" [attr.data-priority]="todo().priority">
+    {{ todo().priority }}
+  </span>
   <div class="actions">
     <ng-content />
   </div>

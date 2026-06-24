@@ -25,6 +25,11 @@ import { authFeature } from '@app/features/auth/data-access/auth.feature';
 import { todosReducer, todosFeatureKey } from '@app/features/todos/data-access/todo.reducer';
 import { AuthEffects } from '@app/features/auth/data-access/auth.effects';
 import { TodoEffects } from '@app/features/todos/data-access/todo.effects';
+import {
+  notificationsReducer,
+  notificationsFeatureKey,
+} from '@app/features/notifications/data-access/notification.reducer';
+import { NotificationEffects } from '@app/features/notifications/data-access/notification.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -52,10 +57,11 @@ export const appConfig: ApplicationConfig = {
     ),
     provideState(authFeature.name, authFeature.reducer),
     provideState(todosFeatureKey, todosReducer),
+    provideState(notificationsFeatureKey, notificationsReducer),
     provideState(appConfigFeatureKey, appConfigReducer),
     provideState('router', routerReducer),
     provideAppConfigInitializer(),
-    provideEffects(AuthEffects, TodoEffects),
+    provideEffects(AuthEffects, TodoEffects, NotificationEffects),
     provideRouterStore({ serializer: CustomRouterSerializer }),
     ...(isDevMode()
       ? [provideStoreDevtools(devtoolsConfig)]

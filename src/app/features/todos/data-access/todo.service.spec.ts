@@ -28,7 +28,16 @@ describe('TodoService', () => {
     const todos = [{ id: '1', userId, task: 'A', completed: false }];
 
     service.getTodos(userId).subscribe((result) => {
-      expect(result).toEqual(todos);
+      expect(result).toEqual([
+        {
+          id: '1',
+          userId,
+          task: 'A',
+          completed: false,
+          tags: [],
+          priority: 'medium',
+        },
+      ]);
     });
 
     const req = httpMock.expectOne(

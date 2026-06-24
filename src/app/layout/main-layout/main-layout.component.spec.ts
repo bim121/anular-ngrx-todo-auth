@@ -4,6 +4,10 @@ import { Store } from '@ngrx/store';
 import { BehaviorSubject, of } from 'rxjs';
 import { User } from '@app/features/auth/data-access/auth.model';
 import { selectUser } from '@app/features/auth/data-access/auth.selectors';
+import {
+  selectAllNotifications,
+  selectUnreadNotificationsCount,
+} from '@app/features/notifications/data-access/notification.selectors';
 import { RoutePageContextService } from '@app/core/services/route-page-context.service';
 import { MainLayoutComponent } from './main-layout.component';
 
@@ -21,8 +25,18 @@ describe('MainLayoutComponent (NgRx + zoneless)', () => {
         {
           provide: Store,
           useValue: {
-            select: (selector: unknown) =>
-              selector === selectUser ? user$.asObservable() : of(undefined),
+            select: (selector: unknown) => {
+              if (selector === selectUser) {
+                return user$.asObservable();
+              }
+              if (selector === selectAllNotifications) {
+                return of([]);
+              }
+              if (selector === selectUnreadNotificationsCount) {
+                return of(0);
+              }
+              return of(undefined);
+            },
             dispatch: vi.fn(),
           },
         },

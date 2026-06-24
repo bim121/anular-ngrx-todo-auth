@@ -9,19 +9,24 @@ import {
 import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { Todo } from '@app/features/todos/data-access/todo.model';
+import { Todo, TodoTreeNode } from '@app/features/todos/data-access/todo.model';
 import * as TodoActions from '@app/features/todos/data-access/todo.actions';
 import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
-import { TodoItemComponent } from '@app/features/todos/ui/todo-item/todo-item.component';
 import { TodoStatsPanelComponent } from '@app/features/todos/ui/todo-stats-panel/todo-stats-panel.component';
+import { TodoTreeItemComponent } from '@app/features/todos/ui/todo-tree-item/todo-tree-item.component';
 import { ToastService } from '@app/shared/ui/toast/toast.service';
 import { TodoListUiStore } from './todo-list-ui.store';
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [FormsModule, SpinnerComponent, TodoItemComponent, TodoStatsPanelComponent],
+  imports: [
+    FormsModule,
+    SpinnerComponent,
+    TodoStatsPanelComponent,
+    TodoTreeItemComponent,
+  ],
   providers: [TodoListUiStore],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
@@ -35,6 +40,9 @@ export class TodoListComponent {
   readonly todos = toSignal(this.store.select(TodoSelectors.selectAllTodos), {
     initialValue: [] as Todo[],
   });
+  readonly availableTags = toSignal(this.store.select(TodoSelectors.selectAllTags), {
+    initialValue: [] as string[],
+  });
   readonly loading = toSignal(this.store.select(TodoSelectors.selectTodosLoading), {
     initialValue: false,
   });
@@ -45,19 +53,34 @@ export class TodoListComponent {
     this.store.select(TodoSelectors.selectPendingToggleIds),
     { initialValue: [] as string[] }
   );
-  readonly filteredTodos = computed(() => {
-    const items = this.todos();
-    const f = this.uiStore.filter();
 
-    switch (f) {
-      case 'active':
-        return items.filter((todo) => !todo.completed);
-      case 'done':
-        return items.filter((todo) => todo.completed);
-      default:
-        return items;
+  readonly filteredTodoTree = computed(() => {
+    let items = this.todos();
+    const statusFilter = this.uiStore.filter();
+    const tag = this.uiStore.selectedTag();
+
+    if (tag) {
+      items = items.filter((todo) => todo.tags.includes(tag));
     }
+
+    switch (statusFilter) {
+      case 'active':
+        items = items.filter((todo) => !todo.completed);
+        break;
+      case 'done':
+        items = items.filter((todo) => todo.completed);
+        break;
+    }
+
+    return TodoSelectors.buildTodoTree(items);
   });
+
+  readonly visibleTodoCount = computed(() => {
+    const countNodes = (nodes: TodoTreeNode[]): number =>
+      nodes.reduce((sum, node) => sum + 1 + countNodes(node.children), 0);
+    return countNodes(this.filteredTodoTree());
+  });
+
   readonly todoToggled = output<string>();
 
   newTask = '';
@@ -79,9 +102,8 @@ export class TodoListComponent {
     this.newTask = '';
   }
 
-  isTogglePending(todoId: string): boolean {
-    return this.pendingToggleIds().includes(todoId);
-  }
+  isTogglePending = (todoId: string): boolean =>
+    this.pendingToggleIds().includes(todoId);
 
   onTodoToggled(todoId: string): void {
     if (this.loading()) return;

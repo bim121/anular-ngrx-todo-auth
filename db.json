@@ -43,33 +43,53 @@
       "userId": "user_1",
       "task": "Learn NgRx Effects",
       "completed": false,
-      "createdAt": "2026-01-01T00:00:00.000Z"
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "tags": ["learning", "ngrx"],
+      "priority": "high"
+    },
+    {
+      "id": "todo_1_sub1",
+      "userId": "user_1",
+      "task": "Read marble testing docs",
+      "completed": false,
+      "createdAt": "2026-01-02T00:00:00.000Z",
+      "tags": ["learning"],
+      "priority": "medium",
+      "parentId": "todo_1"
     },
     {
       "id": "todo_user2",
       "userId": "user_2",
       "task": "Other user todo",
       "completed": false,
-      "createdAt": "2026-05-29T12:00:00.000Z"
+      "createdAt": "2026-05-29T12:00:00.000Z",
+      "tags": [],
+      "priority": "low"
     },
     {
       "id": "PMp4qyw2db4",
       "userId": "user_1",
       "task": "New task",
       "completed": false,
-      "createdAt": "2026-06-09T00:00:00.000Z"
+      "createdAt": "2026-06-09T00:00:00.000Z",
+      "tags": ["work"],
+      "priority": "medium"
     },
     {
       "id": "YklJHfmNhJs",
       "userId": "user_1",
       "task": "Verify",
-      "completed": false
+      "completed": false,
+      "tags": ["work"],
+      "priority": "low"
     },
     {
       "userId": "user_1",
       "task": "ping",
       "completed": false,
-      "id": "HI2oFOHVYNE"
+      "id": "HI2oFOHVYNE",
+      "tags": [],
+      "priority": "medium"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

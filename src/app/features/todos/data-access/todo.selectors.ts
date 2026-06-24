@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { TodosState } from './todo.model';
+import { Todo, TodoTreeNode, TodosState } from './todo.model';
 import {
   selectAll,
   selectEntities,
@@ -45,3 +45,34 @@ export const selectIsTodoTogglePending = (id: string) =>
 
 export const selectTodoById = (id: string) =>
   createSelector(selectTodoEntities, (entities) => entities[id]);
+
+export const selectTodosByTag = (tag: string) =>
+  createSelector(selectAllTodos, (todos) =>
+    todos.filter((todo) => todo.tags.includes(tag))
+  );
+
+export const selectAllTags = createSelector(selectAllTodos, (todos) =>
+  [...new Set(todos.flatMap((todo) => todo.tags))].sort()
+);
+
+export function buildTodoTree(todos: readonly Todo[]): TodoTreeNode[] {
+  const byParent = new Map<string | undefined, Todo[]>();
+
+  for (const todo of todos) {
+    const key = todo.parentId;
+    if (!byParent.has(key)) {
+      byParent.set(key, []);
+    }
+    byParent.get(key)!.push(todo);
+  }
+
+  const build = (parentId: string | undefined): TodoTreeNode[] =>
+    (byParent.get(parentId) ?? []).map((todo) => ({
+      ...todo,
+      children: build(todo.id),
+    }));
+
+  return build(undefined);
+}
+
+export const selectTodoTree = createSelector(selectAllTodos, buildTodoTree);

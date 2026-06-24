@@ -9,8 +9,22 @@ import * as AuthActions from '@app/features/auth/data-access/auth.actions';
 import { Todo } from './todo.model';
 
 describe('todosReducer', () => {
-  const t1: Todo = { id: '1', userId: 'u1', task: 'A', completed: false };
-  const t2: Todo = { id: '2', userId: 'u1', task: 'B', completed: false };
+  const t1: Todo = {
+    id: '1',
+    userId: 'u1',
+    task: 'A',
+    completed: false,
+    tags: [],
+    priority: 'medium',
+  };
+  const t2: Todo = {
+    id: '2',
+    userId: 'u1',
+    task: 'B',
+    completed: false,
+    tags: [],
+    priority: 'medium',
+  };
 
   it('returns initial state for unknown action', () => {
     const state = todosReducer(undefined, { type: 'NOOP' } as never);

@@ -54,67 +54,46 @@
       </button>
     </div>
 
-    @let count = filteredTodos().length;
-    <span class="todo-count">{{ count }} items</span>
+    @if (availableTags().length > 0) {
+      <div class="tag-bar" role="group" aria-label="Filter by tag">
+        <button
+          type="button"
+          class="tag-filter-btn"
+          [class.active]="uiStore.selectedTag() === null"
+          (click)="uiStore.setTag(null)"
+        >
+          All tags
+        </button>
+        @for (tag of availableTags(); track tag) {
+          <button
+            type="button"
+            class="tag-filter-btn"
+            [class.active]="uiStore.selectedTag() === tag"
+            (click)="uiStore.setTag(tag)"
+          >
+            {{ tag }}
+          </button>
+        }
+      </div>
+    }
+
+    <span class="todo-count">{{ visibleTodoCount() }} items</span>
 
     <ul>
-      @for (todo of filteredTodos(); track todo.id) {
-        <li [class.completed]="todo.completed">
-          @if (uiStore.editingId() !== todo.id) {
-            <app-todo-item
-              [todo]="todo"
-              [disabled]="loading() || isTogglePending(todo.id)"
-              (toggled)="onTodoToggled(todo.id)"
-            >
-              <button
-                type="button"
-                (click)="startEdit(todo)"
-                class="edit-btn"
-                [disabled]="loading()"
-              >
-                Edit
-              </button>
-              <button
-                type="button"
-                (click)="deleteTodo(todo.id)"
-                class="delete-btn"
-                [disabled]="loading()"
-              >
-                Delete
-              </button>
-            </app-todo-item>
-          } @else {
-            <div class="edit-mode">
-              <input
-                type="text"
-                [(ngModel)]="updatedTask"
-                name="updatedTask"
-                class="edit-input"
-                (keyup.enter)="saveEdit()"
-                (keyup.escape)="cancelEdit()"
-                [disabled]="loading()"
-              />
-              <div class="actions">
-                <button
-                  type="button"
-                  (click)="saveEdit()"
-                  class="save-btn"
-                  [disabled]="loading()"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  (click)="cancelEdit()"
-                  class="cancel-btn"
-                  [disabled]="loading()"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          }
-        </li>
+      @for (node of filteredTodoTree(); track node.id) {
+        <app-todo-tree-item
+          [node]="node"
+          [loading]="loading()"
+          [editingId]="uiStore.editingId()"
+          [updatedTask]="updatedTask"
+          [isTogglePending]="isTogglePending"
+          (toggled)="onTodoToggled($event)"
+          (editStarted)="startEdit($event)"
+          (deleted)="deleteTodo($event)"
+          (editSaved)="saveEdit()"
+          (editCancelled)="cancelEdit()"
+          (updatedTaskChange)="updatedTask = $event"
+        />
       } @empty {
         <li class="empty-list-message">No todos</li>
       }

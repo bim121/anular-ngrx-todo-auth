@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, map, Observable, throwError, timeout } from "rxjs";
-import { Todo } from "./todo.model";
+import { Todo, DEFAULT_TODO_PRIORITY, normalizeTodo } from "./todo.model";
 import { v4 as uuidv4 } from 'uuid';
 
 const API_TIMEOUT_MS = 15_000;
@@ -17,6 +17,7 @@ export class TodoService {
     public getTodos(userId: string): Observable<Todo[]> {
         return this.http.get<Todo[]>(`${this.todoUrl}?userId=${userId}`).pipe(
             timeout(API_TIMEOUT_MS),
+            map((todos) => todos.map((todo) => normalizeTodo(todo))),
             catchError(this.handleError)
         );
     }
@@ -27,11 +28,14 @@ export class TodoService {
             userId,
             task,
             completed: false,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            tags: [],
+            priority: DEFAULT_TODO_PRIORITY,
         };
 
         return this.http.post<Todo>(this.todoUrl, newTodo).pipe(
             timeout(API_TIMEOUT_MS),
+            map((todo) => normalizeTodo(todo)),
             catchError(this.handleError)
         );
     }
@@ -43,7 +47,7 @@ export class TodoService {
                 if (todo.userId !== userId) {
                     throw new Error('Unauthorized to update this todo');
                 }
-                return todo;
+                return normalizeTodo(todo);
             }),
             catchError(this.handleError)
         );

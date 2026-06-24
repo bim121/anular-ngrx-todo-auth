@@ -1,0 +1,43 @@
+.todo-tree-item {
+  padding-left: calc(var(--tree-depth, 0) * 16px);
+}
+
+.subtasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.edit-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn,
+.delete-btn,
+.save-btn,
+.cancel-btn {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+.delete-btn {
+  color: #c0392b;
+}

@@ -1,0 +1,82 @@
+<li
+  [class.completed]="node().completed"
+  [style.--tree-depth]="depth()"
+  class="todo-tree-item"
+>
+  @if (editingId() !== node().id) {
+    <app-todo-item
+      [todo]="node()"
+      [disabled]="loading() || isTogglePending()(node().id)"
+      (toggled)="onToggle(node().id)"
+    >
+      <button
+        type="button"
+        (click)="onStartEdit(node())"
+        class="edit-btn"
+        [disabled]="loading()"
+      >
+        Edit
+      </button>
+      <button
+        type="button"
+        (click)="onDelete(node().id)"
+        class="delete-btn"
+        [disabled]="loading()"
+      >
+        Delete
+      </button>
+    </app-todo-item>
+  } @else {
+    <div class="edit-mode">
+      <input
+        type="text"
+        [ngModel]="updatedTask()"
+        (ngModelChange)="updatedTaskChange.emit($event)"
+        name="updatedTask"
+        class="edit-input"
+        (keyup.enter)="editSaved.emit()"
+        (keyup.escape)="editCancelled.emit()"
+        [disabled]="loading()"
+      />
+      <div class="actions">
+        <button
+          type="button"
+          (click)="editSaved.emit()"
+          class="save-btn"
+          [disabled]="loading()"
+        >
+          Save
+        </button>
+        <button
+          type="button"
+          (click)="editCancelled.emit()"
+          class="cancel-btn"
+          [disabled]="loading()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (node().children.length > 0) {
+    <ul class="subtasks">
+      @for (child of node().children; track child.id) {
+        <app-todo-tree-item
+          [node]="child"
+          [depth]="depth() + 1"
+          [loading]="loading()"
+          [editingId]="editingId()"
+          [updatedTask]="updatedTask()"
+          [isTogglePending]="isTogglePending()"
+          (toggled)="toggled.emit($event)"
+          (editStarted)="editStarted.emit($event)"
+          (deleted)="deleted.emit($event)"
+          (editSaved)="editSaved.emit()"
+          (editCancelled)="editCancelled.emit()"
+          (updatedTaskChange)="updatedTaskChange.emit($event)"
+        />
+      }
+    </ul>
+  }
+</li>

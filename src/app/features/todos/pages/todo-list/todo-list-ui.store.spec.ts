@@ -23,6 +23,18 @@ describe('TodoListUiStore', () => {
     expect(uiStore.filter()).toBe('active');
   });
 
+  it('setTag updates selectedTag signal', () => {
+    const uiStore = TestBed.inject(TodoListUiStore);
+
+    expect(uiStore.selectedTag()).toBeNull();
+
+    uiStore.setTag('work');
+    expect(uiStore.selectedTag()).toBe('work');
+
+    uiStore.setTag(null);
+    expect(uiStore.selectedTag()).toBeNull();
+  });
+
   it('startEdit and cancelEdit manage editingId', () => {
     const uiStore = TestBed.inject(TodoListUiStore);
 
