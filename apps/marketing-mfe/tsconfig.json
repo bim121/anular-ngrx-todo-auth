@@ -20,6 +20,9 @@
       "@marketing/core/*": ["src/core/*"],
       "@marketing/shared/*": ["src/shared/*"],
       "@marketing/features/*": ["src/features/*"],
+      "@marketing/stores/*": ["src/stores/*"],
+      "@marketing/hooks/*": ["src/hooks/*"],
+      "@marketing/providers/*": ["src/providers/*"],
       "@shared/validators/*": ["../../libs/shared/validators/*"]
     }
   },

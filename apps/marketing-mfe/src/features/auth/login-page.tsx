@@ -3,16 +3,14 @@ import {
   AUTH_VALIDATION_MESSAGES,
   isValidEmail,
 } from '@shared/validators/email';
-import { AuthResponse, loginUser } from '@marketing/core/api';
+import { loginUser } from '@marketing/core/api';
+import { useAuthStore } from '@marketing/stores/authStore';
 import { ANGULAR_APP_URL } from '@marketing/core/env';
 import { Toast } from '@marketing/shared/ui/toast';
 import './login-page.css';
 
-interface LoginPageProps {
-  onLoginSuccess: (auth: AuthResponse) => void;
-}
-
-export function LoginPage({ onLoginSuccess }: LoginPageProps) {
+export function LoginPage() {
+  const login = useAuthStore((state) => state.login);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -61,7 +59,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
     try {
       const auth = await loginUser(email, password);
       setSuccess(`Welcome, ${auth.user.name}! Login successful.`);
-      onLoginSuccess(auth);
+      login(auth);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Login failed. Try again.';
@@ -78,7 +76,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
           <p className="login-card__eyebrow">marketing-mfe</p>
           <h1>Sign in</h1>
           <p className="login-card__hint">
-            React hooks todo list — same json-server as the Angular app.
+            React hooks + TanStack Query — same json-server as the Angular app.
           </p>
         </header>
 

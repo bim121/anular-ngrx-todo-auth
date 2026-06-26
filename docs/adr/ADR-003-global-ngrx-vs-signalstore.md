@@ -8,6 +8,8 @@
 
 - [ADR-006](./ADR-006-local-resource-vs-global-store.md) — httpResource vs NgRx
 - [ADR-007](./ADR-007-optimistic-todo-toggle.md) — optimistic toggle in NgRx entity store
+- [ADR-003-react-state.md](./ADR-003-react-state.md) — React mirror (TanStack Query + Zustand)
+- [ADR-012](./ADR-012-phase-03-advanced-ngrx-recap.md) — Phase 3 cheat sheet
 - [ngrx-effects-operators.md](../ngrx-effects-operators.md)
 
 ---

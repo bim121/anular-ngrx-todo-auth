@@ -1,95 +1,42 @@
-import {
-  FormEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import {
-  createTodo,
-  deleteTodo,
-  fetchTodos,
-  updateTodo,
-  type Todo,
-} from '@marketing/core/api';
-import { Toast } from '@marketing/shared/ui/toast';
+import { FormEvent, useMemo, useState } from 'react';
 import { applyFilter, type TodoFilter } from './apply-filter';
+import {
+  useAddTodoMutation,
+  useDeleteTodoMutation,
+  useToggleTodoMutation,
+  useTodosQuery,
+} from './useTodosQuery';
+import { useAuthStore } from '@marketing/stores/authStore';
+import { useLogout } from '@marketing/hooks/useLogout';
+import { Toast } from '@marketing/shared/ui/toast';
 import './TodoList.css';
 
-interface TodoListProps {
-  userId: string;
-  accessToken: string;
-  userName: string;
-  onLogout: () => void;
-}
+export function TodoList() {
+  const userName = useAuthStore((state) => state.userName) ?? 'User';
+  const logout = useLogout();
 
-export function TodoList({
-  userId,
-  accessToken,
-  userName,
-  onLogout,
-}: TodoListProps) {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const { data: todos = [], isLoading, error: queryError } = useTodosQuery();
+  const addTodoMutation = useAddTodoMutation();
+  const deleteTodoMutation = useDeleteTodoMutation();
+  const toggleTodoMutation = useToggleTodoMutation();
+
   const [filter, setFilter] = useState<TodoFilter>('all');
   const [newTask, setNewTask] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [mutating, setMutating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadTodos() {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const items = await fetchTodos(userId, accessToken);
-        if (!cancelled) {
-          setTodos(items);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          const message =
-            err instanceof Error ? err.message : 'Failed to load todos';
-          setError(message);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    }
-
-    void loadTodos();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [userId, accessToken]);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const filtered = useMemo(
     () => applyFilter(todos, filter),
     [todos, filter]
   );
 
-  const runMutation = useCallback(
-    async (action: () => Promise<void>) => {
-      setMutating(true);
-      setError(null);
+  const mutating =
+    addTodoMutation.isPending ||
+    deleteTodoMutation.isPending ||
+    toggleTodoMutation.isPending;
 
-      try {
-        await action();
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Todo action failed';
-        setError(message);
-      } finally {
-        setMutating(false);
-      }
-    },
-    []
-  );
+  const error =
+    actionError ??
+    (queryError instanceof Error ? queryError.message : null);
 
   async function handleAdd(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -98,28 +45,35 @@ export function TodoList({
       return;
     }
 
-    await runMutation(async () => {
-      const created = await createTodo(task, userId, accessToken);
-      setTodos((current) => [...current, created]);
+    setActionError(null);
+
+    try {
+      await addTodoMutation.mutateAsync(task);
       setNewTask('');
-    });
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to add todo');
+    }
   }
 
-  async function handleToggle(todo: Todo) {
+  async function handleToggle(todoId: string) {
     if (mutating) {
       return;
     }
 
-    await runMutation(async () => {
-      const updated = await updateTodo(
-        { id: todo.id, completed: !todo.completed },
-        userId,
-        accessToken
+    const todo = todos.find((item) => item.id === todoId);
+    if (!todo) {
+      return;
+    }
+
+    setActionError(null);
+
+    try {
+      await toggleTodoMutation.mutateAsync(todo);
+    } catch (err) {
+      setActionError(
+        err instanceof Error ? err.message : 'Failed to update todo'
       );
-      setTodos((current) =>
-        current.map((item) => (item.id === updated.id ? updated : item))
-      );
-    });
+    }
   }
 
   async function handleDelete(todoId: string) {
@@ -131,10 +85,15 @@ export function TodoList({
       return;
     }
 
-    await runMutation(async () => {
-      await deleteTodo(todoId, userId, accessToken);
-      setTodos((current) => current.filter((item) => item.id !== todoId));
-    });
+    setActionError(null);
+
+    try {
+      await deleteTodoMutation.mutateAsync(todoId);
+    } catch (err) {
+      setActionError(
+        err instanceof Error ? err.message : 'Failed to delete todo'
+      );
+    }
   }
 
   return (
@@ -145,13 +104,13 @@ export function TodoList({
           <h1>My Todos</h1>
           <p className="todo-header__user">Signed in as {userName}</p>
         </div>
-        <button type="button" className="todo-header__logout" onClick={onLogout}>
+        <button type="button" className="todo-header__logout" onClick={logout}>
           Logout
         </button>
       </header>
 
       {error ? (
-        <Toast type="error" message={error} onDismiss={() => setError(null)} />
+        <Toast type="error" message={error} onDismiss={() => setActionError(null)} />
       ) : null}
 
       <section className="todo-card">
@@ -161,15 +120,18 @@ export function TodoList({
             value={newTask}
             onChange={(event) => setNewTask(event.target.value)}
             placeholder="What needs to be done?"
-            disabled={loading || mutating}
+            disabled={isLoading || mutating}
             aria-label="New task"
           />
-          <button type="submit" disabled={!newTask.trim() || loading || mutating}>
+          <button
+            type="submit"
+            disabled={!newTask.trim() || isLoading || mutating}
+          >
             Add Task
           </button>
         </form>
 
-        {loading ? (
+        {isLoading ? (
           <p className="todo-status" aria-busy="true">
             Loading tasks…
           </p>
@@ -181,7 +143,9 @@ export function TodoList({
                   key={value}
                   type="button"
                   className={
-                    filter === value ? 'todo-filter todo-filter--active' : 'todo-filter'
+                    filter === value
+                      ? 'todo-filter todo-filter--active'
+                      : 'todo-filter'
                   }
                   onClick={() => setFilter(value)}
                 >
@@ -191,18 +155,23 @@ export function TodoList({
             </div>
 
             <p className="todo-count">{filtered.length} items</p>
+            <p className="todo-hint">
+              Tip: task starting with <code>[500]</code> rolls back on toggle (mock API error).
+            </p>
 
             <ul className="todo-list">
               {filtered.map((todo) => (
                 <li
                   key={todo.id}
-                  className={todo.completed ? 'todo-item todo-item--done' : 'todo-item'}
+                  className={
+                    todo.completed ? 'todo-item todo-item--done' : 'todo-item'
+                  }
                 >
                   <label className="todo-item__label">
                     <input
                       type="checkbox"
                       checked={todo.completed}
-                      onChange={() => void handleToggle(todo)}
+                      onChange={() => void handleToggle(todo.id)}
                       disabled={mutating}
                     />
                     <span>{todo.task}</span>

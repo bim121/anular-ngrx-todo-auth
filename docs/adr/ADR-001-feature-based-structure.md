@@ -30,6 +30,8 @@ Auth and todos live under `features/`. Cross-feature imports are allowed only fr
 - No barrel `index.ts` in `core/` yet — direct file imports avoid circular deps and tree-shaking issues.
 - `layout/` and `shared/ui/` are placeholders until Phase 1.3 (layouts) and toast/spinner work.
 
+**See also:** [ADR-010](./ADR-010-phase-01-production-core-recap.md) — full Phase 1 cheat sheet.
+
 ## Alternatives considered
 
 - **Flat `auth/` + `todos/` at app root** — worked for Phase 0 but mixes pages and store; harder to enforce boundaries as the app grows.

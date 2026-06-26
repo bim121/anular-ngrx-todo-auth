@@ -313,6 +313,21 @@ Mock load from `assets/config.json` в APP_INITIALIZER.
 
 ### R.3.1 — TanStack Query setup
 
+- [x] `@tanstack/react-query` + devtools installed
+- [x] `useTodosQuery`, CRUD mutations, optimistic toggle + rollback
+- [x] `QueryClientProvider` in `AppProviders`; Devtools dev-only
+- [x] Mock 500 via `[500]` task prefix + `X-Mock-Toggle-Error` middleware
+
+### R.3.2 — Zustand auth slice
+
+- [x] `stores/authStore.ts` — `login` / `logout`
+- [x] `useLogout` clears Query cache (`queryClient.clear()`)
+
+### R.3.3 — ADR: Query vs Zustand boundaries
+
+- [x] `docs/adr/ADR-003-react-state.md` — mirror Angular ADR-003
+- [x] Phase recaps: `ADR-010` (Phase 1), `ADR-011` (Phase 2), `ADR-012` (Phase 3)
+
 ```bash
 npm install @tanstack/react-query --workspace=marketing-mfe
 ```
@@ -344,24 +359,6 @@ export function useToggleTodoMutation() {
 3. React Query Devtools только в development.
 
 **Критерий:** toggle optimistic — UI мгновенный; при mock 500 — rollback.
-
-### R.3.2 — Zustand auth slice
-
-```typescript
-// stores/authStore.ts
-export const useAuthStore = create<AuthState>((set) => ({
-  token: null,
-  userId: null,
-  login: (token, userId) => set({ token, userId }),
-  logout: () => set({ token: null, userId: null }),
-}));
-```
-
-**Проверка:** logout очищает Query cache (`queryClient.clear()`).
-
-### R.3.3 — ADR: Query vs Zustand boundaries
-
-**Файл:** `docs/adr/ADR-003-react-state.md` — mirror Angular ADR-003.
 
 ---
 

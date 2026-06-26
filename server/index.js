@@ -27,7 +27,8 @@ const db = new Low(observer, {});
 await db.read();
 
 const app = createApp(db, { logger: false });
-const { auth, getCurrentUserProfile, rejectDuplicateUserEmail } = createApiMiddleware(db);
+const { auth, getCurrentUserProfile, rejectDuplicateUserEmail, mockTogglePatchError } =
+  createApiMiddleware(db);
 
 /** Insert custom middleware after body parser, before json-server routes. */
 function preRouteLayer(template, handler) {
@@ -55,7 +56,8 @@ app.middleware.splice(
   0,
   preRouteLayer(templateLayer, auth),
   preRouteLayer(templateLayer, getCurrentUserProfile),
-  preRouteLayer(templateLayer, rejectDuplicateUserEmail)
+  preRouteLayer(templateLayer, rejectDuplicateUserEmail),
+  preRouteLayer(templateLayer, mockTogglePatchError)
 );
 
 app.listen(port, () => {

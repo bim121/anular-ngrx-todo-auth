@@ -116,6 +116,18 @@
   color: #6b7280;
 }
 
+.todo-hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.todo-hint code {
+  background: #f3f4f6;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
 .todo-list {
   list-style: none;
   margin: 0;

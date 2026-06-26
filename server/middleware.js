@@ -93,6 +93,23 @@ export function createApiMiddleware(db) {
 
       next();
     },
+
+    /** @type {import('@tinyhttp/app').RequestHandler} */
+    mockTogglePatchError(req, res, next) {
+      const pathname = getPathname(req);
+
+      if (req.method !== 'PATCH' || !pathname.startsWith('/todos/')) {
+        next();
+        return;
+      }
+
+      if (req.headers['x-mock-toggle-error'] === '1') {
+        res.status(500).json({ error: 'Mock toggle failure' });
+        return;
+      }
+
+      next();
+    },
   };
 }
 

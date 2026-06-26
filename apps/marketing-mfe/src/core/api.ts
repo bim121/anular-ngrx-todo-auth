@@ -149,11 +149,17 @@ export async function createTodo(
 export async function updateTodo(
   todo: Partial<Todo> & { id: string },
   userId: string,
-  accessToken: string
+  accessToken: string,
+  options?: { mockToggleError?: boolean }
 ): Promise<Todo> {
+  const headers: HeadersInit = {
+    ...authHeaders(accessToken),
+    ...(options?.mockToggleError ? { 'X-Mock-Toggle-Error': '1' } : {}),
+  };
+
   const response = await fetch(`${API_BASE_URL}/todos/${todo.id}`, {
     method: 'PATCH',
-    headers: authHeaders(accessToken),
+    headers,
     body: JSON.stringify(todo),
   });
 
