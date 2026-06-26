@@ -2,7 +2,6 @@ import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import type { LoginDto } from '@shared/api-types/login.dto';
 import { loginUser } from '@/core/api';
-import { useTodosStore } from './todos';
 
 const STORAGE_KEYS = {
   token: 'analytics-mfe:token',
@@ -65,7 +64,6 @@ export const useAuthStore = defineStore('auth', () => {
     userId.value = null;
     userName.value = null;
     error.value = null;
-    useTodosStore().$reset();
   }
 
   return {

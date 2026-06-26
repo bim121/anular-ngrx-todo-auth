@@ -1,19 +1,43 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia';
 import { useAuth } from '@/composables/useAuth';
+import { useLogout } from '@/composables/useLogout';
 import { useTodoFilter } from '@/composables/useTodoFilter';
-import { useTodosStore } from '@/stores/todos';
+import {
+  useAddTodoMutation,
+  useDeleteTodoMutation,
+  useToggleTodoMutation,
+  useTodosQuery,
+} from '@/features/todos/useTodosQuery';
 
 const router = useRouter();
-const { token, userId, userName, logout } = useAuth();
-const todosStore = useTodosStore();
-const { loading, error } = storeToRefs(todosStore);
-const { filter, filteredTodos } = useTodoFilter();
+const { userName } = useAuth();
+const logout = useLogout();
+
+const { data, isLoading, error: queryError } = useTodosQuery();
+const addTodoMutation = useAddTodoMutation();
+const deleteTodoMutation = useDeleteTodoMutation();
+const toggleTodoMutation = useToggleTodoMutation();
+
+const todos = computed(() => data.value ?? []);
+const { filter, filteredTodos } = useTodoFilter(todos);
 
 const newTask = ref('');
-const mutating = ref(false);
+const actionError = ref<string | null>(null);
+
+const mutating = computed(
+  () =>
+    addTodoMutation.isPending.value ||
+    deleteTodoMutation.isPending.value ||
+    toggleTodoMutation.isPending.value
+);
+
+const error = computed(
+  () =>
+    actionError.value ??
+    (queryError.value instanceof Error ? queryError.value.message : null)
+);
 
 watch(filter, (value) => {
   if (import.meta.env.DEV) {
@@ -21,62 +45,60 @@ watch(filter, (value) => {
   }
 });
 
-onMounted(async () => {
-  if (!userId.value || !token.value) {
-    return;
-  }
-
-  try {
-    await todosStore.loadAll(userId.value);
-  } catch {
-    // error surfaced via store
-  }
-});
-
-async function runMutation(action: () => Promise<void>): Promise<void> {
-  mutating.value = true;
-
-  try {
-    await action();
-  } finally {
-    mutating.value = false;
-  }
-}
-
 async function handleAdd(): Promise<void> {
   const task = newTask.value.trim();
-  if (!task || mutating.value || !userId.value || !token.value) {
+  if (!task || mutating.value) {
     return;
   }
 
-  await runMutation(async () => {
-    await todosStore.addTodo(task);
+  actionError.value = null;
+
+  try {
+    await addTodoMutation.mutateAsync(task);
     newTask.value = '';
-  });
+  } catch (err) {
+    actionError.value =
+      err instanceof Error ? err.message : 'Failed to add todo';
+  }
 }
 
 async function handleToggle(todoId: string): Promise<void> {
-  if (mutating.value || !userId.value || !token.value) {
+  if (mutating.value) {
     return;
   }
 
-  await runMutation(async () => {
-    await todosStore.toggleOptimistic(todoId);
-  });
+  const todo = todos.value.find((item) => item.id === todoId);
+  if (!todo) {
+    return;
+  }
+
+  actionError.value = null;
+
+  try {
+    await toggleTodoMutation.mutateAsync(todo);
+  } catch (err) {
+    actionError.value =
+      err instanceof Error ? err.message : 'Failed to update todo';
+  }
 }
 
 async function handleDelete(todoId: string): Promise<void> {
-  if (mutating.value || !userId.value || !token.value) {
+  if (mutating.value) {
     return;
   }
 
-  if (!window.confirm('Are you sure you want to delete this task?')) {
+  if (!globalThis.confirm('Are you sure you want to delete this task?')) {
     return;
   }
 
-  await runMutation(async () => {
-    await todosStore.removeTodo(todoId);
-  });
+  actionError.value = null;
+
+  try {
+    await deleteTodoMutation.mutateAsync(todoId);
+  } catch (err) {
+    actionError.value =
+      err instanceof Error ? err.message : 'Failed to delete todo';
+  }
 }
 
 function handleLogout(): void {
@@ -107,14 +129,14 @@ function handleLogout(): void {
           type="text"
           placeholder="What needs to be done?"
           aria-label="New task"
-          :disabled="loading || mutating"
+          :disabled="isLoading || mutating"
         />
-        <button type="submit" :disabled="!newTask.trim() || loading || mutating">
+        <button type="submit" :disabled="!newTask.trim() || isLoading || mutating">
           Add Task
         </button>
       </form>
 
-      <p v-if="loading" class="status" aria-busy="true">Loading tasks…</p>
+      <p v-if="isLoading" class="status" aria-busy="true">Loading tasks…</p>
 
       <template v-else>
         <div class="filters" role="group" aria-label="Filter tasks">
@@ -131,6 +153,9 @@ function handleLogout(): void {
         </div>
 
         <p class="count">{{ filteredTodos.length }} items</p>
+        <p class="hint">
+          Tip: task starting with <code>[500]</code> rolls back on toggle (mock API error).
+        </p>
 
         <ul class="list">
           <li
@@ -278,6 +303,16 @@ h1 {
   margin: 0 0 0.75rem;
   font-size: 0.875rem;
   color: #94a3b8;
+}
+
+.hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.hint code {
+  color: #c4b5fd;
 }
 
 .list {
