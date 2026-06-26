@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { dirname, resolve } from 'node:path';
@@ -18,5 +19,9 @@ export default defineConfig({
   server: {
     port: 4400,
     strictPort: true,
+  },
+  test: {
+    environment: 'jsdom',
+    include: ['src/**/*.spec.ts'],
   },
 });

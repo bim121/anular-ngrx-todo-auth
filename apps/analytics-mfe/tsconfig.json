@@ -20,5 +20,5 @@
       "@shared/api-types/*": ["../../libs/shared/api-types/src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+    "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.spec.ts"]
 }

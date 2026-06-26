@@ -1,29 +1,19 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import {
-  createTodo,
-  deleteTodo,
-  fetchTodos,
-  updateTodo,
-  type Todo,
-} from '@/core/api';
+import { storeToRefs } from 'pinia';
 import { useAuth } from '@/composables/useAuth';
-import { applyFilter, type TodoFilter } from './apply-filter';
+import { useTodoFilter } from '@/composables/useTodoFilter';
+import { useTodosStore } from '@/stores/todos';
 
 const router = useRouter();
 const { token, userId, userName, logout } = useAuth();
+const todosStore = useTodosStore();
+const { loading, error } = storeToRefs(todosStore);
+const { filter, filteredTodos } = useTodoFilter();
 
-const todos = ref<Todo[]>([]);
-const filter = ref<TodoFilter>('all');
 const newTask = ref('');
-const loading = ref(true);
 const mutating = ref(false);
-const error = ref<string | null>(null);
-
-const filteredTodos = computed(() =>
-  applyFilter(todos.value, filter.value)
-);
 
 watch(filter, (value) => {
   if (import.meta.env.DEV) {
@@ -33,32 +23,21 @@ watch(filter, (value) => {
 
 onMounted(async () => {
   if (!userId.value || !token.value) {
-    loading.value = false;
     return;
   }
 
-  loading.value = true;
-  error.value = null;
-
   try {
-    todos.value = await fetchTodos(userId.value, token.value);
-  } catch (err) {
-    error.value =
-      err instanceof Error ? err.message : 'Failed to load todos';
-  } finally {
-    loading.value = false;
+    await todosStore.loadAll(userId.value);
+  } catch {
+    // error surfaced via store
   }
 });
 
 async function runMutation(action: () => Promise<void>): Promise<void> {
   mutating.value = true;
-  error.value = null;
 
   try {
     await action();
-  } catch (err) {
-    error.value =
-      err instanceof Error ? err.message : 'Todo action failed';
   } finally {
     mutating.value = false;
   }
@@ -71,26 +50,18 @@ async function handleAdd(): Promise<void> {
   }
 
   await runMutation(async () => {
-    const created = await createTodo(task, userId.value!, token.value!);
-    todos.value = [...todos.value, created];
+    await todosStore.addTodo(task);
     newTask.value = '';
   });
 }
 
-async function handleToggle(todo: Todo): Promise<void> {
+async function handleToggle(todoId: string): Promise<void> {
   if (mutating.value || !userId.value || !token.value) {
     return;
   }
 
   await runMutation(async () => {
-    const updated = await updateTodo(
-      { id: todo.id, completed: !todo.completed },
-      userId.value!,
-      token.value!
-    );
-    todos.value = todos.value.map((item) =>
-      item.id === updated.id ? updated : item
-    );
+    await todosStore.toggleOptimistic(todoId);
   });
 }
 
@@ -104,8 +75,7 @@ async function handleDelete(todoId: string): Promise<void> {
   }
 
   await runMutation(async () => {
-    await deleteTodo(todoId, userId.value!, token.value!);
-    todos.value = todos.value.filter((item) => item.id !== todoId);
+    await todosStore.removeTodo(todoId);
   });
 }
 
@@ -174,7 +144,7 @@ function handleLogout(): void {
                 type="checkbox"
                 :checked="todo.completed"
                 :disabled="mutating"
-                @change="handleToggle(todo)"
+                @change="handleToggle(todo.id)"
               />
               <span>{{ todo.task }}</span>
             </label>
