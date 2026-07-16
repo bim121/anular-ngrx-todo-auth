@@ -271,6 +271,20 @@ Apollo во **всех трёх** стеках + Angular admin-mfe optional path
 - **Vue:** `useAiInsight()` composable (optional)
 - **Angular:** primary AI UI in todos-mfe
 
+## Phase 19 — RAG
+
+- Angular RAG chat + citations → backend B-36
+- Next: SSE / AI SDK stream to same API
+
+## Phase 20 — Agents & MCP
+
+- HITL confirm UI → B-37
+- Doc: MCP in Cursor for FE/backend tools
+
+## Phase 21 — FE AWS
+
+- CloudFront + RUM ↔ B-34 / B-24 Grafana
+
 ---
 
 ## Phase 11–18

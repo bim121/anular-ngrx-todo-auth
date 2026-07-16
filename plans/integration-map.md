@@ -57,7 +57,11 @@ export const environment = {
 | Admin panel v1 | Phase 14 | B-12 | Tenant list, migrations view | `admin.enabled` |
 | Admin panel v2 | Phase 15 | B-12, B-28 | Blue/green switch, migrate | `admin.enabled` |
 | Attachments | Phase 13 | B-14 | Presigned upload | per feature |
-| AI / Vector | Phase 18 | B-29 | Semantic search | per feature |
+| AI / Vector | Phase 18 | B-29 | Semantic search | `ai.enabled` |
+| **RAG chat** | **Phase 19** | **B-36** | Grounded Q&A + citations | `ai.rag.enabled` |
+| **AI Agents / MCP** | **Phase 20** | **B-37** | Tool timeline + HITL | `ai.agent.enabled` |
+| **FE AWS / RUM** | **Phase 21** | **B-34, B-24** | CloudFront + Grafana link | — |
+| Observability stack | Phase 12 / 21 | **B-24** | Grafana+Loki+Prometheus+Promtail | — |
 | **GraphQL** | **Phase 13-GraphQL** | **B-10** | `POST /graphql` | `useGraphQL: true` |
 | **gRPC** | Phase 13-GraphQL (architecture) | **B-17** | internal microservices | — |
 

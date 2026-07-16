@@ -32,6 +32,8 @@
 | GraphQL (Phase 13g) | [phase-13-graphql-client.md](./phase-13-graphql-client.md) |
 | Admin panel | [admin-panel-spec.md](./admin-panel-spec.md) |
 | Product vectors | [product-features-expansion.md](./product-features-expansion.md) |
+| **AWS certs (backend)** | [aws-cert-track.md](../todo-platform-backend/plans/aws-cert-track.md) |
+| **RAG / Agents** | [phase-19](./phase-19-rag-chat-ui.md), [phase-20](./phase-20-ai-agents-mcp-ui.md) |
 
 ---
 
@@ -58,9 +60,12 @@
 | 14 | [phase-14](./phase-14-multi-tenant.md) | 32–35 | admin-mfe | middleware | interceptor |
 | 15 | [phase-15](./phase-15-blue-green.md) | 36–39 | manifest | CDN slot | CDN slot |
 | 16 | [phase-16](./phase-16-infrastructure.md) | 40–52+ | shell CDN | deploy Next | deploy Vue |
-| **18** | [phase-18](./phase-18-ai-features.md) | 33–36 | AI UI | Vercel AI | composable |
+| **18** | [phase-18](./phase-18-ai-features.md) | 33–36 | AI UI semantic | Vercel AI | composable |
+| **19** | [phase-19](./phase-19-rag-chat-ui.md) | 37–39 | **RAG chat** + citations | SSE/Vercel AI | optional insights |
+| **20** | [phase-20](./phase-20-ai-agents-mcp-ui.md) | 40–42 | **Agents + HITL** | optional | optional |
+| **21** | [phase-21](./phase-21-frontend-aws-observability.md) | 43–45 | CloudFront + RUM | AWS hosting | — |
 
-> **Порядок:** Phase 17 ∥ Phase 13. Phase 13g сразу после REST. Phase 9 — сборка 4 remotes (подготовка с Phase 0).
+> **Порядок:** Phase 17 ∥ Phase 13. Phase 13g после REST. Phase 18 → 19 → 20 (AI). Phase 21 после B-34. Observability backend: **B-24** (Grafana/Loki/Prometheus/Promtail). AWS certs: [aws-cert-track.md](../todo-platform-backend/plans/aws-cert-track.md).
 
 ---
 
@@ -76,7 +81,9 @@
 | 12 | 12 + 17: Keycloak **все стеки** | B-05, B-12 |
 | 13–14 | 13 REST → 13g GraphQL **все стеки** | B-17 gRPC |
 | 15–16 | 14–15 Admin | B-12, B-28 |
-| 18+ | 16 CDN 4 remotes | B-20 → B-31, **B-33** | J-20 → J-33 (паритет) |
+| 18+ | 16 CDN 4 remotes | B-20 → B-33 | J-20 → J-33 |
+| 20+ | **18–20 AI** (vector→RAG→agents) | **B-29, B-36–37** | J-29, J-36–37 |
+| 22+ | **21 FE AWS** | **B-34–35, B-38** | J-34–38 |
 
 ---
 

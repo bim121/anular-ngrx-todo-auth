@@ -237,6 +237,8 @@ export function useAiInsight(stats: Ref<WeeklyStats | null>) {
 ## Связь
 
 ← [product-features-expansion.md](./product-features-expansion.md)  
-← [phase-17-auth-oidc-keycloak.md](./phase-17-auth-oidc-keycloak.md)
+← [phase-17-auth-oidc-keycloak.md](./phase-17-auth-oidc-keycloak.md)  
+→ [phase-19-rag-chat-ui.md](./phase-19-rag-chat-ui.md) — RAG после semantic search  
+→ Backend [B-36](../../todo-platform-backend/plans/backend-phase-36-rag-llm.md) / [B-37](../../todo-platform-backend/plans/backend-phase-37-ai-agents-mcp.md)
 
 
