@@ -20,6 +20,7 @@ export class TodoTreeItemComponent {
   readonly node = input.required<TodoTreeNode>();
   readonly depth = input(0);
   readonly loading = input(false);
+  readonly saving = input(false);
   readonly editingId = input<string | null>(null);
   readonly updatedTask = input('');
   readonly isTogglePending = input<(id: string) => boolean>(() => false);

@@ -1,5 +1,6 @@
 import {
   selectAuthPersistenceReady,
+  selectAuthStatus,
   selectIsAuthenticated,
   selectIsLoggedIn,
 } from './auth.selectors';
@@ -13,9 +14,14 @@ describe('auth selectors', () => {
     expect(selectIsLoggedIn(buildRootState(initialState))).toBe(false);
   });
 
+  it('selectAuthStatus is idle initially', () => {
+    expect(selectAuthStatus(buildRootState(initialState))).toBe('idle');
+  });
+
   it('selectIsLoggedIn returns true when user is logged in', () => {
     const state = buildRootState({
       ...initialState,
+      status: 'authenticated',
       isLoggedIn: true,
       user: { id: 'u1', name: 'Test', email: 't@e.com' },
       token: 'abc',
@@ -24,9 +30,10 @@ describe('auth selectors', () => {
     expect(selectIsLoggedIn(state)).toBe(true);
   });
 
-  it('selectIsAuthenticated requires both isLoggedIn and token', () => {
+  it('selectIsAuthenticated requires authenticated status and token', () => {
     const withoutToken = buildRootState({
       ...initialState,
+      status: 'authenticated',
       isLoggedIn: true,
       token: null,
     });
@@ -34,6 +41,7 @@ describe('auth selectors', () => {
 
     const authenticated = buildRootState({
       ...initialState,
+      status: 'authenticated',
       isLoggedIn: true,
       user: { id: 'u1', name: 'Test', email: 't@e.com' },
       token: 'abc',

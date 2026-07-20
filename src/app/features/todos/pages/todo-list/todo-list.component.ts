@@ -80,6 +80,12 @@ export class TodoListPageComponent {
         this.toast.error(err);
       }
     });
+
+    effect(() => {
+      if (this.uiStore.editStatus() === 'viewing') {
+        this.updatedTask = '';
+      }
+    });
   }
 
   addTodo(task: string): void {
@@ -117,6 +123,8 @@ export class TodoListPageComponent {
 
   saveEdit(): void {
     if (this.loading()) return;
+    if (this.uiStore.editStatus() === 'saving') return;
+
     const editingId = this.uiStore.editingId();
     if (editingId && this.updatedTask.trim()) {
       const todo = this.todos().find((item) => item.id === editingId);
@@ -125,11 +133,11 @@ export class TodoListPageComponent {
         return;
       }
 
+      this.uiStore.beginSave();
       this.todosFacade.update({
         ...todo,
         task: this.updatedTask.trim(),
       });
-      this.cancelEdit();
     }
   }
 }

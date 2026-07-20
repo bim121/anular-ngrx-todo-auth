@@ -69,6 +69,7 @@ describe('store meta-reducers', () => {
     expect(state.auth).toMatchObject({
       token: 'saved-token',
       isLoggedIn: true,
+      status: 'authenticated',
       user: { id: 'u1', name: 'Saved', email: 's@e.com' },
     });
     expect(state.auth._persistedAt).toEqual(expect.any(Number));
@@ -89,12 +90,14 @@ describe('store meta-reducers', () => {
     );
 
     expect(state.auth.token).toBe('token-1');
+    expect(state.auth.status).toBe('authenticated');
 
     const saved = JSON.parse(storage['auth'] ?? '{}');
     expect(saved).toEqual({
       token: 'token-1',
       user: { id: 'u1', name: 'Test', email: 't@e.com' },
       isLoggedIn: true,
+      status: 'authenticated',
     });
   });
 

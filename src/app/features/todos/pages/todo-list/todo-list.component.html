@@ -50,6 +50,7 @@
         <app-todo-tree-item
           [node]="node"
           [loading]="loading()"
+          [saving]="uiStore.editStatus() === 'saving'"
           [editingId]="uiStore.editingId()"
           [updatedTask]="updatedTask"
           [isTogglePending]="isTogglePending"

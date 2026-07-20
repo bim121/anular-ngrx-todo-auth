@@ -16,7 +16,7 @@
 - [x] Smart/dumb split для todos
 - [x] `TodoRepository` interface + json implementation + **`HttpTodoRepository` skeleton** (still json-server until Phase 13)
 - [ ] Таблица CQRS-lite ↔ backend Commands (см. ниже)
-- [ ] Auth state machine documented + implemented
+- [x] Auth state machine documented + implemented
 - [ ] Nx workspace с libs
 - [ ] Interceptor chain complete
 - [ ] ADR-007 layering rules

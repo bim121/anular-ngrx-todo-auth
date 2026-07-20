@@ -20,9 +20,15 @@ export interface AuthResponse {
     accessToken: string;
 }
 
+/** Explicit auth state machine (phase 4.4.1 variant B). */
+export type AuthStatus = 'idle' | 'submitting' | 'authenticated' | 'error';
+
 export interface AuthState {
     user: User | null;
     token: string | null;
+    /** Single source of truth for the auth lifecycle machine. */
+    status: AuthStatus;
+    /** Kept in sync with `status` for persistence / existing selectors. */
     isLoggedIn: boolean;
     isLoading: boolean;
     error: string | null;

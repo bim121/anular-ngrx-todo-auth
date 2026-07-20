@@ -1,10 +1,24 @@
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Actions, ofType } from '@ngrx/effects';
+import {
+  patchState,
+  signalStore,
+  withHooks,
+  withMethods,
+  withState,
+} from '@ngrx/signals';
 import { TodoFilter } from '@app/features/todos/data-access/todo.model';
+import * as TodoActions from '@app/features/todos/data-access/todo.actions';
 
 export type TodoListFilter = TodoFilter;
 
+/** Per-item edit lifecycle (phase 4.4.2). */
+export type TodoEditStatus = 'viewing' | 'editing' | 'saving';
+
 export interface TodoListUiState {
   filter: TodoListFilter;
+  editStatus: TodoEditStatus;
   editingId: string | null;
   selectedTag: string | null;
 }
@@ -12,6 +26,7 @@ export interface TodoListUiState {
 export const TodoListUiStore = signalStore(
   withState<TodoListUiState>({
     filter: 'all',
+    editStatus: 'viewing',
     editingId: null,
     selectedTag: null,
   }),
@@ -22,11 +37,43 @@ export const TodoListUiStore = signalStore(
     setTag(tag: string | null) {
       patchState(store, { selectedTag: tag });
     },
+    /** viewing → editing */
     startEdit(id: string) {
-      patchState(store, { editingId: id });
+      patchState(store, { editStatus: 'editing', editingId: id });
     },
+    /** editing | saving → viewing */
     cancelEdit() {
-      patchState(store, { editingId: null });
+      patchState(store, { editStatus: 'viewing', editingId: null });
     },
-  }))
+    /** editing → saving */
+    beginSave() {
+      if (store.editStatus() !== 'editing' || store.editingId() == null) {
+        return;
+      }
+      patchState(store, { editStatus: 'saving' });
+    },
+  })),
+  withHooks({
+    onInit(store) {
+      inject(Actions)
+        .pipe(
+          ofType(
+            TodoActions.updateTodoSuccess,
+            TodoActions.updateTodoFailure
+          ),
+          takeUntilDestroyed()
+        )
+        .subscribe((action) => {
+          if (store.editStatus() !== 'saving') {
+            return;
+          }
+
+          if (action.type === TodoActions.updateTodoSuccess.type) {
+            patchState(store, { editStatus: 'viewing', editingId: null });
+          } else {
+            patchState(store, { editStatus: 'editing' });
+          }
+        });
+    },
+  })
 );

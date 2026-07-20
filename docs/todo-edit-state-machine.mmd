@@ -1,0 +1,23 @@
+%% Todo item edit machine (phase 4.4.2 — TodoListUiStore)
+%% Per-row UI lifecycle while editing a task title
+
+stateDiagram-v2
+    [*] --> viewing
+
+    viewing --> editing: startEdit(id)
+    editing --> viewing: cancelEdit
+    editing --> saving: beginSave
+    saving --> viewing: updateTodoSuccess
+    saving --> editing: updateTodoFailure
+
+    note right of viewing
+      editingId = null
+    end note
+
+    note right of editing
+      Row shows inline input
+    end note
+
+    note right of saving
+      Controls disabled; waiting for HTTP
+    end note

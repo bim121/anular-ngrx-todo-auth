@@ -7,12 +7,14 @@ export const {
   selectAuthState,
   selectUser,
   selectToken,
+  selectStatus,
   selectIsLoggedIn,
   selectIsLoading,
   selectError,
   selectIsAuthenticated,
 } = authFeature;
 
+export const selectAuthStatus = selectStatus;
 export const selectAuthLoading = selectIsLoading;
 export const selectAuthError = selectError;
 

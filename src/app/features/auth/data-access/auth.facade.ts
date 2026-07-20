@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { LoginDto, RegisterDto, User } from './auth.model';
+import { AuthStatus, LoginDto, RegisterDto, User } from './auth.model';
 import * as AuthActions from './auth.actions';
 import {
   selectAuthError,
   selectAuthLoading,
+  selectAuthStatus,
   selectIsLoggedIn,
   selectUser,
 } from './auth.selectors';
@@ -20,6 +21,9 @@ export class AuthFacade {
 
   readonly user = toSignal(this.store.select(selectUser), {
     initialValue: null as User | null,
+  });
+  readonly status = toSignal(this.store.select(selectAuthStatus), {
+    initialValue: 'idle' as AuthStatus,
   });
   readonly isLoggedIn = toSignal(this.store.select(selectIsLoggedIn), {
     initialValue: false,

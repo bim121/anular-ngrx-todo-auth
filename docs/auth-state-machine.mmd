@@ -1,0 +1,35 @@
+%% Auth status machine (phase 4.4.1 — NgRx reducer variant B)
+%% Render with any Mermaid viewer / VS Code Mermaid extension
+
+stateDiagram-v2
+    [*] --> idle
+
+    idle --> submitting: loginUser / registerUser
+    submitting --> authenticated: loginSuccess
+    submitting --> idle: registerSuccess
+    submitting --> error: loginFailure / registerFailure
+
+    authenticated --> idle: logoutUser
+
+    error --> submitting: loginUser / registerUser
+    error --> idle: logoutUser
+
+    note right of idle
+      Guest / logged out.
+      isLoading=false, isLoggedIn=false
+    end note
+
+    note right of submitting
+      Credentials in flight.
+      isLoading=true
+    end note
+
+    note right of authenticated
+      Session active (user + token).
+      isLoggedIn=true
+    end note
+
+    note right of error
+      Last attempt failed; error message set.
+      Retry via login/register → submitting
+    end note
