@@ -23,6 +23,7 @@ import { provideAppConfigInitializer } from '@app/core/config/app-config.initial
 import { authInterceptor } from '@app/core/interceptors/auth.interceptor';
 import { authFeature } from '@app/features/auth/data-access/auth.feature';
 import { todosReducer, todosFeatureKey } from '@app/features/todos/data-access/todo.reducer';
+import { provideTodoRepository } from '@app/features/todos/data-access/todo-repository.providers';
 import { AuthEffects } from '@app/features/auth/data-access/auth.effects';
 import { TodoEffects } from '@app/features/todos/data-access/todo.effects';
 import {
@@ -61,6 +62,7 @@ export const appConfig: ApplicationConfig = {
     provideState(appConfigFeatureKey, appConfigReducer),
     provideState('router', routerReducer),
     provideAppConfigInitializer(),
+    provideTodoRepository(),
     provideEffects(AuthEffects, TodoEffects, NotificationEffects),
     provideRouterStore({ serializer: CustomRouterSerializer }),
     ...(isDevMode()

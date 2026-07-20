@@ -14,7 +14,7 @@ import { ToastService } from '@app/shared/ui/toast/toast.service';
 import { selectUserId } from '@app/features/auth/data-access/auth.selectors';
 import { selectTodoEntities } from '@app/features/todos/data-access/todo.selectors';
 import { TodoEffects } from './todo.effects';
-import { TodoService } from './todo.service';
+import { TodoRepository } from './todo.repository';
 import { Store } from '@ngrx/store';
 import { routerNavigatedAction } from '@ngrx/router-store';
 import * as TodoActions from './todo.actions';
@@ -23,18 +23,18 @@ import { Todo } from './todo.model';
 describe('TodoEffects loadTodos$', () => {
   let actions$: ReplaySubject<unknown>;
   let effects: TodoEffects;
-  let getTodosMock: ReturnType<typeof vi.fn>;
+  let getAllMock: ReturnType<typeof vi.fn>;
   let lifecycle: EffectsLifecycleService;
 
   beforeEach(() => {
     actions$ = new ReplaySubject(1);
-    getTodosMock = vi.fn();
+    getAllMock = vi.fn();
 
     TestBed.configureTestingModule({
       providers: [
         TodoEffects,
         provideMockActions(() => actions$ as Observable<unknown>),
-        { provide: TodoService, useValue: { getTodos: getTodosMock } },
+        { provide: TodoRepository, useValue: { getAll: getAllMock } },
         {
           provide: Store,
           useValue: {
@@ -53,19 +53,19 @@ describe('TodoEffects loadTodos$', () => {
     lifecycle = TestBed.inject(EffectsLifecycleService);
   });
 
-  it('passes userId from store to getTodos', async () => {
-    getTodosMock.mockReturnValue(
+  it('passes userId from store to getAll', async () => {
+    getAllMock.mockReturnValue(
       of([{ id: '1', userId: 'user-1', task: 'A', completed: false, tags: [], priority: 'medium' as const }])
     );
 
     actions$.next(TodoActions.loadTodos());
     await firstValueFrom(effects.loadTodos$);
 
-    expect(getTodosMock).toHaveBeenCalledWith('user-1');
+    expect(getAllMock).toHaveBeenCalledWith('user-1');
   });
 
-  it('retries getTodos twice then dispatches loadTodosSuccess', async () => {
-    getTodosMock
+  it('retries getAll twice then dispatches loadTodosSuccess', async () => {
+    getAllMock
       .mockReturnValueOnce(throwError(() => new Error('network')))
       .mockReturnValueOnce(throwError(() => new Error('network')))
       .mockReturnValueOnce(
@@ -75,29 +75,29 @@ describe('TodoEffects loadTodos$', () => {
     actions$.next(TodoActions.loadTodos());
     const action = await firstValueFrom(effects.loadTodos$);
 
-    expect(getTodosMock).toHaveBeenCalledTimes(3);
-    expect(getTodosMock).toHaveBeenCalledWith('user-1');
+    expect(getAllMock).toHaveBeenCalledTimes(3);
+    expect(getAllMock).toHaveBeenCalledWith('user-1');
     expect(action.type).toBe(TodoActions.loadTodosSuccess.type);
   });
 
   it('dispatches loadTodosFailure after retries exhausted', async () => {
-    getTodosMock.mockReturnValue(throwError(() => new Error('down')));
+    getAllMock.mockReturnValue(throwError(() => new Error('down')));
 
     actions$.next(TodoActions.loadTodos());
     const action = await firstValueFrom(effects.loadTodos$);
 
-    expect(getTodosMock).toHaveBeenCalledTimes(3);
-    expect(getTodosMock).toHaveBeenCalledWith('user-1');
+    expect(getAllMock).toHaveBeenCalledTimes(3);
+    expect(getAllMock).toHaveBeenCalledWith('user-1');
     expect(action.type).toBe(TodoActions.loadTodosFailure.type);
   });
 
-  it('does not call getTodos when userId is missing', async () => {
+  it('does not call getAll when userId is missing', async () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
         TodoEffects,
         provideMockActions(() => actions$ as Observable<unknown>),
-        { provide: TodoService, useValue: { getTodos: getTodosMock } },
+        { provide: TodoRepository, useValue: { getAll: getAllMock } },
         {
           provide: Store,
           useValue: {
@@ -122,12 +122,12 @@ describe('TodoEffects loadTodos$', () => {
     await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(emitted).toBe(false);
-    expect(getTodosMock).not.toHaveBeenCalled();
+    expect(getAllMock).not.toHaveBeenCalled();
   });
 
   it('does not dispatch loadTodosSuccess when load is cancelled on logout', async () => {
     const pendingTodos$ = new Subject<Todo[]>();
-    getTodosMock.mockReturnValue(pendingTodos$.asObservable());
+    getAllMock.mockReturnValue(pendingTodos$.asObservable());
 
     let emitted: unknown;
     const sub = effects.loadTodos$.subscribe((action) => {
@@ -142,7 +142,7 @@ describe('TodoEffects loadTodos$', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 50));
 
-    expect(getTodosMock).toHaveBeenCalledWith('user-1');
+    expect(getAllMock).toHaveBeenCalledWith('user-1');
     expect(emitted).toBeUndefined();
     sub.unsubscribe();
   });
@@ -159,7 +159,7 @@ describe('TodoEffects loadTodosOnNavigation$', () => {
       providers: [
         TodoEffects,
         provideMockActions(() => actions$ as Observable<unknown>),
-        { provide: TodoService, useValue: {} },
+        { provide: TodoRepository, useValue: {} },
         {
           provide: Store,
           useValue: {
@@ -278,8 +278,8 @@ describe('TodoEffects toggleTodo$ (marble)', () => {
           TodoEffects,
           provideMockActions(() => actions$ as Observable<unknown>),
           {
-            provide: TodoService,
-            useValue: { updateTodo: updateTodoMock },
+            provide: TodoRepository,
+            useValue: { update: updateTodoMock },
           },
           {
             provide: Store,
@@ -344,7 +344,7 @@ describe('TodoEffects toggleTodoFailureToast$', () => {
         TodoEffects,
         provideMockActions(() => actions$ as Observable<unknown>),
         {
-          provide: TodoService,
+          provide: TodoRepository,
           useValue: {},
         },
         {
@@ -392,7 +392,7 @@ describe('TodoEffects marbles', () => {
     effectKey: keyof TodoEffects;
     expectedMarble: string;
     expectedValues?: Record<string, unknown>;
-    todoService: Record<string, ReturnType<typeof vi.fn>>;
+    todoRepository: Record<string, ReturnType<typeof vi.fn>>;
     userId?: string | null;
     entities?: Record<string, typeof todo>;
   }): void {
@@ -408,7 +408,7 @@ describe('TodoEffects marbles', () => {
         providers: [
           TodoEffects,
           provideMockActions(() => actions$ as Observable<unknown>),
-          { provide: TodoService, useValue: config.todoService },
+          { provide: TodoRepository, useValue: config.todoRepository },
           {
             provide: Store,
             useValue: {
@@ -447,8 +447,8 @@ describe('TodoEffects marbles', () => {
       expectedValues: {
         b: TodoActions.loadTodosSuccess({ todos: [todo] }),
       },
-      todoService: {
-        getTodos: vi.fn(() => of([todo])),
+      todoRepository: {
+        getAll: vi.fn(() => of([todo])),
       },
     });
   });
@@ -467,7 +467,7 @@ describe('TodoEffects marbles', () => {
       effectKey: 'loadTodosOnNavigation$',
       expectedMarble: '-b',
       expectedValues: { b: TodoActions.loadTodos() },
-      todoService: {},
+      todoRepository: {},
     });
   });
 
@@ -480,8 +480,8 @@ describe('TodoEffects marbles', () => {
       expectedValues: {
         b: TodoActions.addTodoSuccess({ todo }),
       },
-      todoService: {
-        addTodo: vi.fn(() => of(todo)),
+      todoRepository: {
+        create: vi.fn(() => of(todo)),
       },
     });
   });
@@ -497,7 +497,7 @@ describe('TodoEffects marbles', () => {
           error: new Error('Not logged in'),
         }),
       },
-      todoService: {},
+      todoRepository: {},
       userId: null,
     });
   });
@@ -513,8 +513,8 @@ describe('TodoEffects marbles', () => {
       expectedValues: {
         b: TodoActions.updateTodoSuccess({ todo: updated }),
       },
-      todoService: {
-        updateTodo: vi.fn(() => of(updated)),
+      todoRepository: {
+        update: vi.fn(() => of(updated)),
       },
     });
   });
@@ -528,8 +528,8 @@ describe('TodoEffects marbles', () => {
       expectedValues: {
         b: TodoActions.deleteTodoSuccess({ todoId: todo.id }),
       },
-      todoService: {
-        deleteTodo: vi.fn(() => of(undefined)),
+      todoRepository: {
+        delete: vi.fn(() => of(undefined)),
       },
     });
   });
@@ -552,7 +552,7 @@ describe('TodoEffects marbles', () => {
         providers: [
           TodoEffects,
           provideMockActions(() => actions$ as Observable<unknown>),
-          { provide: TodoService, useValue: {} },
+          { provide: TodoRepository, useValue: {} },
           { provide: Store, useValue: { select: () => of(undefined) } },
           {
             provide: ToastService,

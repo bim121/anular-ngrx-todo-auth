@@ -15,6 +15,15 @@ export interface Todo {
   parentId?: string;
 }
 
+/** Payload to create a todo — repository assigns id / defaults. */
+export interface CreateTodoDto {
+  task: string;
+  userId: string;
+  parentId?: string;
+  tags?: string[];
+  priority?: TodoPriority;
+}
+
 export interface TodoTreeNode extends Todo {
   children: TodoTreeNode[];
 }

@@ -19,7 +19,7 @@ import { EffectsLifecycleService } from '@app/core/effects/effects-lifecycle.ser
 import { ToastService } from '@app/shared/ui/toast/toast.service';
 import * as AuthSelectors from '@app/features/auth/data-access/auth.selectors';
 import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
-import { TodoService } from './todo.service';
+import { TodoRepository } from './todo.repository';
 import * as TodoActions from './todo.actions';
 
 /**
@@ -31,7 +31,7 @@ const LOAD_RETRY = { count: 2, delay: 1000 } as const;
 @Injectable()
 export class TodoEffects {
   private readonly actions$ = inject(Actions);
-  private readonly todoService = inject(TodoService);
+  private readonly todos = inject(TodoRepository);
   private readonly store = inject(Store);
   private readonly lifecycle = inject(EffectsLifecycleService);
   private readonly toast = inject(ToastService);
@@ -54,7 +54,7 @@ export class TodoEffects {
       concatLatestFrom(() => this.store.select(AuthSelectors.selectUserId)),
       filter(([, userId]) => userId != null),
       switchMap(([, userId]) =>
-        defer(() => this.todoService.getTodos(userId!)).pipe(
+        defer(() => this.todos.getAll(userId!)).pipe(
           takeUntil(this.lifecycle.cancelPendingRequests),
           retry(LOAD_RETRY),
           map((todos) => TodoActions.loadTodosSuccess({ todos })),
@@ -77,7 +77,7 @@ export class TodoEffects {
           );
         }
 
-        return this.todoService.addTodo(task, userId).pipe(
+        return this.todos.create({ task, userId }).pipe(
           map((todo) => TodoActions.addTodoSuccess({ todo })),
           catchError((error) => of(TodoActions.addTodoFailure({ error })))
         );
@@ -106,8 +106,8 @@ export class TodoEffects {
           );
         }
 
-        return this.todoService
-          .updateTodo({ id, completed: todo.completed }, userId)
+        return this.todos
+          .update({ id, completed: todo.completed }, userId)
           .pipe(
             map((updated) => TodoActions.toggleTodoSuccess({ todo: updated })),
             catchError((error) =>
@@ -152,7 +152,7 @@ export class TodoEffects {
           );
         }
 
-        return this.todoService.updateTodo(todo, userId).pipe(
+        return this.todos.update(todo, userId).pipe(
           map((updated) => TodoActions.updateTodoSuccess({ todo: updated })),
           catchError((error) => of(TodoActions.updateTodoFailure({ error })))
         );
@@ -173,7 +173,7 @@ export class TodoEffects {
           );
         }
 
-        return this.todoService.deleteTodo(todoId, userId).pipe(
+        return this.todos.delete(todoId, userId).pipe(
           map(() => TodoActions.deleteTodoSuccess({ todoId })),
           catchError((error) => of(TodoActions.deleteTodoFailure({ error })))
         );
