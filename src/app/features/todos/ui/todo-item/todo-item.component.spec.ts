@@ -30,10 +30,10 @@ describe('TodoItemComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('dev');
   });
 
-  it('emits toggle when checkbox changes', () => {
-    const toggleSpy = vi.fn();
+  it('emits toggled when checkbox changes', () => {
+    const toggledSpy = vi.fn();
     fixture.componentRef.setInput('todo', mockTodo);
-    fixture.componentInstance.toggle.subscribe(toggleSpy);
+    fixture.componentInstance.toggled.subscribe(toggledSpy);
     fixture.detectChanges();
 
     const checkbox = fixture.nativeElement.querySelector(
@@ -41,14 +41,14 @@ describe('TodoItemComponent', () => {
     ) as HTMLInputElement;
     checkbox.dispatchEvent(new Event('change'));
 
-    expect(toggleSpy).toHaveBeenCalledTimes(1);
+    expect(toggledSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('does not emit toggle when disabled', () => {
-    const toggleSpy = vi.fn();
+  it('does not emit toggled when disabled', () => {
+    const toggledSpy = vi.fn();
     fixture.componentRef.setInput('todo', mockTodo);
     fixture.componentRef.setInput('disabled', true);
-    fixture.componentInstance.toggle.subscribe(toggleSpy);
+    fixture.componentInstance.toggled.subscribe(toggledSpy);
     fixture.detectChanges();
 
     const checkbox = fixture.nativeElement.querySelector(
@@ -56,6 +56,6 @@ describe('TodoItemComponent', () => {
     ) as HTMLInputElement;
     checkbox.dispatchEvent(new Event('change'));
 
-    expect(toggleSpy).not.toHaveBeenCalled();
+    expect(toggledSpy).not.toHaveBeenCalled();
   });
 });

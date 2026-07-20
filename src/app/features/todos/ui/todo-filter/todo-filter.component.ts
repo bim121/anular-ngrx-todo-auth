@@ -19,7 +19,7 @@ export class TodoFilterComponent {
   readonly filter = input.required<TodoFilter>();
   readonly filterChange = output<TodoFilter>();
 
-  readonly options: ReadonlyArray<{ value: TodoFilter; label: string }> = [
+  readonly options: readonly { value: TodoFilter; label: string }[] = [
     { value: 'all', label: 'All' },
     { value: 'active', label: 'Active' },
     { value: 'done', label: 'Done' },
