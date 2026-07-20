@@ -2,9 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { User } from '@app/features/auth/data-access/auth.model';
-import { selectUser } from '@app/features/auth/data-access/auth.selectors';
-import * as AuthActions from '@app/features/auth/data-access/auth.actions';
+import { AuthFacade } from '@app/features/auth/data-access/auth.facade';
 import {
   selectAllNotifications,
   selectUnreadNotificationsCount,
@@ -22,11 +20,10 @@ import { RoutePageContextService } from '@app/core/services/route-page-context.s
 })
 export class MainLayoutComponent {
   private readonly store = inject(Store);
+  private readonly auth = inject(AuthFacade);
   readonly pageContext = inject(RoutePageContextService);
 
-  readonly user = toSignal(this.store.select(selectUser), {
-    initialValue: null as User | null,
-  });
+  readonly user = this.auth.user;
   readonly notifications = toSignal(
     this.store.select(selectAllNotifications),
     { initialValue: [] }
@@ -39,7 +36,7 @@ export class MainLayoutComponent {
   readonly notificationsOpen = signal(false);
 
   logout(): void {
-    this.store.dispatch(AuthActions.logoutUser());
+    this.auth.logout();
   }
 
   toggleNotifications(): void {

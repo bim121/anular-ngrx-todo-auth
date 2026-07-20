@@ -1,9 +1,10 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { User } from '@app/features/auth/data-access/auth.model';
-import { selectUser } from '@app/features/auth/data-access/auth.selectors';
+import { AuthFacade } from '@app/features/auth/data-access/auth.facade';
 import {
   selectAllNotifications,
   selectUnreadNotificationsCount,
@@ -13,22 +14,26 @@ import { MainLayoutComponent } from './main-layout.component';
 
 describe('MainLayoutComponent (NgRx + zoneless)', () => {
   let fixture: ComponentFixture<MainLayoutComponent>;
-  let user$: BehaviorSubject<User | null>;
+  let user: ReturnType<typeof signal<User | null>>;
 
   beforeEach(async () => {
-    user$ = new BehaviorSubject<User | null>(null);
+    user = signal<User | null>(null);
 
     await TestBed.configureTestingModule({
       imports: [MainLayoutComponent],
       providers: [
         provideRouter([]),
         {
+          provide: AuthFacade,
+          useValue: {
+            user,
+            logout: vi.fn(),
+          },
+        },
+        {
           provide: Store,
           useValue: {
             select: (selector: unknown) => {
-              if (selector === selectUser) {
-                return user$.asObservable();
-              }
               if (selector === selectAllNotifications) {
                 return of([]);
               }
@@ -53,8 +58,8 @@ describe('MainLayoutComponent (NgRx + zoneless)', () => {
     fixture.detectChanges();
   });
 
-  it('renders profile link when store emits user via toSignal', () => {
-    user$.next({ id: 'u1', name: 'Alice', email: 'alice@example.com' });
+  it('renders profile link when auth facade user is set', () => {
+    user.set({ id: 'u1', name: 'Alice', email: 'alice@example.com' });
     fixture.detectChanges();
 
     const link = fixture.nativeElement.querySelector('.profile-link');
@@ -62,8 +67,8 @@ describe('MainLayoutComponent (NgRx + zoneless)', () => {
     expect(link?.getAttribute('href')).toBe('/profile');
   });
 
-  it('hides profile link when store user is null', () => {
-    user$.next(null);
+  it('hides profile link when auth facade user is null', () => {
+    user.set(null);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.profile-link')).toBeNull();

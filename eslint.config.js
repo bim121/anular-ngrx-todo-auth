@@ -41,6 +41,25 @@ module.exports = defineConfig([
     },
   },
   {
+    files: ['**/pages/**/*.ts'],
+    ignores: ['**/*.spec.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@ngrx/store',
+              importNames: ['Store'],
+              message:
+                'Pages must inject facades (AuthFacade / TodosFacade), not Store directly (phase 4.2.3).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['**/*.html'],
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
     rules: {},

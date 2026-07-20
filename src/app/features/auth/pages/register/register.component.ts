@@ -1,13 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { form } from '@angular/forms/signals';
-import { Store } from '@ngrx/store';
-import {
-  selectAuthLoading,
-  selectAuthError,
-} from '@app/features/auth/data-access/auth.selectors';
-import * as AuthActions from '@app/features/auth/data-access/auth.actions';
+import { AuthFacade } from '@app/features/auth/data-access/auth.facade';
 import {
   applyRegisterFieldRules,
   markRegisterFieldsTouched,
@@ -25,7 +19,7 @@ import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterComponent {
-  private readonly store = inject(Store);
+  private readonly auth = inject(AuthFacade);
 
   private readonly model = signal<RegisterFormModel>({
     name: '',
@@ -34,12 +28,8 @@ export class RegisterComponent {
     passwordConfirm: '',
   });
 
-  readonly loading = toSignal(this.store.select(selectAuthLoading), {
-    initialValue: false,
-  });
-  readonly error = toSignal(this.store.select(selectAuthError), {
-    initialValue: null,
-  });
+  readonly loading = this.auth.loading;
+  readonly error = this.auth.error;
 
   readonly registerForm = form(this.model, (fields) => {
     applyRegisterFieldRules(fields, () => this.loading());
@@ -54,8 +44,6 @@ export class RegisterComponent {
     }
 
     const { name, email, password } = this.registerForm().value();
-    this.store.dispatch(
-      AuthActions.registerUser({ credentials: { name, email, password } })
-    );
+    this.auth.register({ name, email, password });
   }
 }

@@ -6,11 +6,9 @@ import {
   inject,
   output,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Store } from '@ngrx/store';
 import { Todo, TodoTreeNode } from '@app/features/todos/data-access/todo.model';
-import * as TodoActions from '@app/features/todos/data-access/todo.actions';
-import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
+import { TodosFacade } from '@app/features/todos/data-access/todos.facade';
+import { buildTodoTree } from '@app/features/todos/data-access/todo.selectors';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
 import { TodoStatsPanelComponent } from '@app/features/todos/ui/todo-stats-panel/todo-stats-panel.component';
 import { TodoTreeItemComponent } from '@app/features/todos/ui/todo-tree-item/todo-tree-item.component';
@@ -35,26 +33,14 @@ import { TodoListUiStore } from './todo-list-ui.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoListPageComponent {
-  private readonly store = inject(Store);
+  private readonly todosFacade = inject(TodosFacade);
   private readonly toast = inject(ToastService);
   readonly uiStore = inject(TodoListUiStore);
 
-  readonly todos = toSignal(this.store.select(TodoSelectors.selectAllTodos), {
-    initialValue: [] as Todo[],
-  });
-  readonly availableTags = toSignal(this.store.select(TodoSelectors.selectAllTags), {
-    initialValue: [] as string[],
-  });
-  readonly loading = toSignal(this.store.select(TodoSelectors.selectTodosLoading), {
-    initialValue: false,
-  });
-  readonly error = toSignal(this.store.select(TodoSelectors.selectTodosError), {
-    initialValue: null,
-  });
-  readonly pendingToggleIds = toSignal(
-    this.store.select(TodoSelectors.selectPendingToggleIds),
-    { initialValue: [] as string[] }
-  );
+  readonly todos = this.todosFacade.todos;
+  readonly availableTags = this.todosFacade.availableTags;
+  readonly loading = this.todosFacade.loading;
+  readonly error = this.todosFacade.error;
 
   readonly filteredTodoTree = computed(() => {
     let items = this.todos();
@@ -74,7 +60,7 @@ export class TodoListPageComponent {
         break;
     }
 
-    return TodoSelectors.buildTodoTree(items);
+    return buildTodoTree(items);
   });
 
   readonly visibleTodoCount = computed(() => {
@@ -97,25 +83,24 @@ export class TodoListPageComponent {
   }
 
   addTodo(task: string): void {
-    this.store.dispatch(TodoActions.addTodo({ task }));
+    this.todosFacade.add(task);
   }
 
   isTogglePending = (todoId: string): boolean =>
-    this.pendingToggleIds().includes(todoId);
+    this.todosFacade.isTogglePending(todoId);
 
   onTodoToggled(todoId: string): void {
     if (this.loading()) return;
-    if (this.pendingToggleIds().includes(todoId)) return;
+    if (this.todosFacade.isTogglePending(todoId)) return;
 
-    this.store.dispatch(TodoActions.toggleTodoOptimistic({ id: todoId }));
-    this.store.dispatch(TodoActions.toggleTodo({ id: todoId }));
+    this.todosFacade.toggle(todoId);
     this.todoToggled.emit(todoId);
   }
 
   deleteTodo(todoId: string): void {
     if (this.loading()) return;
     if (confirm('Are you sure you want to delete this task?')) {
-      this.store.dispatch(TodoActions.deleteTodo({ todoId }));
+      this.todosFacade.remove(todoId);
     }
   }
 
@@ -140,11 +125,10 @@ export class TodoListPageComponent {
         return;
       }
 
-      const todoToUpdate = {
+      this.todosFacade.update({
         ...todo,
         task: this.updatedTask.trim(),
-      };
-      this.store.dispatch(TodoActions.updateTodo({ todo: todoToUpdate }));
+      });
       this.cancelEdit();
     }
   }

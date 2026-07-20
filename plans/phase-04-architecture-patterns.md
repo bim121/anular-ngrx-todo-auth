@@ -12,7 +12,7 @@
 
 ## Результат фазы
 
-- [ ] `AuthFacade`, `TodosFacade`
+- [x] `AuthFacade`, `TodosFacade`
 - [x] Smart/dumb split для todos
 - [ ] `TodoRepository` interface + json implementation + **`HttpTodoRepository` skeleton** (still json-server until Phase 13)
 - [ ] Таблица CQRS-lite ↔ backend Commands (см. ниже)
