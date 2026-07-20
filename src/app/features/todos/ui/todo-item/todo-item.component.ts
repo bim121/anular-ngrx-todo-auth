@@ -16,10 +16,10 @@ import { Todo } from '@app/features/todos/data-access/todo.model';
 export class TodoItemComponent {
   readonly todo = input.required<Todo>();
   readonly disabled = input(false);
-  readonly toggled = output<void>();
+  readonly toggle = output<void>();
 
   onToggle(): void {
     if (this.disabled()) return;
-    this.toggled.emit();
+    this.toggle.emit();
   }
 }

@@ -7,7 +7,7 @@
     <app-todo-item
       [todo]="node()"
       [disabled]="loading() || isTogglePending()(node().id)"
-      (toggled)="onToggle(node().id)"
+      (toggle)="onToggle(node().id)"
     >
       <button
         type="button"

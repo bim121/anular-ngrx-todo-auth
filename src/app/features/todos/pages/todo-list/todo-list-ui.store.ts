@@ -1,6 +1,7 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { TodoFilter } from '@app/features/todos/data-access/todo.model';
 
-export type TodoListFilter = 'all' | 'active' | 'done';
+export type TodoListFilter = TodoFilter;
 
 export interface TodoListUiState {
   filter: TodoListFilter;

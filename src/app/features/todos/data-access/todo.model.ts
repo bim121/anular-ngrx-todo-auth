@@ -2,6 +2,8 @@ import type { EntityState } from '@ngrx/entity';
 
 export type TodoPriority = 'low' | 'medium' | 'high';
 
+export type TodoFilter = 'all' | 'active' | 'done';
+
 export interface Todo {
   id: string;
   userId: string;

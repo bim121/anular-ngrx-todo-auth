@@ -6,7 +6,6 @@ import {
   inject,
   output,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { Todo, TodoTreeNode } from '@app/features/todos/data-access/todo.model';
@@ -15,24 +14,27 @@ import * as TodoSelectors from '@app/features/todos/data-access/todo.selectors';
 import { SpinnerComponent } from '@app/shared/ui/spinner/spinner.component';
 import { TodoStatsPanelComponent } from '@app/features/todos/ui/todo-stats-panel/todo-stats-panel.component';
 import { TodoTreeItemComponent } from '@app/features/todos/ui/todo-tree-item/todo-tree-item.component';
+import { TodoFormComponent } from '@app/features/todos/ui/todo-form/todo-form.component';
+import { TodoFilterComponent } from '@app/features/todos/ui/todo-filter/todo-filter.component';
 import { ToastService } from '@app/shared/ui/toast/toast.service';
 import { TodoListUiStore } from './todo-list-ui.store';
 
 @Component({
-  selector: 'app-todo-list',
+  selector: 'app-todo-list-page',
   standalone: true,
   imports: [
-    FormsModule,
     SpinnerComponent,
     TodoStatsPanelComponent,
     TodoTreeItemComponent,
+    TodoFormComponent,
+    TodoFilterComponent,
   ],
   providers: [TodoListUiStore],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TodoListComponent {
+export class TodoListPageComponent {
   private readonly store = inject(Store);
   private readonly toast = inject(ToastService);
   readonly uiStore = inject(TodoListUiStore);
@@ -83,7 +85,6 @@ export class TodoListComponent {
 
   readonly todoToggled = output<string>();
 
-  newTask = '';
   updatedTask = '';
 
   constructor() {
@@ -95,11 +96,8 @@ export class TodoListComponent {
     });
   }
 
-  addTodo(): void {
-    if (!this.newTask.trim()) return;
-    const task = this.newTask.trim();
+  addTodo(task: string): void {
     this.store.dispatch(TodoActions.addTodo({ task }));
-    this.newTask = '';
   }
 
   isTogglePending = (todoId: string): boolean =>

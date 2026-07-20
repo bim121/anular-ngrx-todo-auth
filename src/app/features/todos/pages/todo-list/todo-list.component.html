@@ -1,17 +1,5 @@
 <div class="todo-list-container">
-  <form (ngSubmit)="addTodo()" class="add-todo-form">
-    <input
-      type="text"
-      [(ngModel)]="newTask"
-      name="newTask"
-      placeholder="What needs to be done?"
-      required
-      [disabled]="loading()"
-    />
-    <button type="submit" [disabled]="!newTask.trim()">
-      Add Task
-    </button>
-  </form>
+  <app-todo-form [disabled]="loading()" (submitted)="addTodo($event)" />
 
   @if (loading()) {
     <div class="todo-loading" aria-busy="true">
@@ -27,32 +15,10 @@
       <div class="skeleton"></div>
     }
 
-    <div class="filter-bar" role="group" aria-label="Filter tasks">
-      <button
-        type="button"
-        class="filter-btn"
-        [class.active]="uiStore.filter() === 'all'"
-        (click)="uiStore.setFilter('all')"
-      >
-        All
-      </button>
-      <button
-        type="button"
-        class="filter-btn"
-        [class.active]="uiStore.filter() === 'active'"
-        (click)="uiStore.setFilter('active')"
-      >
-        Active
-      </button>
-      <button
-        type="button"
-        class="filter-btn"
-        [class.active]="uiStore.filter() === 'done'"
-        (click)="uiStore.setFilter('done')"
-      >
-        Done
-      </button>
-    </div>
+    <app-todo-filter
+      [filter]="uiStore.filter()"
+      (filterChange)="uiStore.setFilter($event)"
+    />
 
     @if (availableTags().length > 0) {
       <div class="tag-bar" role="group" aria-label="Filter by tag">

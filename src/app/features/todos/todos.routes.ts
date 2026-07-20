@@ -14,7 +14,7 @@ export const TODOS_ROUTES: Routes = [
         path: 'todos',
         loadComponent: () =>
           import('@app/features/todos/pages/todo-list/todo-list.component').then(
-            (m) => m.TodoListComponent
+            (m) => m.TodoListPageComponent
           ),
         canActivate: [authGuard],
         data: {
