@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { Todo } from './todo.model';
+import { Todo, TodoFilter } from './todo.model';
 import * as TodoActions from './todo.actions';
 import {
   selectAllTags,
@@ -10,6 +10,7 @@ import {
   selectTodosError,
   selectTodosLoading,
 } from './todo.selectors';
+import { TODO_FILTER_STRATEGIES } from './todo-filter.strategy';
 
 /**
  * Thin API over NgRx todos state for UI layers (pages).
@@ -18,6 +19,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class TodosFacade {
   private readonly store = inject(Store);
+  private readonly filterStrategies = inject(TODO_FILTER_STRATEGIES);
 
   readonly todos = toSignal(this.store.select(selectAllTodos), {
     initialValue: [] as Todo[],
@@ -35,6 +37,11 @@ export class TodosFacade {
     this.store.select(selectPendingToggleIds),
     { initialValue: [] as string[] }
   );
+
+  /** Applies the injected TodoFilterStrategy for the given filter id. */
+  filterTodos(filter: TodoFilter): Todo[] {
+    return this.filterStrategies[filter].apply(this.todos());
+  }
 
   load(): void {
     this.store.dispatch(TodoActions.loadTodos());

@@ -9,6 +9,7 @@ import {
 } from '@app/features/notifications/data-access/notification.selectors';
 import * as NotificationActions from '@app/features/notifications/data-access/notification.actions';
 import { RoutePageContextService } from '@app/core/services/route-page-context.service';
+import { ThemeService } from '@app/core/ui/theme.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -21,9 +22,11 @@ import { RoutePageContextService } from '@app/core/services/route-page-context.s
 export class MainLayoutComponent {
   private readonly store = inject(Store);
   private readonly auth = inject(AuthFacade);
+  private readonly themeService = inject(ThemeService);
   readonly pageContext = inject(RoutePageContextService);
 
   readonly user = this.auth.user;
+  readonly theme = this.themeService.theme;
   readonly notifications = toSignal(
     this.store.select(selectAllNotifications),
     { initialValue: [] }
@@ -37,6 +40,10 @@ export class MainLayoutComponent {
 
   logout(): void {
     this.auth.logout();
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggle();
   }
 
   toggleNotifications(): void {

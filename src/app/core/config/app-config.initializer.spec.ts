@@ -7,6 +7,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { loadAppConfig } from './app-config.initializer';
 import * as AppConfigActions from './app-config.actions';
+import { DEFAULT_APP_CONFIG } from './app-config.model';
 
 describe('loadAppConfig initializer', () => {
   let httpMock: HttpTestingController;
@@ -26,32 +27,38 @@ describe('loadAppConfig initializer', () => {
     httpMock.verify();
   });
 
-  it('loads features from /assets/config.json', async () => {
+  it('loads config from /assets/app-config.json via ConfigService', async () => {
     const promise = TestBed.runInInjectionContext(loadAppConfig);
 
-    const req = httpMock.expectOne('/assets/config.json');
+    const req = httpMock.expectOne('/assets/app-config.json');
     expect(req.request.method).toBe('GET');
-    req.flush({ features: { analytics: true, betaTodos: false } });
+    req.flush({
+      apiBaseUrl: 'http://localhost:3000',
+      features: { analytics: true, betaTodos: false },
+    });
 
     await promise;
 
     expect(store.dispatch).toHaveBeenCalledWith(
       AppConfigActions.loadAppConfig({
-        features: { analytics: true, betaTodos: false },
+        config: {
+          apiBaseUrl: 'http://localhost:3000',
+          features: { analytics: true, betaTodos: false },
+        },
       })
     );
   });
 
-  it('dispatches empty features when config load fails', async () => {
+  it('dispatches defaults when config load fails', async () => {
     const promise = TestBed.runInInjectionContext(loadAppConfig);
 
-    const req = httpMock.expectOne('/assets/config.json');
+    const req = httpMock.expectOne('/assets/app-config.json');
     req.error(new ProgressEvent('error'));
 
     await promise;
 
     expect(store.dispatch).toHaveBeenCalledWith(
-      AppConfigActions.loadAppConfig({ features: {} })
+      AppConfigActions.loadAppConfig({ config: { ...DEFAULT_APP_CONFIG } })
     );
   });
 });

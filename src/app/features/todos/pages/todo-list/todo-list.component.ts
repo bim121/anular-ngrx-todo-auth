@@ -43,21 +43,11 @@ export class TodoListPageComponent {
   readonly error = this.todosFacade.error;
 
   readonly filteredTodoTree = computed(() => {
-    let items = this.todos();
-    const statusFilter = this.uiStore.filter();
+    let items = this.todosFacade.filterTodos(this.uiStore.filter());
     const tag = this.uiStore.selectedTag();
 
     if (tag) {
       items = items.filter((todo) => todo.tags.includes(tag));
-    }
-
-    switch (statusFilter) {
-      case 'active':
-        items = items.filter((todo) => !todo.completed);
-        break;
-      case 'done':
-        items = items.filter((todo) => todo.completed);
-        break;
     }
 
     return buildTodoTree(items);

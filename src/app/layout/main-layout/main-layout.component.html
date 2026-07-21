@@ -12,6 +12,14 @@
     </div>
 
     <div class="main-header__actions">
+      <button
+        type="button"
+        class="theme-btn"
+        (click)="toggleTheme()"
+        [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+      >
+        {{ theme() === 'dark' ? 'Light' : 'Dark' }}
+      </button>
       <div class="notifications">
         <button
           type="button"

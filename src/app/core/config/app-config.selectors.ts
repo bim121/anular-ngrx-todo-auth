@@ -10,5 +10,10 @@ export const selectFeatures = createSelector(
   (state) => state.features
 );
 
+export const selectApiBaseUrl = createSelector(
+  selectAppConfigState,
+  (state) => state.apiBaseUrl
+);
+
 export const selectIsFeatureEnabled = (feature: string) =>
   createSelector(selectFeatures, (features) => features[feature] ?? false);

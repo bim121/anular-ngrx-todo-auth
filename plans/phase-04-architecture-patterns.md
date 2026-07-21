@@ -18,7 +18,7 @@
 - [ ] Таблица CQRS-lite ↔ backend Commands (см. ниже)
 - [x] Auth state machine documented + implemented
 - [ ] Nx workspace с libs
-- [ ] Interceptor chain complete
+- [x] Interceptor chain complete
 - [ ] ADR-007 layering rules
 
 ### React/Next.js (marketing-mfe)

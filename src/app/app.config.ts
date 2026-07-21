@@ -20,10 +20,11 @@ import { metaReducers } from '@app/core/store/store.meta-reducers';
 import { devtoolsConfig } from '@app/core/store/devtools-config';
 import { appConfigReducer, appConfigFeatureKey } from '@app/core/config/app-config.reducer';
 import { provideAppConfigInitializer } from '@app/core/config/app-config.initializer';
-import { authInterceptor } from '@app/core/interceptors/auth.interceptor';
+import { httpInterceptorChain } from '@app/core/interceptors/http-interceptor.chain';
 import { authFeature } from '@app/features/auth/data-access/auth.feature';
 import { todosReducer, todosFeatureKey } from '@app/features/todos/data-access/todo.reducer';
 import { provideTodoRepository } from '@app/features/todos/data-access/todo-repository.providers';
+import { provideTodoFilterStrategies } from '@app/features/todos/data-access/todo-filter.strategy';
 import { AuthEffects } from '@app/features/auth/data-access/auth.effects';
 import { TodoEffects } from '@app/features/todos/data-access/todo.effects';
 import {
@@ -36,7 +37,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors(httpInterceptorChain())),
     provideRouter(routes, withPreloading(TodosPreloadStrategy)),
     provideClientHydration(withEventReplay()),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
@@ -63,6 +64,7 @@ export const appConfig: ApplicationConfig = {
     provideState('router', routerReducer),
     provideAppConfigInitializer(),
     provideTodoRepository(),
+    provideTodoFilterStrategies(),
     provideEffects(AuthEffects, TodoEffects, NotificationEffects),
     provideRouterStore({ serializer: CustomRouterSerializer }),
     ...(isDevMode()

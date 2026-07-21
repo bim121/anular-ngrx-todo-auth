@@ -10,13 +10,16 @@ describe('appConfigReducer', () => {
     expect(state).toEqual(initialAppConfigState);
   });
 
-  it('loadAppConfig: replaces features map', () => {
-    const features = { analytics: true, betaTodos: false };
+  it('loadAppConfig: replaces apiBaseUrl and features', () => {
+    const config = {
+      apiBaseUrl: 'https://api.example.com',
+      features: { analytics: true, betaTodos: false },
+    };
     const state = appConfigReducer(
       initialAppConfigState,
-      AppConfigActions.loadAppConfig({ features })
+      AppConfigActions.loadAppConfig({ config })
     );
 
-    expect(state.features).toEqual(features);
+    expect(state).toEqual(config);
   });
 });
