@@ -1,45 +1,8 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "extends": "./tsconfig.base.json",
-  "compileOnSave": false,
-  "compilerOptions": {
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "ES2022",
-    "module": "preserve",
-    "moduleResolution": "bundler",
-    "baseUrl": ".",
-    "paths": {
-      "@shared/validators/*": ["libs/shared/validators/*"],
-      "@shared/api-types/*": ["libs/shared/api-types/src/*"],
-      "@app/core/*": ["src/app/core/*"],
-      "@app/shared/*": ["src/app/shared/*"],
-      "@app/shared/validators/*": ["src/app/shared/validators/*"],
-      "@app/features/auth/*": ["src/app/features/auth/*"],
-      "@app/features/todos/*": ["src/app/features/todos/*"],
-      "@app/features/notifications/*": ["src/app/features/notifications/*"],
-      "@app/features/ui/*": ["src/app/features/ui/*"],
-      "@app/layout/*": ["src/app/layout/*"]
-    }
-  },
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  },
   "files": [],
   "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+    { "path": "./apps/web/tsconfig.app.json" },
+    { "path": "./apps/web/tsconfig.spec.json" }
   ]
 }

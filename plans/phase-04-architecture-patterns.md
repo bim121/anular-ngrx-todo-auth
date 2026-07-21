@@ -17,7 +17,7 @@
 - [x] `TodoRepository` interface + json implementation + **`HttpTodoRepository` skeleton** (still json-server until Phase 13)
 - [ ] Таблица CQRS-lite ↔ backend Commands (см. ниже)
 - [x] Auth state machine documented + implemented
-- [ ] Nx workspace с libs
+- [x] Nx workspace с libs
 - [x] Interceptor chain complete
 - [ ] ADR-007 layering rules
 
@@ -216,10 +216,10 @@ libs/
 
 ### 4.6.4 Пошаговая миграция
 
-1. [ ] Создать libs, скопировать код.
-2. [ ] Обновить imports на `@anular-ngrx/auth-data-access`.
-3. [ ] `nx build web` green.
-4. [ ] `nx test` per lib.
+1. [x] Создать libs, скопировать код.
+2. [x] Обновить imports на `@anular-ngrx/auth-data-access`.
+3. [x] `nx build web` green.
+4. [x] `nx test` per lib.
 
 ---
 
@@ -248,7 +248,7 @@ Layering: data-access → feature → ui → app shell. Запрет цикло�
 
 - [ ] Zero `Store` inject in dumb components
 - [ ] Swap `TodoRepository` mock in test without HTTP
-- [ ] `nx graph` без circular deps
+- [x] `nx graph` без circular deps
 - [ ] State machine doc matches code
 
 ---

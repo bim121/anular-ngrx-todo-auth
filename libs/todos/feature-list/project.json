@@ -1,0 +1,28 @@
+{
+  "name": "todos-feature-list",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/todos/feature-list/src",
+  "prefix": "app",
+  "projectType": "library",
+  "tags": ["scope:todos", "type:feature"],
+  "targets": {
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/todos/feature-list/**/*.ts",
+          "libs/todos/feature-list/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "buildTarget": "web:build:development",
+        "providersFile": "apps/web/src/testing/test-providers.ts",
+        "tsConfig": "apps/web/tsconfig.spec.json",
+        "include": ["**/*.spec.ts"]
+      }
+    }
+  }
+}

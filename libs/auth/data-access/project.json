@@ -1,0 +1,28 @@
+{
+  "name": "auth-data-access",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/auth/data-access/src",
+  "prefix": "app",
+  "projectType": "library",
+  "tags": ["scope:auth", "type:data-access"],
+  "targets": {
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/auth/data-access/**/*.ts",
+          "libs/auth/data-access/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "buildTarget": "web:build:development",
+        "providersFile": "apps/web/src/testing/test-providers.ts",
+        "tsConfig": "apps/web/tsconfig.spec.json",
+        "include": ["**/*.spec.ts"]
+      }
+    }
+  }
+}

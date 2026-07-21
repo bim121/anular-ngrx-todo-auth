@@ -7,13 +7,30 @@ Target polyglot MFE architecture: [polyglot-mfe-architecture.md](../../plans/pol
 
 | App | Stack | Path | Route (target) | Status |
 |-----|-------|------|----------------|--------|
-| **shell** | Angular 21 | repo root `src/` (today: monolith) | layout, auth, router | Phase 9 — split from monolith |
-| **todos-mfe** | Angular 21 | `src/app/features/todos/` (today: in monolith) | `/todos/*` | Phase 9 — extract remote |
+| **web** (shell) | Angular 21 + Nx | `apps/web/` | layout, auth, router | Phase 4 — Nx app |
+| **todos-mfe** | Angular 21 | `libs/todos/*` (in web today) | `/todos/*` | Phase 9 — extract remote |
 | **admin-mfe** | Angular 21 | — | `/admin/*` | Phase 9 stub → Phase 14 |
 | **marketing-mfe** | React + Vite (→ Next.js 15) | `apps/marketing-mfe/` | `/`, `/pricing`, `/docs` | Phase 1 login stub |
 | **analytics-mfe** | Vue 3 + Vite | `apps/analytics-mfe/` | `/analytics` | Phase 1 auth stub |
 
-Today the Angular **shell** and **todos** features live in one app at the repository root. `marketing-mfe` is a separate workspace under `apps/`.
+## Angular libs (Nx)
+
+| Lib | Import | Tags |
+|-----|--------|------|
+| auth-data-access | `@anular-ngrx/auth-data-access` | `scope:auth`, `type:data-access` |
+| auth-feature-login | `@anular-ngrx/auth-feature-login` | `scope:auth`, `type:feature` |
+| todos-data-access | `@anular-ngrx/todos-data-access` | `scope:todos`, `type:data-access` |
+| todos-feature-list | `@anular-ngrx/todos-feature-list` | `scope:todos`, `type:feature` |
+| shared-ui | `@anular-ngrx/shared-ui` | `scope:shared`, `type:ui` |
+
+```bash
+nx build web
+nx test web
+nx run-many -t test --projects=auth-data-access,todos-data-access,todos-feature-list,shared-ui
+nx graph
+```
+
+Today the Angular **web** shell lives under `apps/web/`. Feature code is in `libs/`. `marketing-mfe` / `analytics-mfe` remain separate workspaces under `apps/`.
 
 ## Dev servers & ports
 
