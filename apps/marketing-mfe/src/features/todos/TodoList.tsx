@@ -1,11 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { applyFilter, type TodoFilter } from './apply-filter';
-import {
-  useAddTodoMutation,
-  useDeleteTodoMutation,
-  useToggleTodoMutation,
-  useTodosQuery,
-} from './useTodosQuery';
+import { useTodos } from './useTodos';
 import { useAuthStore } from '@marketing/stores/authStore';
 import { useLogout } from '@marketing/hooks/useLogout';
 import { Toast } from '@marketing/shared/ui/toast';
@@ -15,10 +10,8 @@ export function TodoList() {
   const userName = useAuthStore((state) => state.userName) ?? 'User';
   const logout = useLogout();
 
-  const { data: todos = [], isLoading, error: queryError } = useTodosQuery();
-  const addTodoMutation = useAddTodoMutation();
-  const deleteTodoMutation = useDeleteTodoMutation();
-  const toggleTodoMutation = useToggleTodoMutation();
+  const { todos, loading, error: queryError, mutating, add, toggle, remove } =
+    useTodos();
 
   const [filter, setFilter] = useState<TodoFilter>('all');
   const [newTask, setNewTask] = useState('');
@@ -28,11 +21,6 @@ export function TodoList() {
     () => applyFilter(todos, filter),
     [todos, filter]
   );
-
-  const mutating =
-    addTodoMutation.isPending ||
-    deleteTodoMutation.isPending ||
-    toggleTodoMutation.isPending;
 
   const error =
     actionError ??
@@ -48,7 +36,7 @@ export function TodoList() {
     setActionError(null);
 
     try {
-      await addTodoMutation.mutateAsync(task);
+      await add(task);
       setNewTask('');
     } catch (err) {
       setActionError(err instanceof Error ? err.message : 'Failed to add todo');
@@ -60,15 +48,10 @@ export function TodoList() {
       return;
     }
 
-    const todo = todos.find((item) => item.id === todoId);
-    if (!todo) {
-      return;
-    }
-
     setActionError(null);
 
     try {
-      await toggleTodoMutation.mutateAsync(todo);
+      await toggle(todoId);
     } catch (err) {
       setActionError(
         err instanceof Error ? err.message : 'Failed to update todo'
@@ -88,7 +71,7 @@ export function TodoList() {
     setActionError(null);
 
     try {
-      await deleteTodoMutation.mutateAsync(todoId);
+      await remove(todoId);
     } catch (err) {
       setActionError(
         err instanceof Error ? err.message : 'Failed to delete todo'
@@ -120,18 +103,18 @@ export function TodoList() {
             value={newTask}
             onChange={(event) => setNewTask(event.target.value)}
             placeholder="What needs to be done?"
-            disabled={isLoading || mutating}
+            disabled={loading || mutating}
             aria-label="New task"
           />
           <button
             type="submit"
-            disabled={!newTask.trim() || isLoading || mutating}
+            disabled={!newTask.trim() || loading || mutating}
           >
             Add Task
           </button>
         </form>
 
-        {isLoading ? (
+        {loading ? (
           <p className="todo-status" aria-busy="true">
             Loading tasks…
           </p>

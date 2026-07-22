@@ -11,7 +11,7 @@
 
 | Layer | Technology | Scope | Examples in `marketing-mfe` |
 |-------|------------|-------|-----------------------------|
-| **Server / async** | TanStack Query | Cached HTTP, mutations, optimistic UI | `useTodosQuery`, `useToggleTodoMutation`, CRUD mutations |
+| **Server / async** | TanStack Query | Cached HTTP, mutations, optimistic UI | `useTodos` (Query + mutations behind composable) |
 | **Client session** | Zustand | Synchronous app identity | `useAuthStore` — `token`, `userId`, `userName`, `login`, `logout` |
 | **Page UI** | `useState` / `useMemo` | Ephemeral, single screen | Todo filter chip, `newTask` input, local form errors |
 
@@ -78,9 +78,11 @@ Otherwise todos from the previous user could flash after re-login.
 1. **`createAppQueryClient()`** — `staleTime`, `retry` defaults in `core/query-client.ts`.
 2. **`AppProviders`** — wrap root in `QueryClientProvider`; React Query Devtools **only** when `import.meta.env.DEV`.
 3. **`main.tsx`** — `<AppProviders><App /></AppProviders>`.
-4. **`useTodosQuery`** — `enabled: Boolean(userId && token)`; read auth from Zustand.
+4. **`useTodos`** — `enabled: Boolean(userId && token)`; read auth from Zustand; persist via `TodoRepository`.
 5. **Mutations** — `invalidateQueries({ queryKey: todoQueryKey(userId) })` on success (toggle uses optimistic path).
 6. **`useLogout`** — Zustand reset + `queryClient.clear()`.
+
+**Layering:** [ADR-007-react-layering.md](./ADR-007-react-layering.md) — pages → composables → repository → api.
 
 ---
 
@@ -92,8 +94,9 @@ Otherwise todos from the previous user could flash after re-login.
 | `apps/marketing-mfe/src/providers/AppProviders.tsx` | Provider + dev Devtools |
 | `apps/marketing-mfe/src/stores/authStore.ts` | Zustand auth slice |
 | `apps/marketing-mfe/src/hooks/useLogout.ts` | Logout + cache clear |
-| `apps/marketing-mfe/src/features/todos/useTodosQuery.ts` | Query + CRUD mutations |
-| `apps/marketing-mfe/src/features/todos/TodoList.tsx` | UI wired to hooks |
+| `apps/marketing-mfe/src/features/todos/useTodos.ts` | Composable: Query + CRUD via repository |
+| `apps/marketing-mfe/src/features/todos/TodoList.tsx` | UI wired to `useTodos()` only |
+| `libs/shared/data-access` | `TodoRepository` + json-server / mock impls |
 | `server/middleware.js` | `mockTogglePatchError` for rollback demo |
 
 ---

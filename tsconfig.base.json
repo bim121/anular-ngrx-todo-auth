@@ -31,6 +31,8 @@
       "@app/shared/*": ["apps/web/src/app/shared/*"],
       "@app/shared/validators/*": ["apps/web/src/app/shared/validators/*"],
       "@shared/api-types/*": ["libs/shared/api-types/src/*"],
+      "@shared/data-access": ["libs/shared/data-access/src/index.ts"],
+      "@shared/data-access/*": ["libs/shared/data-access/src/*"],
       "@shared/validators/*": ["libs/shared/validators/*"]
     }
   },

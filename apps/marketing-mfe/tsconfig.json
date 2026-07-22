@@ -23,8 +23,10 @@
       "@marketing/stores/*": ["src/stores/*"],
       "@marketing/hooks/*": ["src/hooks/*"],
       "@marketing/providers/*": ["src/providers/*"],
+      "@shared/data-access": ["../../libs/shared/data-access/src/index.ts"],
+      "@shared/data-access/*": ["../../libs/shared/data-access/src/*"],
       "@shared/validators/*": ["../../libs/shared/validators/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "../../libs/shared/data-access/src"]
 }

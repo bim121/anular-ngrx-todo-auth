@@ -23,11 +23,11 @@
 
 ### React/Next.js (marketing-mfe)
 
-- [ ] `useTodos()` composable — repository behind hook
-- [ ] `TodoRepository` interface + json-server impl
-- [ ] Feature folder boundaries ADR
-- [ ] Pages inject composables, not fetch directly
-- [ ] Mock repository в Vitest tests
+- [x] `useTodos()` composable — repository behind hook
+- [x] `TodoRepository` interface + json-server impl
+- [x] Feature folder boundaries ADR
+- [x] Pages inject composables, not fetch directly
+- [x] Mock repository в Vitest tests
 
 ### Vue 3 (analytics-mfe)
 

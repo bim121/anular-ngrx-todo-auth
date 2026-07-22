@@ -111,9 +111,9 @@
 ## Phase 4 — Architecture (все стеки)
 
 ### React/Next
-- [ ] `useTodos()` composable — repository behind hook
-- [ ] `TodoRepository` interface + json impl
-- [ ] Feature folder boundaries ADR
+- [x] `useTodos()` composable — repository behind hook
+- [x] `TodoRepository` interface + json impl
+- [x] Feature folder boundaries ADR
 
 ### Vue
 - [ ] `useTodos()` composable wrapping Pinia + service
