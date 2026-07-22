@@ -1,48 +1,37 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import { useLogout } from '@/composables/useLogout';
 import { useTodoFilter } from '@/composables/useTodoFilter';
-import {
-  useAddTodoMutation,
-  useDeleteTodoMutation,
-  useToggleTodoMutation,
-  useTodosQuery,
-} from '@/features/todos/useTodosQuery';
+import { useTodos } from '@/composables/useTodos';
 
 const router = useRouter();
 const { userName } = useAuth();
 const logout = useLogout();
 
-const { data, isLoading, error: queryError } = useTodosQuery();
-const addTodoMutation = useAddTodoMutation();
-const deleteTodoMutation = useDeleteTodoMutation();
-const toggleTodoMutation = useToggleTodoMutation();
+const { todos, loading, error: storeError, mutating, load, add, toggle, remove } =
+  useTodos();
 
-const todos = computed(() => data.value ?? []);
 const { filter, filteredTodos } = useTodoFilter(todos);
 
 const newTask = ref('');
 const actionError = ref<string | null>(null);
 
-const mutating = computed(
-  () =>
-    addTodoMutation.isPending.value ||
-    deleteTodoMutation.isPending.value ||
-    toggleTodoMutation.isPending.value
-);
-
 const error = computed(
-  () =>
-    actionError.value ??
-    (queryError.value instanceof Error ? queryError.value.message : null)
+  () => actionError.value ?? storeError.value
 );
 
 watch(filter, (value) => {
   if (import.meta.env.DEV) {
     console.info('[analytics-mfe] todo filter changed:', value);
   }
+});
+
+onMounted(() => {
+  void load().catch(() => {
+    /* error already in store */
+  });
 });
 
 async function handleAdd(): Promise<void> {
@@ -54,7 +43,7 @@ async function handleAdd(): Promise<void> {
   actionError.value = null;
 
   try {
-    await addTodoMutation.mutateAsync(task);
+    await add(task);
     newTask.value = '';
   } catch (err) {
     actionError.value =
@@ -67,15 +56,10 @@ async function handleToggle(todoId: string): Promise<void> {
     return;
   }
 
-  const todo = todos.value.find((item) => item.id === todoId);
-  if (!todo) {
-    return;
-  }
-
   actionError.value = null;
 
   try {
-    await toggleTodoMutation.mutateAsync(todo);
+    await toggle(todoId);
   } catch (err) {
     actionError.value =
       err instanceof Error ? err.message : 'Failed to update todo';
@@ -94,7 +78,7 @@ async function handleDelete(todoId: string): Promise<void> {
   actionError.value = null;
 
   try {
-    await deleteTodoMutation.mutateAsync(todoId);
+    await remove(todoId);
   } catch (err) {
     actionError.value =
       err instanceof Error ? err.message : 'Failed to delete todo';
@@ -129,14 +113,14 @@ function handleLogout(): void {
           type="text"
           placeholder="What needs to be done?"
           aria-label="New task"
-          :disabled="isLoading || mutating"
+          :disabled="loading || mutating"
         />
-        <button type="submit" :disabled="!newTask.trim() || isLoading || mutating">
+        <button type="submit" :disabled="!newTask.trim() || loading || mutating">
           Add Task
         </button>
       </form>
 
-      <p v-if="isLoading" class="status" aria-busy="true">Loading tasks…</p>
+      <p v-if="loading" class="status" aria-busy="true">Loading tasks…</p>
 
       <template v-else>
         <div class="filters" role="group" aria-label="Filter tasks">

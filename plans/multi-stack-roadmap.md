@@ -116,8 +116,8 @@
 - [x] Feature folder boundaries ADR
 
 ### Vue
-- [ ] `useTodos()` composable wrapping Pinia + service
-- [ ] Same repository interface (shared TS type)
+- [x] `useTodos()` composable wrapping Pinia + service
+- [x] Same repository interface (shared TS type)
 
 ---
 

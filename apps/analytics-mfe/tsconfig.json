@@ -17,7 +17,9 @@
     "paths": {
       "@/*": ["src/*"],
       "@shared/validators/*": ["../../libs/shared/validators/*"],
-      "@shared/api-types/*": ["../../libs/shared/api-types/src/*"]
+      "@shared/api-types/*": ["../../libs/shared/api-types/src/*"],
+      "@shared/data-access": ["../../libs/shared/data-access/src/index.ts"],
+      "@shared/data-access/*": ["../../libs/shared/data-access/src/*"]
     }
   },
     "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.spec.ts"]

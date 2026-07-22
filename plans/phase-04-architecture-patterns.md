@@ -31,11 +31,11 @@
 
 ### Vue 3 (analytics-mfe)
 
-- [ ] `useTodos()` composable wrapping Pinia + service
-- [ ] Same `TodoRepository` interface (shared TS type)
-- [ ] Service layer отделён от store actions
-- [ ] ADR-007 layering для Vue features
-- [ ] Swap repository impl in tests без HTTP
+- [x] `useTodos()` composable wrapping Pinia + service
+- [x] Same `TodoRepository` interface (shared TS type)
+- [x] Service layer отделён от store actions
+- [x] ADR-007 layering для Vue features
+- [x] Swap repository impl in tests без HTTP
 
 ---
 

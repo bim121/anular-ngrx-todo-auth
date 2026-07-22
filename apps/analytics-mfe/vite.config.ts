@@ -14,6 +14,7 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       '@shared/validators': resolve(rootDir, 'libs/shared/validators'),
       '@shared/api-types': resolve(rootDir, 'libs/shared/api-types/src'),
+      '@shared/data-access': resolve(rootDir, 'libs/shared/data-access/src'),
     },
   },
   server: {

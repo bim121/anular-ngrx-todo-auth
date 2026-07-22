@@ -1,11 +1,6 @@
-export interface Todo {
-  id: string;
-  userId: string;
-  task: string;
-  completed: boolean;
-  createdAt?: string;
-}
+import type { Todo } from '@shared/data-access';
 
+export type { Todo };
 export type TodoFilter = 'all' | 'active' | 'done';
 
 export function applyFilter(todos: Todo[], filter: TodoFilter): Todo[] {
