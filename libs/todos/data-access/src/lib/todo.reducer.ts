@@ -124,6 +124,13 @@ export const todosReducer = createReducer(
     )
   ),
 
+  on(TodoActions.applyRemoteTodoUpdate, (state, { todo }) => {
+    if (!state.entities[todo.id]) {
+      return state;
+    }
+    return todosAdapter.updateOne({ id: todo.id, changes: todo }, state);
+  }),
+
   on(AuthActions.logoutUser, () => initialTodoState)
 );
 

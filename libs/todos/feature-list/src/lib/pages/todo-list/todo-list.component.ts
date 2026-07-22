@@ -7,7 +7,7 @@ import {
   output,
 } from '@angular/core';
 import { Todo, TodoTreeNode } from '@anular-ngrx/todos-data-access';
-import { TodosFacade } from '@anular-ngrx/todos-data-access';
+import { CommentsFacade, TodosFacade } from '@anular-ngrx/todos-data-access';
 import { buildTodoTree } from '@anular-ngrx/todos-data-access';
 import { SpinnerComponent } from '@anular-ngrx/shared-ui';
 import { TodoStatsPanelComponent } from '../../ui/todo-stats-panel/todo-stats-panel.component';
@@ -34,6 +34,7 @@ import { TodoListUiStore } from './todo-list-ui.store';
 })
 export class TodoListPageComponent {
   private readonly todosFacade = inject(TodosFacade);
+  private readonly commentsFacade = inject(CommentsFacade);
   private readonly toast = inject(ToastService);
   readonly uiStore = inject(TodoListUiStore);
 
@@ -63,11 +64,23 @@ export class TodoListPageComponent {
 
   updatedTask = '';
 
+  readonly commentsFor = (todoId: string) =>
+    this.commentsFacade.commentsFor(todoId);
+  readonly commentsLoadingFor = (todoId: string) =>
+    this.commentsFacade.isLoading(todoId);
+
   constructor() {
     effect(() => {
       const err = this.error();
       if (err) {
         this.toast.error(err);
+      }
+    });
+
+    effect(() => {
+      const commentErr = this.commentsFacade.error();
+      if (commentErr) {
+        this.toast.error(commentErr);
       }
     });
 
@@ -129,5 +142,13 @@ export class TodoListPageComponent {
         task: this.updatedTask.trim(),
       });
     }
+  }
+
+  onCommentsOpened(todoId: string): void {
+    this.commentsFacade.load(todoId);
+  }
+
+  onCommentSubmitted(event: { todoId: string; body: string }): void {
+    this.commentsFacade.add(event.todoId, event.body);
   }
 }

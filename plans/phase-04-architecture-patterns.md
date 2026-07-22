@@ -257,13 +257,13 @@ Layering: data-access → feature → ui → app shell. Запрет цикло�
 
 ### PF-1.1 WebSocket prep (V1 Collaboration)
 
-- [ ] `RealtimeService` interface в `core/`
-- [ ] Mock implementation + NgRx effect skeleton (полная реализация Phase 4–5)
+- [x] `RealtimeService` interface в `core/`
+- [x] Mock implementation + NgRx effect skeleton (полная реализация Phase 4–5)
 
 ### PF-1.2 Comments (V1)
 
-- [ ] `Comment` entity + `CommentsFacade`
-- [ ] `TodoItem` expandable comments section
+- [x] `Comment` entity + `CommentsFacade`
+- [x] `TodoItem` expandable comments section
 
 ---
 

@@ -1,32 +1,83 @@
-<div class="view-mode">
-  <input
-    type="checkbox"
-    [checked]="todo().completed"
-    (change)="onToggle()"
-    class="todo-checkbox"
-    [disabled]="disabled()"
-  />
-  <button
-    type="button"
-    (click)="onToggle()"
-    class="todo-task"
-    [class.priority-high]="todo().priority === 'high'"
-    [class.priority-low]="todo().priority === 'low'"
-    [disabled]="disabled()"
-  >
-    {{ todo().task }}
-  </button>
-  @if (todo().tags.length > 0) {
-    <div class="todo-tags" aria-label="Tags">
-      @for (tag of todo().tags; track tag) {
-        <span class="tag-chip">{{ tag }}</span>
+<div class="todo-item-root">
+  <div class="view-mode">
+    <input
+      type="checkbox"
+      [checked]="todo().completed"
+      (change)="onToggle()"
+      class="todo-checkbox"
+      [disabled]="disabled()"
+    />
+    <button
+      type="button"
+      (click)="onToggle()"
+      class="todo-task"
+      [class.priority-high]="todo().priority === 'high'"
+      [class.priority-low]="todo().priority === 'low'"
+      [disabled]="disabled()"
+    >
+      {{ todo().task }}
+    </button>
+    @if (todo().tags.length > 0) {
+      <div class="todo-tags" aria-label="Tags">
+        @for (tag of todo().tags; track tag) {
+          <span class="tag-chip">{{ tag }}</span>
+        }
+      </div>
+    }
+    <span class="priority-badge" [attr.data-priority]="todo().priority">
+      {{ todo().priority }}
+    </span>
+    <button
+      type="button"
+      class="comments-toggle"
+      (click)="toggleComments()"
+      [attr.aria-expanded]="commentsExpanded()"
+    >
+      Comments
+      @if (comments().length > 0) {
+        <span class="comments-count">({{ comments().length }})</span>
       }
+    </button>
+    <div class="actions">
+      <ng-content />
     </div>
-  }
-  <span class="priority-badge" [attr.data-priority]="todo().priority">
-    {{ todo().priority }}
-  </span>
-  <div class="actions">
-    <ng-content />
   </div>
+
+  @if (commentsExpanded()) {
+    <section class="comments-panel" aria-label="Comments">
+      @if (commentsLoading()) {
+        <p class="comments-status">Loading comments…</p>
+      } @else if (comments().length === 0) {
+        <p class="comments-status">No comments yet</p>
+      } @else {
+        <ul class="comments-list">
+          @for (comment of comments(); track comment.id) {
+            <li class="comment-item">
+              <span class="comment-author">{{ comment.authorName }}</span>
+              <span class="comment-body">{{ comment.body }}</span>
+            </li>
+          }
+        </ul>
+      }
+
+      <form class="comment-form" (submit)="$event.preventDefault(); submitComment()">
+        <input
+          type="text"
+          name="commentDraft"
+          class="comment-input"
+          placeholder="Add a comment…"
+          [(ngModel)]="draft"
+          [disabled]="disabled()"
+          (keyup.enter)="submitComment()"
+        />
+        <button
+          type="submit"
+          class="comment-submit"
+          [disabled]="disabled() || !draft.trim()"
+        >
+          Post
+        </button>
+      </form>
+    </section>
+  }
 </div>

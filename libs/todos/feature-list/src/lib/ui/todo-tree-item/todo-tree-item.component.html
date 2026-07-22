@@ -7,7 +7,11 @@
     <app-todo-item
       [todo]="node()"
       [disabled]="loading() || isTogglePending()(node().id)"
+      [comments]="commentsFor()(node().id)"
+      [commentsLoading]="commentsLoadingFor()(node().id)"
       (toggled)="onToggle(node().id)"
+      (commentsOpened)="commentsOpened.emit(node().id)"
+      (commentSubmitted)="commentSubmitted.emit({ todoId: node().id, body: $event })"
     >
       <button
         type="button"
@@ -70,12 +74,16 @@
           [editingId]="editingId()"
           [updatedTask]="updatedTask()"
           [isTogglePending]="isTogglePending()"
+          [commentsFor]="commentsFor()"
+          [commentsLoadingFor]="commentsLoadingFor()"
           (toggled)="toggled.emit($event)"
           (editStarted)="editStarted.emit($event)"
           (deleted)="deleted.emit($event)"
           (editSaved)="editSaved.emit()"
           (editCancelled)="editCancelled.emit()"
           (updatedTaskChange)="updatedTaskChange.emit($event)"
+          (commentsOpened)="commentsOpened.emit($event)"
+          (commentSubmitted)="commentSubmitted.emit($event)"
         />
       }
     </ul>

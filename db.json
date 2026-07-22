@@ -92,5 +92,23 @@
       "priority": "medium"
     }
   ],
+  "comments": [
+    {
+      "id": "comment_1",
+      "todoId": "todo_1",
+      "userId": "user_2",
+      "authorName": "Other User",
+      "body": "Effects chapter is solid — also check operators.",
+      "createdAt": "2026-01-03T10:00:00.000Z"
+    },
+    {
+      "id": "comment_2",
+      "todoId": "todo_1",
+      "userId": "user_1",
+      "authorName": "Test User",
+      "body": "Will do after the marble tests.",
+      "createdAt": "2026-01-03T11:30:00.000Z"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

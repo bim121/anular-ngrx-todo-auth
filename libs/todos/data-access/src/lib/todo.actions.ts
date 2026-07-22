@@ -79,3 +79,9 @@ export const toggleTodoFailure = createAction(
     '[To-Do Page] Toggle to-do Failure',
     props<{ id: string; previousCompleted: boolean; error: unknown }>()
 );
+
+/** Incoming live update from RealtimeService — patch store only (no API round-trip). */
+export const applyRemoteTodoUpdate = createAction(
+    '[Realtime] Apply remote to-do update',
+    props<{ todo: Partial<Todo> & { id: string } }>()
+);

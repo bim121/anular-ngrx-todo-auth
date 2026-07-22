@@ -58,4 +58,34 @@ describe('TodoItemComponent', () => {
 
     expect(toggledSpy).not.toHaveBeenCalled();
   });
+
+  it('expands comments and emits commentsOpened once', () => {
+    const openedSpy = vi.fn();
+    fixture.componentRef.setInput('todo', mockTodo);
+    fixture.componentRef.setInput('comments', [
+      {
+        id: 'c1',
+        todoId: '1',
+        userId: 'u1',
+        authorName: 'Ada',
+        body: 'Hi',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      },
+    ]);
+    fixture.componentInstance.commentsOpened.subscribe(openedSpy);
+    fixture.detectChanges();
+
+    const toggle = fixture.nativeElement.querySelector(
+      '.comments-toggle'
+    ) as HTMLButtonElement;
+    toggle.click();
+    fixture.detectChanges();
+    toggle.click();
+    fixture.detectChanges();
+    toggle.click();
+    fixture.detectChanges();
+
+    expect(openedSpy).toHaveBeenCalledTimes(1);
+    expect(fixture.nativeElement.textContent).toContain('Hi');
+  });
 });

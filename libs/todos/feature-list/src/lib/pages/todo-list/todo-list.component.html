@@ -54,12 +54,16 @@
           [editingId]="uiStore.editingId()"
           [updatedTask]="updatedTask"
           [isTogglePending]="isTogglePending"
+          [commentsFor]="commentsFor"
+          [commentsLoadingFor]="commentsLoadingFor"
           (toggled)="onTodoToggled($event)"
           (editStarted)="startEdit($event)"
           (deleted)="deleteTodo($event)"
           (editSaved)="saveEdit()"
           (editCancelled)="cancelEdit()"
           (updatedTaskChange)="updatedTask = $event"
+          (commentsOpened)="onCommentsOpened($event)"
+          (commentSubmitted)="onCommentSubmitted($event)"
         />
       } @empty {
         <li class="empty-list-message">No todos</li>

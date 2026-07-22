@@ -21,12 +21,23 @@ import { devtoolsConfig } from '@app/core/store/devtools-config';
 import { appConfigReducer, appConfigFeatureKey } from '@app/core/config/app-config.reducer';
 import { provideAppConfigInitializer } from '@app/core/config/app-config.initializer';
 import { httpInterceptorChain } from '@app/core/interceptors/http-interceptor.chain';
-import { authFeature } from '@anular-ngrx/auth-data-access';
-import { todosReducer, todosFeatureKey } from '@anular-ngrx/todos-data-access';
-import { provideTodoRepository } from '@anular-ngrx/todos-data-access';
-import { provideTodoFilterStrategies } from '@anular-ngrx/todos-data-access';
-import { AuthEffects } from '@anular-ngrx/auth-data-access';
-import { TodoEffects } from '@anular-ngrx/todos-data-access';
+import {
+  AuthEffects,
+  authFeature,
+} from '@anular-ngrx/auth-data-access';
+import {
+  CommentEffects,
+  provideCommentRepository,
+  provideTodoFilterStrategies,
+  provideTodoRepository,
+  TodoEffects,
+  todosFeatureKey,
+  todosReducer,
+  commentsFeatureKey,
+  commentsReducer,
+} from '@anular-ngrx/todos-data-access';
+import { provideRealtimeService } from '@app/core/realtime/realtime.providers';
+import { RealtimeEffects } from '@app/core/realtime/realtime.effects';
 import {
   notificationsReducer,
   notificationsFeatureKey,
@@ -59,13 +70,22 @@ export const appConfig: ApplicationConfig = {
     ),
     provideState(authFeature.name, authFeature.reducer),
     provideState(todosFeatureKey, todosReducer),
+    provideState(commentsFeatureKey, commentsReducer),
     provideState(notificationsFeatureKey, notificationsReducer),
     provideState(appConfigFeatureKey, appConfigReducer),
     provideState('router', routerReducer),
     provideAppConfigInitializer(),
     provideTodoRepository(),
+    provideCommentRepository(),
     provideTodoFilterStrategies(),
-    provideEffects(AuthEffects, TodoEffects, NotificationEffects),
+    provideRealtimeService(),
+    provideEffects(
+      AuthEffects,
+      TodoEffects,
+      CommentEffects,
+      NotificationEffects,
+      RealtimeEffects
+    ),
     provideRouterStore({ serializer: CustomRouterSerializer }),
     ...(isDevMode() ? [provideStoreDevtools(devtoolsConfig)] : []),
   ],

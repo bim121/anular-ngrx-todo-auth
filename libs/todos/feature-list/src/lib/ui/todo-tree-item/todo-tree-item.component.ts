@@ -5,7 +5,7 @@ import {
   output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TodoTreeNode } from '@anular-ngrx/todos-data-access';
+import { TodoComment, TodoTreeNode } from '@anular-ngrx/todos-data-access';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
 
 @Component({
@@ -24,6 +24,8 @@ export class TodoTreeItemComponent {
   readonly editingId = input<string | null>(null);
   readonly updatedTask = input('');
   readonly isTogglePending = input<(id: string) => boolean>(() => false);
+  readonly commentsFor = input<(id: string) => TodoComment[]>(() => []);
+  readonly commentsLoadingFor = input<(id: string) => boolean>(() => false);
 
   readonly toggled = output<string>();
   readonly editStarted = output<TodoTreeNode>();
@@ -31,6 +33,8 @@ export class TodoTreeItemComponent {
   readonly editSaved = output<void>();
   readonly editCancelled = output<void>();
   readonly updatedTaskChange = output<string>();
+  readonly commentsOpened = output<string>();
+  readonly commentSubmitted = output<{ todoId: string; body: string }>();
 
   onToggle(id: string): void {
     this.toggled.emit(id);
