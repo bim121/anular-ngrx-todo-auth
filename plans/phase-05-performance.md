@@ -10,7 +10,7 @@
 
 ## Результат фазы
 
-- [ ] `docs/perf-budget.md` с цифрами
+- [x] `docs/perf-budget.md` с цифрами
 - [ ] Virtual scroll 1000+ todos
 - [ ] HTTP cache + dedup
 - [ ] Lighthouse CI
@@ -46,15 +46,21 @@
 | Initial JS | `dist/stats.json` | document KB |
 | Todo list render 1000 | DevTools Profiler | < 100ms |
 
+**Done (2026-07-23):** numbers + screenshots in [`docs/perf/baseline.md`](../docs/perf/baseline.md) and [`docs/perf-budget.md`](../docs/perf-budget.md).
+
 ### 5.1.2 Seed 1000 todos
 
 Script `scripts/seed-many-todos.js` → db.json для stress test.
 
+```bash
+node scripts/seed-many-todos.js 1000
+# or: npm run seed:many
+```
+
 ### 5.1.3 Angular DevTools
 
-- Record profile: scroll list, toggle 10 items.
-- Export screenshot → `docs/perf/baseline-profile.png`.
-
+- [x] Record profile: scroll list, toggle interactions (`docs/perf/baseline-profile.png`).
+- INP **61 ms**, CLS **0**; Rendering/Painting dominate vs Scripting — see [`docs/perf/baseline.md`](../docs/perf/baseline.md).
 ---
 
 ## Неделя 2 — Rendering

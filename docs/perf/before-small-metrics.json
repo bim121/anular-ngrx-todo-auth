@@ -1,0 +1,24 @@
+{
+  "label": "before-small",
+  "baseUrl": "http://localhost:4173",
+  "measuredAt": "2026-07-23T16:14:15.629Z",
+  "listReadyWallMs": 172,
+  "apiToDomMs": 114,
+  "todosApiEndOffsetMs": 58,
+  "paint": {
+    "fcp": null,
+    "lcp": null,
+    "domContentLoaded": 26.199999928474426,
+    "loadEventEnd": 26.799999952316284,
+    "todoItemCount": 1,
+    "todoCountLabel": "1 items",
+    "todoResources": [
+      {
+        "name": "http://localhost:3000/todos?userId=user_1",
+        "duration": 1.5,
+        "responseEnd": 51.799999952316284
+      }
+    ],
+    "longTasks": []
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "theme": "light",
+  "auth": "{\"token\":\"mockToken=user_1-1784823262796\",\"user\":{\"id\":\"user_1\",\"name\":\"Test User\",\"email\":\"test@example.com\"},\"isLoggedIn\":true,\"status\":\"authenticated\"}"
+}
