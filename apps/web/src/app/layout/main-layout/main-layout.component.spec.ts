@@ -65,6 +65,9 @@ describe('MainLayoutComponent (NgRx + zoneless)', () => {
     const link = fixture.nativeElement.querySelector('.profile-link');
     expect(link?.textContent).toContain('Alice');
     expect(link?.getAttribute('href')).toBe('/profile');
+    const avatar = link?.querySelector('img.profile-avatar');
+    expect(avatar).toBeTruthy();
+    expect(avatar?.getAttribute('width')).toBe('36');
   });
 
   it('hides profile link when auth facade user is null', () => {

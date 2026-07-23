@@ -16,6 +16,7 @@ import { provideRouterStore, routerReducer } from '@ngrx/router-store';
 import { CustomRouterSerializer } from '@app/core/routing/custom-router.serializer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { IMAGE_LOADER, type ImageLoaderConfig } from '@angular/common';
 import { metaReducers } from '@app/core/store/store.meta-reducers';
 import { devtoolsConfig } from '@app/core/store/devtools-config';
 import { appConfigReducer, appConfigFeatureKey } from '@app/core/config/app-config.reducer';
@@ -52,6 +53,11 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withPreloading(TodosPreloadStrategy)),
     provideClientHydration(withEventReplay()),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    {
+      // Pass-through loader so NgOptimizedImage accepts absolute dicebear URLs.
+      provide: IMAGE_LOADER,
+      useValue: (config: ImageLoaderConfig) => config.src,
+    },
     provideStore(
       {},
       {

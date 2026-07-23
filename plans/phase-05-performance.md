@@ -11,7 +11,7 @@
 ## Результат фазы
 
 - [x] `docs/perf-budget.md` с цифрами
-- [ ] Virtual scroll 1000+ todos
+- [x] Virtual scroll 1000+ todos
 - [ ] HTTP cache + dedup
 - [ ] Lighthouse CI
 - [ ] Memory leak audit doc
@@ -70,27 +70,28 @@ node scripts/seed-many-todos.js 1000
 ```typescript
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
-// template
-<cdk-virtual-scroll-viewport itemSize="72" class="viewport">
-  @for (todo of todos(); track todo.id) {
-    <app-todo-item *cdkVirtualFor="todo; trackBy: trackById" />
-  }
+// template — *cdkVirtualFor + trackBy (fixed itemSize=72)
+<cdk-virtual-scroll-viewport itemSize="72" class="todo-viewport">
+  <li *cdkVirtualFor="let node of filteredTodoTree(); trackBy: trackByTodoId">
+    <app-todo-tree-item [node]="node" … />
+  </li>
 </cdk-virtual-scroll-viewport>
 ```
 
 **Шаги:**
-1. Fixed item height (CSS).
-2. `trackBy` обязателен.
-3. Compare FPS with/without virtual scroll.
+1. [x] Fixed item height (CSS `.todo-virtual-row { height: 72px }`).
+2. [x] `trackBy` обязателен (`trackByTodoId`).
+3. Compare FPS with/without virtual scroll (manual / re-run Performance profile).
 
 ### 5.2.2 NgOptimizedImage
 
-- Avatar в header (mock url).
-- `priority` только above-fold.
+- [x] Avatar в header (dicebear mock url via `NgOptimizedImage` + `priority`).
+- [x] `priority` только above-fold (header avatar).
 
 ### 5.2.3 Detach experiment (optional)
 
-Один тяжёлый widget — `ChangeDetectorRef.detach()` + manual `markForCheck` — документировать tradeoff.
+- [x] `TodoStatsPanelComponent` — `ChangeDetectorRef.detach()` + `detectChanges()`.
+- [x] Документ: [`docs/perf/detach-experiment.md`](../docs/perf/detach-experiment.md).
 
 ---
 

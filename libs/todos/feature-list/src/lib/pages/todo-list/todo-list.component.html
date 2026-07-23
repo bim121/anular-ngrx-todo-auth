@@ -45,29 +45,46 @@
 
     <span class="todo-count">{{ visibleTodoCount() }} items</span>
 
-    <ul>
-      @for (node of filteredTodoTree(); track node.id) {
-        <app-todo-tree-item
-          [node]="node"
-          [loading]="loading()"
-          [saving]="uiStore.editStatus() === 'saving'"
-          [editingId]="uiStore.editingId()"
-          [updatedTask]="updatedTask"
-          [isTogglePending]="isTogglePending"
-          [commentsFor]="commentsFor"
-          [commentsLoadingFor]="commentsLoadingFor"
-          (toggled)="onTodoToggled($event)"
-          (editStarted)="startEdit($event)"
-          (deleted)="deleteTodo($event)"
-          (editSaved)="saveEdit()"
-          (editCancelled)="cancelEdit()"
-          (updatedTaskChange)="updatedTask = $event"
-          (commentsOpened)="onCommentsOpened($event)"
-          (commentSubmitted)="onCommentSubmitted($event)"
-        />
-      } @empty {
-        <li class="empty-list-message">No todos</li>
-      }
-    </ul>
+    @if (filteredTodoTree().length === 0) {
+      <p class="empty-list-message">No todos</p>
+    } @else {
+      <cdk-virtual-scroll-viewport
+        itemSize="72"
+        class="todo-viewport"
+        role="list"
+        aria-label="Todo list"
+      >
+        <ul class="todo-virtual-list">
+          <li
+            *cdkVirtualFor="
+              let node of filteredTodoTree();
+              trackBy: trackByTodoId
+            "
+            class="todo-virtual-row"
+            [class.completed]="node.completed"
+            role="listitem"
+          >
+            <app-todo-tree-item
+              [node]="node"
+              [loading]="loading()"
+              [saving]="uiStore.editStatus() === 'saving'"
+              [editingId]="uiStore.editingId()"
+              [updatedTask]="updatedTask"
+              [isTogglePending]="isTogglePending"
+              [commentsFor]="commentsFor"
+              [commentsLoadingFor]="commentsLoadingFor"
+              (toggled)="onTodoToggled($event)"
+              (editStarted)="startEdit($event)"
+              (deleted)="deleteTodo($event)"
+              (editSaved)="saveEdit()"
+              (editCancelled)="cancelEdit()"
+              (updatedTaskChange)="updatedTask = $event"
+              (commentsOpened)="onCommentsOpened($event)"
+              (commentSubmitted)="onCommentSubmitted($event)"
+            />
+          </li>
+        </ul>
+      </cdk-virtual-scroll-viewport>
+    }
   }
 </div>

@@ -70,20 +70,32 @@
 .error-message { color: #a94442; background-color: #f2dede; }
 .empty-list-message { color: #888; }
 
-ul {
+/* CDK virtual scroll — fixed row height (itemSize=72). */
+.todo-viewport {
+  height: min(70vh, 520px);
+  width: 100%;
+}
+
+.todo-virtual-list {
   list-style: none;
+  margin: 0;
   padding: 0;
 }
-li {
+
+.todo-virtual-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  height: 72px;
+  box-sizing: border-box;
+  padding: 0 4px;
   border-bottom: 1px solid #eee;
+  overflow: hidden;
 }
-li:last-child {
-  border-bottom: none;
+
+.todo-virtual-row.completed {
+  opacity: 0.85;
 }
+
 .actions button {
   margin-left: 8px;
   padding: 6px 10px;

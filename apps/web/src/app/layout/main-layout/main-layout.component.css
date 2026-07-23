@@ -162,17 +162,24 @@
 }
 
 .profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.9rem;
   color: #4b5563;
-}
-
-.profile-link {
   text-decoration: none;
 }
 
 .profile-link:hover {
   color: #2563eb;
   text-decoration: underline;
+}
+
+.profile-avatar {
+  border-radius: 999px;
+  object-fit: cover;
+  background: #e5e7eb;
+  flex-shrink: 0;
 }
 
 .logout-btn {

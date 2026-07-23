@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -14,7 +15,7 @@ import { ThemeService } from '@app/core/ui/theme.service';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, NgOptimizedImage],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +33,16 @@ export class MainLayoutComponent {
   });
   readonly unreadCount = toSignal(this.store.select(selectUnreadNotificationsCount), {
     initialValue: 0,
+  });
+
+  /** Above-fold header avatar — NgOptimizedImage + priority. */
+  readonly avatarUrl = computed(() => {
+    const user = this.user();
+    if (!user) {
+      return null;
+    }
+    const seed = encodeURIComponent(user.name || user.id);
+    return `https://api.dicebear.com/9.x/initials/svg?seed=${seed}`;
   });
 
   readonly notificationsOpen = signal(false);

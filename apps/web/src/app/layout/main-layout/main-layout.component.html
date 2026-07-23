@@ -55,7 +55,19 @@
         }
       </div>
       @if (user(); as user) {
-        <a routerLink="/profile" class="profile-link">{{ user.name }}</a>
+        <a routerLink="/profile" class="profile-link">
+          @if (avatarUrl(); as src) {
+            <img
+              class="profile-avatar"
+              [ngSrc]="src"
+              width="36"
+              height="36"
+              alt=""
+              priority
+            />
+          }
+          <span>{{ user.name }}</span>
+        </a>
       }
       <button type="button" class="logout-btn" (click)="logout()">Logout</button>
     </div>

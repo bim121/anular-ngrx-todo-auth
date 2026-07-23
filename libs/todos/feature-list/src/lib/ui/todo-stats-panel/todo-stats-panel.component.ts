@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  OnInit,
+  effect,
+  inject,
   input,
   signal,
 } from '@angular/core';
@@ -14,6 +16,11 @@ export interface TodoStats {
   avgTaskLength: number;
 }
 
+/**
+ * Heavy stats widget — ChangeDetectorRef.detach() experiment (Phase 5.2.3).
+ * CD is detached; UI updates only via explicit detectChanges() after compute.
+ * See docs/perf/detach-experiment.md.
+ */
 @Component({
   selector: 'app-todo-stats-panel',
   standalone: true,
@@ -21,20 +28,35 @@ export interface TodoStats {
   styleUrl: './todo-stats-panel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TodoStatsPanelComponent implements OnInit {
+export class TodoStatsPanelComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
+
   readonly todos = input.required<Todo[]>();
   readonly stats = signal<TodoStats | null>(null);
   readonly computing = signal(true);
 
-  ngOnInit(): void {
-    const items = this.todos();
-    setTimeout(() => {
-      this.stats.set(this.computeStats(items));
-      this.computing.set(false);
-    }, 100);
+  constructor() {
+    this.cdr.detach();
+
+    effect((onCleanup) => {
+      const items = this.todos();
+      this.computing.set(true);
+      this.stats.set(null);
+      this.cdr.detectChanges();
+
+      // Defer heavy work so list paint is not blocked (same intent as setTimeout before).
+      const handle = setTimeout(() => {
+        this.stats.set(this.computeStats(items));
+        this.computing.set(false);
+        this.cdr.detectChanges();
+      }, 0);
+
+      onCleanup(() => clearTimeout(handle));
+    });
   }
 
   private computeStats(todos: Todo[]): TodoStats {
+    // Artificial CPU load for detach / defer demos (Phase 5 baseline).
     let checksum = 0;
     for (let i = 0; i < 500_000; i++) {
       checksum += i % 13;

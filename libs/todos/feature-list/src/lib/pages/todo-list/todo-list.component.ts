@@ -6,6 +6,7 @@ import {
   inject,
   output,
 } from '@angular/core';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { Todo, TodoTreeNode } from '@anular-ngrx/todos-data-access';
 import { CommentsFacade, TodosFacade } from '@anular-ngrx/todos-data-access';
 import { buildTodoTree } from '@anular-ngrx/todos-data-access';
@@ -17,10 +18,14 @@ import { TodoFilterComponent } from '../../ui/todo-filter/todo-filter.component'
 import { ToastService } from '@anular-ngrx/shared-ui';
 import { TodoListUiStore } from './todo-list-ui.store';
 
+/** Fixed row height for CDK virtual scroll (collapsed root rows). */
+export const TODO_VIRTUAL_ITEM_SIZE_PX = 72;
+
 @Component({
   selector: 'app-todo-list-page',
   standalone: true,
   imports: [
+    ScrollingModule,
     SpinnerComponent,
     TodoStatsPanelComponent,
     TodoTreeItemComponent,
@@ -68,6 +73,9 @@ export class TodoListPageComponent {
     this.commentsFacade.commentsFor(todoId);
   readonly commentsLoadingFor = (todoId: string) =>
     this.commentsFacade.isLoading(todoId);
+
+  readonly trackByTodoId = (_index: number, node: TodoTreeNode): string =>
+    node.id;
 
   constructor() {
     effect(() => {
