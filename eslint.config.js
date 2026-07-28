@@ -95,6 +95,28 @@ module.exports = defineConfig([
         },
       ],
       '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
+      // Phase 5.3.4 — ban legacy / internal RxJS entry points (works without type-aware lint).
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'rxjs/Rx',
+              message: 'Use named imports from "rxjs" (RxJS 7+).',
+            },
+            {
+              name: 'rxjs/internal',
+              message: 'Do not import RxJS internals.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['rxjs/internal/*'],
+              message: 'Do not import RxJS internals.',
+            },
+          ],
+        },
+      ],
     },
   },
   {
@@ -116,6 +138,20 @@ module.exports = defineConfig([
               importNames: ['Store'],
               message:
                 'Pages must inject facades (AuthFacade / TodosFacade), not Store directly (phase 4.2.3).',
+            },
+            {
+              name: 'rxjs/Rx',
+              message: 'Use named imports from "rxjs" (RxJS 7+).',
+            },
+            {
+              name: 'rxjs/internal',
+              message: 'Do not import RxJS internals.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['rxjs/internal/*'],
+              message: 'Do not import RxJS internals.',
             },
           ],
         },

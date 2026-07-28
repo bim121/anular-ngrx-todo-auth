@@ -100,28 +100,33 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 ### 5.3.1 Analyzer
 
 ```bash
-ng build --configuration production --stats-json
-npx esbuild-visualizer --metadata dist/.../stats.json
+npm run build:stats
+npm run analyze   # → docs/perf/bundle-stats.html
 ```
 
-### 5.3.2 angular.json budgets
+**Done:** report + notes in [`docs/perf/bundle-audit.md`](../docs/perf/bundle-audit.md).
+
+### 5.3.2 angular.json / `apps/web/project.json` budgets
 
 ```json
 "budgets": [
-  { "type": "initial", "maximumWarning": "350kb", "maximumError": "500kb" },
-  { "type": "anyComponentStyle", "maximumWarning": "2kb", "maximumError": "4kb" }
+  { "type": "initial", "maximumWarning": "350kB", "maximumError": "500kB" },
+  { "type": "anyComponentStyle", "maximumWarning": "2kB", "maximumError": "4kB" }
 ]
 ```
 
+**Done** — prod build warns on initial 468.73 kB and two CSS files; error budget still green.
+
 ### 5.3.3 Lazy routes audit
 
-- Каждый feature — отдельный chunk.
-- Shared libs не дублируют `@angular/core`.
+- [x] Каждый feature — отдельный chunk (todos / auth / layouts).
+- [x] Shared `@angular/core` в initial, без дубля в feature chunks — see bundle-audit.
 
 ### 5.3.4 RxJS imports
 
-- Только path imports: `import { map } from 'rxjs/operators'`.
-- ESLint rule `rxjs/no-subject-unsubscribe` etc.
+- [x] Named imports from `'rxjs'` (RxJS 7+); no `rxjs/Rx` / internals.
+- [x] ESLint `no-restricted-imports` for `rxjs/Rx` + `rxjs/internal/*`.
+- [x] `eslint-plugin-rxjs` installed (type-aware rules optional — see bundle-audit).
 
 ---
 
