@@ -1,7 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, throwError, timeout } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
 import { TodoComment, CreateCommentDto } from './comment.model';
 import { CommentRepository } from './comment.repository';
 
@@ -26,7 +25,7 @@ export class JsonServerCommentRepository extends CommentRepository {
 
   create(dto: CreateCommentDto): Observable<TodoComment> {
     const comment: TodoComment = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       todoId: dto.todoId,
       userId: dto.userId,
       authorName: dto.authorName,

@@ -3,7 +3,6 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { concatLatestFrom } from '@ngrx/operators';
 import { catchError, concatMap, map, of } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
 import * as AuthSelectors from '@anular-ngrx/auth-data-access/auth.selectors';
 import { CommentRepository } from './comment.repository';
 import * as CommentActions from './comment.actions';
@@ -47,7 +46,7 @@ export class CommentEffects {
           );
         }
 
-        const tempId = `temp_${uuidv4()}`;
+        const tempId = `temp_${crypto.randomUUID()}`;
         const optimistic = {
           id: tempId,
           todoId,

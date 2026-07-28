@@ -15,8 +15,8 @@ import {
   tap,
 } from 'rxjs';
 import { routerNavigatedAction } from '@ngrx/router-store';
-import { EffectsLifecycleService } from '@anular-ngrx/shared-ui';
-import { ToastService } from '@anular-ngrx/shared-ui';
+import { EffectsLifecycleService } from '@anular-ngrx/shared-ui/effects-lifecycle.service';
+import { ToastService } from '@anular-ngrx/shared-ui/toast/toast.service';
 import * as AuthSelectors from '@anular-ngrx/auth-data-access/auth.selectors';
 import * as TodoSelectors from './todo.selectors';
 import { TodoRepository } from './todo.repository';

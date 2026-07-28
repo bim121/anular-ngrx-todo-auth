@@ -5,7 +5,6 @@ export * from './lib/todo.selectors';
 export * from './lib/todo.effects';
 export * from './lib/todo.repository';
 export * from './lib/json-server-todo.repository';
-export * from './lib/http-todo.repository';
 export * from './lib/todo-repository.providers';
 export * from './lib/todo-filter.strategy';
 export * from './lib/todos.facade';
@@ -18,3 +17,5 @@ export * from './lib/comment.repository';
 export * from './lib/json-server-comment.repository';
 export * from './lib/comment-repository.providers';
 export * from './lib/comments.facade';
+// HttpTodoRepository skeleton — Phase 13; keep off main barrel:
+// `@anular-ngrx/todos-data-access/http-todo.repository`

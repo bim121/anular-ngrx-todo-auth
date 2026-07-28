@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { UserProfile } from '@anular-ngrx/auth-data-access';
-import { SpinnerComponent } from '@anular-ngrx/shared-ui';
+import { SpinnerComponent } from '@anular-ngrx/shared-ui/spinner/spinner.component';
 
 const PROFILE_URL = 'http://localhost:3000/users/me';
 

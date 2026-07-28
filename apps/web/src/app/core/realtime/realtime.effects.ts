@@ -13,7 +13,7 @@ import {
 import * as AuthActions from '@anular-ngrx/auth-data-access/auth.actions';
 import * as AuthSelectors from '@anular-ngrx/auth-data-access/auth.selectors';
 import * as TodoActions from '@anular-ngrx/todos-data-access/todo.actions';
-import { ToastService } from '@anular-ngrx/shared-ui';
+import { ToastService } from '@anular-ngrx/shared-ui/toast/toast.service';
 import { selectIsFeatureEnabled } from '@app/core/config/app-config.selectors';
 import { RealtimeService } from './realtime.service';
 

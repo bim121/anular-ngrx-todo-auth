@@ -10,12 +10,12 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { Todo, TodoTreeNode } from '@anular-ngrx/todos-data-access';
 import { CommentsFacade, TodosFacade } from '@anular-ngrx/todos-data-access';
 import { buildTodoTree } from '@anular-ngrx/todos-data-access';
-import { SpinnerComponent } from '@anular-ngrx/shared-ui';
+import { SpinnerComponent } from '@anular-ngrx/shared-ui/spinner/spinner.component';
 import { TodoStatsPanelComponent } from '../../ui/todo-stats-panel/todo-stats-panel.component';
 import { TodoTreeItemComponent } from '../../ui/todo-tree-item/todo-tree-item.component';
 import { TodoFormComponent } from '../../ui/todo-form/todo-form.component';
 import { TodoFilterComponent } from '../../ui/todo-filter/todo-filter.component';
-import { ToastService } from '@anular-ngrx/shared-ui';
+import { ToastService } from '@anular-ngrx/shared-ui/toast/toast.service';
 import { TodoListUiStore } from './todo-list-ui.store';
 
 /** Fixed row height for CDK virtual scroll (collapsed root rows). */

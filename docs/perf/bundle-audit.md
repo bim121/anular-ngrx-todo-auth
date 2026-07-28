@@ -1,6 +1,6 @@
 # Bundle audit — Phase 5.3
 
-**Date:** 2026-07-28  
+**Date:** 2026-07-28 (optimized pass)  
 **Build:** `npm run build:stats` → `dist/web/stats.json`  
 **Visualizer:** [`bundle-stats.html`](./bundle-stats.html) (`npx esbuild-visualizer`)
 
@@ -19,14 +19,16 @@ Open `docs/perf/bundle-stats.html` in a browser for the treemap.
 
 | | Raw | Transfer (est.) |
 |--|-----|-----------------|
-| **Initial total** | **468.73 kB** | **131.34 kB** |
-| Lazy todos feature (`index`) | 52.51 kB | 13.13 kB |
-| Lazy auth feature (`index`) | 11.36 kB | 2.74 kB |
-| `main-layout-component` | 9.01 kB | 2.75 kB |
+| **Initial total** | **348.08 kB** | **99.47 kB** |
+| Lazy todos feature (`index`) | 52.56 kB | 13.13 kB |
+| Lazy auth feature (`index`) | 46.56 kB | 12.05 kB |
+| Shared forms chunk (lazy) | 31.10 kB | 7.20 kB |
+| Todos route providers chunk | 11.02 kB | 3.07 kB |
+| `main-layout-component` | 8.10 kB | 2.58 kB |
+| `todos-routes` | 3.46 kB | 1.34 kB |
 | `auth-layout-component` | 1.54 kB | 0.71 kB |
-| route entry chunks | &lt; 1 kB each | — |
 
-**Bailout note:** `ngrx-store-localstorage` pulls CommonJS `deepmerge` (Angular build warning). Candidate for later replacement / `allowedCommonJsDependencies`.
+**Baseline (pre-cut):** initial **468.73 kB** → **348.08 kB** (−120.65 kB).
 
 ---
 
@@ -41,12 +43,23 @@ Current build status:
 
 | Check | Result |
 |-------|--------|
-| Initial vs 350 kB warn | **Warn** — 468.73 kB (over by 118.73 kB) |
+| Initial vs 350 kB warn | **Pass** — 348.08 kB |
 | Initial vs 500 kB error | **Pass** |
-| `main-layout.component.css` | **Warn** — 2.82 kB |
-| `register.component.css` | **Warn** — 2.23 kB |
+| `anyComponentStyle` | **Pass** (main-layout + register under 2 kB) |
 
-Budgets are intentionally tight so CI/local builds surface debt without failing the error ceiling yet.
+---
+
+## Cuts applied (follow-up to first audit)
+
+1. **Keep `@angular/forms` off initial** — `form-field` / auth signal schemas off shared barrels; deep imports on login/register only.
+2. **Drop prod StoreDevtools** — `devtools.providers.ts` + `.prod.ts` via `fileReplacements`.
+3. **Skip `withEventReplay()`** — hydration without event-replay (~10 kB).
+4. **Replace `ngrx-store-localstorage`** — lightweight `localStorageSyncReducer` (no `deepmerge`).
+5. **Replace `uuid`** — `crypto.randomUUID()`.
+6. **Lazy NgRx feature registration** — todos/comments/notifications/realtime `provideState` + `provideEffects` on `TODOS_ROUTES` (moves `@ngrx/entity` + repos/effects out of initial).
+7. **Trim CSS** — `main-layout` / `register` under 2 kB warn.
+
+Initial composition (approx.): `@angular/core` ~150 kB, `router` ~73 kB, `common` ~34 kB, `rxjs` ~28 kB, NgRx store/effects/router-store ~23 kB, auth + app shell remainder.
 
 ---
 
@@ -56,20 +69,20 @@ Entry: `apps/web/src/app/app.routes.ts`
 
 | Route group | Load | Chunk name (prod) |
 |-------------|------|-------------------|
-| Todos shell | `loadChildren` → `todos.routes` | `todos-routes` |
+| Todos shell | `loadChildren` → `todos.routes` (+ feature providers) | `todos-routes` + provider chunk |
 | Auth shell | `loadChildren` → `auth.routes` | `auth-routes` |
 | Main layout | `loadComponent` | `main-layout-component` |
 | Auth layout | `loadComponent` | `auth-layout-component` |
-| `/todos` page | `loadComponent` → `@anular-ngrx/todos-feature-list` | lazy `index` (~52 kB) |
+| `/todos` page | `loadComponent` → `@anular-ngrx/todos-feature-list` | lazy `index` (~53 kB) |
 | `/profile` | `loadComponent` → auth-feature-login | (auth feature chunk) |
-| `/login`, `/register` | `loadComponent` → auth-feature-login | lazy `index` (~11 kB) |
+| `/login`, `/register` | `loadComponent` → auth-feature-login | lazy `index` (~47 kB, includes forms) |
 | Stats panel | `@defer` lazy component | `todo-stats-panel-component` (101 B stub) |
 
 **Findings**
 
 - Features are separate lazy chunks — good.
-- `@angular/core` / shared framework code stays in **initial** chunks (expected); feature libs do not re-bundle a second copy of `@angular/core` in lazy outputs (esbuild shared chunks).
-- Todos feature is the largest lazy payload (~52 kB raw) — includes CDK scrolling after Phase 5.2.
+- `@angular/forms` lives in **lazy** auth/todos UI chunks, not initial.
+- Todos feature still largest page payload (~53 kB) — CDK scrolling (Phase 5.2).
 
 ---
 
@@ -79,25 +92,20 @@ Entry: `apps/web/src/app/app.routes.ts`
 
 - No `import * as … from 'rxjs'`
 - No `rxjs/Rx` / `rxjs/internal`
-- Operators use **named imports from `'rxjs'`** (RxJS 7+ tree-shakeable).  
-  Plan’s older `rxjs/operators` style is **not** required on RxJS 7+; named `rxjs` imports are preferred.
+- Operators use **named imports from `'rxjs'`** (RxJS 7+ tree-shakeable).
 
 ### ESLint
-
-Enforced without type-aware lint (flat config + Nx):
 
 | Mechanism | What it bans |
 |-----------|----------------|
 | `no-restricted-imports` | `rxjs/Rx`, `rxjs/internal`, `rxjs/internal/*` |
 
-`eslint-plugin-rxjs` is installed for optional local use (`rxjs/no-subject-unsubscribe`, etc.), but its rules need `parserOptions.project` / type-aware ESLint. Enabling them repo-wide is deferred so `nx lint` stays green; the import bans + code audit cover Phase 5.3.4 intent.
-
-Manual checks done: no `Subject.unsubscribe()` anti-patterns spotted in app effects (NgRx `createEffect` + operators).
+`eslint-plugin-rxjs` is installed for optional local use; type-aware rules deferred so `nx lint` stays green.
 
 ---
 
-## Follow-ups (not in 5.3 scope)
+## Follow-ups (later weeks)
 
-1. Cut initial toward **&lt; 350 kB** (localStorage sync / deepmerge, unused polyfills, stricter sideEffects).
-2. Trim `main-layout` / `register` CSS under 2 kB warn.
-3. Re-run `npm run analyze` after each bundle win; refresh this doc.
+1. Memoization / parametric selectors (5.4).
+2. HTTP cache interceptor (5.5).
+3. Re-run `npm run analyze` after further cuts; refresh this doc.

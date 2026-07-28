@@ -6,5 +6,6 @@ export * from './lib/auth.feature';
 export * from './lib/auth.facade';
 export * from './lib/auth.service';
 export * from './lib/auth.effects';
-export * from './lib/auth-signal-form.schema';
 export * from './lib/user-profile.model';
+// Signal form schemas — lazy login/register only:
+// `@anular-ngrx/auth-data-access/auth-signal-form.schema`

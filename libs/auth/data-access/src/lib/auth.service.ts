@@ -2,7 +2,6 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { catchError, map, Observable, switchMap, throwError } from "rxjs";
 import { AuthResponse, User } from "./auth.model";
-import { v4 as uuidv4 } from 'uuid';
 
 type StoredUser = User & { password: string };
 
@@ -15,7 +14,7 @@ export class AuthService {
 
     public register(credentials: {name: string, email: string, password: string}): Observable<User>{
         const newUser: User = {
-            id: uuidv4(),
+            id: crypto.randomUUID(),
             name: credentials.name,
             email: credentials.email
         };

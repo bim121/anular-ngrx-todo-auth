@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { RoutePageContextService } from '@app/core/services/route-page-context.service';
-import { GlobalErrorBannerComponent } from '@anular-ngrx/shared-ui';
-import { ToastContainerComponent } from '@anular-ngrx/shared-ui';
+import { GlobalErrorBannerComponent } from '@anular-ngrx/shared-ui/global-error-banner/global-error-banner.component';
+import { ToastContainerComponent } from '@anular-ngrx/shared-ui/toast/toast-container.component';
 
 @Component({
   selector: 'app-root',

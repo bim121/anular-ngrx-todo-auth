@@ -2,8 +2,8 @@ import { inject, Injectable, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
-import { EffectsLifecycleService } from '@anular-ngrx/shared-ui';
-import { ToastService } from '@anular-ngrx/shared-ui';
+import { EffectsLifecycleService } from '@anular-ngrx/shared-ui/effects-lifecycle.service';
+import { ToastService } from '@anular-ngrx/shared-ui/toast/toast.service';
 import { AuthService } from './auth.service';
 import * as fromAuth from './auth.actions';
 

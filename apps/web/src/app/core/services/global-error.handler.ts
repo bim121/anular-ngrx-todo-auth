@@ -1,5 +1,5 @@
 import { ErrorHandler, inject, Injectable, isDevMode } from '@angular/core';
-import { GlobalErrorService } from '@anular-ngrx/shared-ui';
+import { GlobalErrorService } from '@anular-ngrx/shared-ui/global-error.service';
 
 /** NgRx handles its own effect/reducer errors via `catchError` — do not route those here. */
 export function isNgRxRuntimeError(error: unknown): boolean {

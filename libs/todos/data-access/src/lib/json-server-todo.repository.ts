@@ -1,7 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, throwError, timeout } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
 import {
   CreateTodoDto,
   DEFAULT_TODO_PRIORITY,
@@ -30,7 +29,7 @@ export class JsonServerTodoRepository extends TodoRepository {
 
   create(dto: CreateTodoDto): Observable<Todo> {
     const newTodo: Todo = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       userId: dto.userId,
       task: dto.task,
       completed: false,

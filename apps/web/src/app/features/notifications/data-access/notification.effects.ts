@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
 import * as TodoActions from '@anular-ngrx/todos-data-access/todo.actions';
 import * as NotificationActions from './notification.actions';
 
@@ -16,7 +15,7 @@ export class NotificationEffects {
       map(({ todo }) =>
         NotificationActions.todoAssigned({
           notification: {
-            id: uuidv4(),
+            id: crypto.randomUUID(),
             message: `Task assigned: ${todo.task}`,
             read: false,
             createdAt: new Date().toISOString(),

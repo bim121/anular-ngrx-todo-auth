@@ -6,9 +6,9 @@ import {
   applyLoginFieldRules,
   LoginFormModel,
   markLoginFieldsTouched,
-} from '@anular-ngrx/auth-data-access';
-import { FormFieldComponent } from '@anular-ngrx/shared-ui';
-import { SpinnerComponent } from '@anular-ngrx/shared-ui';
+} from '@anular-ngrx/auth-data-access/auth-signal-form.schema';
+import { FormFieldComponent } from '@anular-ngrx/shared-ui/form-field/form-field.component';
+import { SpinnerComponent } from '@anular-ngrx/shared-ui/spinner/spinner.component';
 
 @Component({
   selector: 'app-login',

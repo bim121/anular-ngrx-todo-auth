@@ -115,7 +115,7 @@ npm run analyze   # → docs/perf/bundle-stats.html
 ]
 ```
 
-**Done** — prod build warns on initial 468.73 kB and two CSS files; error budget still green.
+**Done** — prod initial **348.08 kB** (under 350 kB warn); component CSS under 2 kB warn. See [`docs/perf/bundle-audit.md`](../docs/perf/bundle-audit.md).
 
 ### 5.3.3 Lazy routes audit
 

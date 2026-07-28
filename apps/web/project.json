@@ -35,7 +35,13 @@
               "maximumError": "4kB"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/web/src/app/core/store/devtools.providers.ts",
+              "with": "apps/web/src/app/core/store/devtools.providers.prod.ts"
+            }
+          ]
         },
         "development": {
           "optimization": false,
