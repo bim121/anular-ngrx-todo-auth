@@ -1,5 +1,10 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { Todo, TodoTreeNode, TodosState } from './todo.model';
+import {
+  createFeatureSelector,
+  createSelector,
+  MemoizedSelector,
+} from '@ngrx/store';
+import { Todo, TodoFilter, TodoTreeNode, TodosState } from './todo.model';
+import { applyTodoFilter } from './todo-filter.strategy';
 import {
   selectAll,
   selectEntities,
@@ -46,10 +51,39 @@ export const selectIsTodoTogglePending = (id: string) =>
 export const selectTodoById = (id: string) =>
   createSelector(selectTodoEntities, (entities) => entities[id]);
 
-export const selectTodosByTag = (tag: string) =>
-  createSelector(selectAllTodos, (todos) =>
+/**
+ * Parametric filter selector — one memoized instance per `TodoFilter` value.
+ * Prefer this over re-filtering in components when reading domain todos.
+ */
+const selectFilteredTodosByStatus = {
+  all: createSelector(selectAllTodos, (todos) => applyTodoFilter(todos, 'all')),
+  active: createSelector(selectAllTodos, (todos) =>
+    applyTodoFilter(todos, 'active')
+  ),
+  done: createSelector(selectAllTodos, (todos) =>
+    applyTodoFilter(todos, 'done')
+  ),
+} as const;
+
+export const selectFilteredTodos = (filter: TodoFilter) =>
+  selectFilteredTodosByStatus[filter];
+
+type TodosByTagSelector = MemoizedSelector<object, Todo[]>;
+
+const todosByTagSelectors = new Map<string, TodosByTagSelector>();
+
+export const selectTodosByTag = (tag: string): TodosByTagSelector => {
+  const cached = todosByTagSelectors.get(tag);
+  if (cached) {
+    return cached;
+  }
+
+  const selector = createSelector(selectAllTodos, (todos) =>
     todos.filter((todo) => todo.tags.includes(tag))
   );
+  todosByTagSelectors.set(tag, selector);
+  return selector;
+};
 
 export const selectAllTags = createSelector(selectAllTodos, (todos) =>
   [...new Set(todos.flatMap((todo) => todo.tags))].sort()

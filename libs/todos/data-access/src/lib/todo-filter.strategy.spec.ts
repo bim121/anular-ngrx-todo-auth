@@ -2,6 +2,7 @@ import {
   ActiveTodoFilter,
   AllTodoFilter,
   DoneTodoFilter,
+  applyTodoFilter,
 } from './todo-filter.strategy';
 import { Todo } from './todo.model';
 
@@ -24,6 +25,16 @@ describe('TodoFilterStrategy', () => {
       priority: 'low',
     },
   ];
+
+  it('applyTodoFilter matches strategy results', () => {
+    expect(applyTodoFilter(todos, 'all')).toEqual(new AllTodoFilter().apply(todos));
+    expect(applyTodoFilter(todos, 'active')).toEqual(
+      new ActiveTodoFilter().apply(todos)
+    );
+    expect(applyTodoFilter(todos, 'done')).toEqual(
+      new DoneTodoFilter().apply(todos)
+    );
+  });
 
   it('AllTodoFilter returns a shallow copy of all todos', () => {
     const result = new AllTodoFilter().apply(todos);

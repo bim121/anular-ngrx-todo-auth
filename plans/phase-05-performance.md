@@ -141,15 +141,24 @@ export const selectFilteredTodos = (filter: Filter) =>
 
 Использовать с `store.select(selectFilteredTodos(filter))` — memo per filter.
 
+- [x] `selectFilteredTodos` — one memoized selector per `all` / `active` / `done`.
+- [x] `selectTodosByTag` — cached factory (`Map`) so the same tag reuses one selector.
+- [x] `TodosFacade.filteredTodos` wired to those selectors; list page uses facade + UI `computed` join.
+- [x] Shared `applyTodoFilter` for selectors + filter strategies.
+
 ### 5.4.2 Не дублировать с computed
 
-Правило в `docs/memoization.md`:
+Правило в [`docs/memoization.md`](../docs/memoization.md):
 - Server state → NgRx selectors.
-- UI-only derived → `computed()` from `toSignal`.
+- UI-only derived → `computed()` from `toSignal` / SignalStore.
+
+- [x] Doc written; todo list follows the split (domain filter in NgRx, tag/tree in `computed`).
 
 ### 5.4.3 shareReplay audit
 
 Grep `shareReplay` — каждое использование обосновать (refCount: true).
+
+- [x] Only `RoutePageContextService` — `shareReplay({ bufferSize: 1, refCount: true })` documented in memoization.md + inline comment.
 
 ### 5.4.4 Pure pipes vs signals
 
@@ -157,6 +166,8 @@ Grep `shareReplay` — каждое использование обоснова�
 |----------|--------|
 | Expensive transform in template | computed signal |
 | Rarely changing display | pure pipe |
+
+- [x] Table + rules in [`docs/memoization.md`](../docs/memoization.md); todos feature uses selectors/`computed` (no filter pipes).
 
 ---
 

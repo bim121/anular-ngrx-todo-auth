@@ -19,6 +19,8 @@ export class RoutePageContextService {
   ).pipe(
     map(() => getLeafRoutePageData(this.router.routerState.snapshot.root)),
     distinctUntilChanged((a, b) => a?.title === b?.title && a?.breadcrumb === b?.breadcrumb),
+    // Shared by toSignal + title effect; refCount avoids a forever-hot router sub.
+    // See docs/memoization.md §5.4.3.
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

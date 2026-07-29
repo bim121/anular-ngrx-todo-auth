@@ -6,11 +6,11 @@ import * as TodoActions from './todo.actions';
 import {
   selectAllTags,
   selectAllTodos,
+  selectFilteredTodos,
   selectPendingToggleIds,
   selectTodosError,
   selectTodosLoading,
 } from './todo.selectors';
-import { TODO_FILTER_STRATEGIES } from './todo-filter.strategy';
 
 /**
  * Thin API over NgRx todos state for UI layers (pages).
@@ -19,11 +19,24 @@ import { TODO_FILTER_STRATEGIES } from './todo-filter.strategy';
 @Injectable({ providedIn: 'root' })
 export class TodosFacade {
   private readonly store = inject(Store);
-  private readonly filterStrategies = inject(TODO_FILTER_STRATEGIES);
 
   readonly todos = toSignal(this.store.select(selectAllTodos), {
     initialValue: [] as Todo[],
   });
+
+  /** Memoized per filter value via `selectFilteredTodos` (Phase 5.4.1). */
+  private readonly filteredByStatus = {
+    all: toSignal(this.store.select(selectFilteredTodos('all')), {
+      initialValue: [] as Todo[],
+    }),
+    active: toSignal(this.store.select(selectFilteredTodos('active')), {
+      initialValue: [] as Todo[],
+    }),
+    done: toSignal(this.store.select(selectFilteredTodos('done')), {
+      initialValue: [] as Todo[],
+    }),
+  } as const;
+
   readonly availableTags = toSignal(this.store.select(selectAllTags), {
     initialValue: [] as string[],
   });
@@ -38,9 +51,9 @@ export class TodosFacade {
     { initialValue: [] as string[] }
   );
 
-  /** Applies the injected TodoFilterStrategy for the given filter id. */
-  filterTodos(filter: TodoFilter): Todo[] {
-    return this.filterStrategies[filter].apply(this.todos());
+  /** Domain filter (all/active/done) — NgRx-memoized; UI chip lives in SignalStore. */
+  filteredTodos(filter: TodoFilter): Todo[] {
+    return this.filteredByStatus[filter]();
   }
 
   load(): void {

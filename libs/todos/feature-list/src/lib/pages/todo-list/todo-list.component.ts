@@ -49,7 +49,8 @@ export class TodoListPageComponent {
   readonly error = this.todosFacade.error;
 
   readonly filteredTodoTree = computed(() => {
-    let items = this.todosFacade.filterTodos(this.uiStore.filter());
+    // Domain filter: NgRx parametric selector (via facade). Tag chip: UI-only join.
+    let items = this.todosFacade.filteredTodos(this.uiStore.filter());
     const tag = this.uiStore.selectedTag();
 
     if (tag) {
