@@ -31,7 +31,7 @@ describe('todosReducer', () => {
     expect(state).toEqual(initialTodoState);
   });
 
-  it('loadTodos: sets loading and clears error', () => {
+  it('loadTodos: sets loading and clears error when store is empty', () => {
     const state = todosReducer(
       { ...initialTodoState, error: 'old' },
       TodoActions.loadTodos()
@@ -39,6 +39,17 @@ describe('todosReducer', () => {
 
     expect(state.loading).toBe(true);
     expect(state.error).toBeNull();
+  });
+
+  it('loadTodos: keeps loading false when entities already exist (SWR soft refresh)', () => {
+    const withTodos = todosAdapter.setAll(
+      [t1],
+      { ...initialTodoState, loading: false }
+    );
+    const state = todosReducer(withTodos, TodoActions.loadTodos());
+
+    expect(state.loading).toBe(false);
+    expect(state.ids).toContain(t1.id);
   });
 
   it('loadTodosSuccess: replaces entity collection', () => {

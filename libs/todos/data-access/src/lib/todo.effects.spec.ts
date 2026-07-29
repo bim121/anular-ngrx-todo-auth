@@ -146,6 +146,39 @@ describe('TodoEffects loadTodos$', () => {
     expect(emitted).toBeUndefined();
     sub.unsubscribe();
   });
+
+  it('exhaustMap ignores a second loadTodos while the first request is in flight', async () => {
+    const pendingTodos$ = new Subject<Todo[]>();
+    getAllMock.mockReturnValue(pendingTodos$.asObservable());
+
+    const emissions: unknown[] = [];
+    const sub = effects.loadTodos$.subscribe((action) => emissions.push(action));
+
+    actions$.next(TodoActions.loadTodos());
+    actions$.next(TodoActions.loadTodos());
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(getAllMock).toHaveBeenCalledTimes(1);
+
+    pendingTodos$.next([
+      {
+        id: '1',
+        userId: 'user-1',
+        task: 'A',
+        completed: false,
+        tags: [],
+        priority: 'medium' as const,
+      },
+    ]);
+    pendingTodos$.complete();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(emissions).toHaveLength(1);
+    expect((emissions[0] as { type: string }).type).toBe(
+      TodoActions.loadTodosSuccess.type
+    );
+    sub.unsubscribe();
+  });
 });
 
 describe('TodoEffects loadTodosOnNavigation$', () => {

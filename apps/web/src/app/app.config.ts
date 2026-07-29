@@ -22,6 +22,7 @@ import { appConfigReducer, appConfigFeatureKey } from '@app/core/config/app-conf
 import { provideAppConfigInitializer } from '@app/core/config/app-config.initializer';
 import { httpInterceptorChain } from '@app/core/interceptors/http-interceptor.chain';
 import { AuthEffects, authFeature } from '@anular-ngrx/auth-data-access';
+import { HttpCacheEffects } from '@app/core/http/http-cache.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -57,7 +58,7 @@ export const appConfig: ApplicationConfig = {
     provideState(appConfigFeatureKey, appConfigReducer),
     provideState('router', routerReducer),
     provideAppConfigInitializer(),
-    provideEffects(AuthEffects),
+    provideEffects(AuthEffects, HttpCacheEffects),
     provideRouterStore({ serializer: CustomRouterSerializer }),
     ...provideAppDevtools(),
   ],

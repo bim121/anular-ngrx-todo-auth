@@ -56,6 +56,11 @@ export class TodosFacade {
     return this.filteredByStatus[filter]();
   }
 
+  /**
+   * Load / revalidate todos.
+   * If the store already has items, they stay visible while the request runs (SWR).
+   * HTTP layer may serve a fresh cache hit or stale-then-network (see docs/perf/http-cache.md).
+   */
   load(): void {
     this.store.dispatch(TodoActions.loadTodos());
   }

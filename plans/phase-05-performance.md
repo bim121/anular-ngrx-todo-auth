@@ -12,7 +12,7 @@
 
 - [x] `docs/perf-budget.md` с цифрами
 - [x] Virtual scroll 1000+ todos
-- [ ] HTTP cache + dedup
+- [x] HTTP cache + dedup
 - [ ] Lighthouse CI
 - [ ] Memory leak audit doc
 
@@ -181,13 +181,23 @@ const cache = new Map<string, { data: unknown; expiry: number }>();
 // Invalidate on add/update/delete actions via service
 ```
 
+- [x] `HttpCacheService` + `cacheInterceptor` (TTL 30s for GET `/todos?…`).
+- [x] Invalidate on todo mutations + clear on logout.
+- [x] Doc: [`docs/perf/http-cache.md`](../docs/perf/http-cache.md).
+
 ### 5.5.2 Stale-while-revalidate
 
 Facade: показать cached todos immediately, фоновый refresh.
 
+- [x] Interceptor: stale cache → emit then revalidate.
+- [x] Reducer soft loading when entities already exist; facade `load()` documents SWR.
+
 ### 5.5.3 Request deduplication
 
 Если 2 компонента dispatch `loadTodos` одновременно — один inflight (effect `exhaustMap` уже помогает; добавить shared `inFlight$` если нужно).
+
+- [x] `loadTodos$` uses `exhaustMap`.
+- [x] HTTP-level inflight map + `shareReplay` for concurrent identical GETs.
 
 ---
 

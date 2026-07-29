@@ -6,6 +6,7 @@ import {
   catchError,
   concatMap,
   defer,
+  exhaustMap,
   filter,
   map,
   of,
@@ -53,7 +54,8 @@ export class TodoEffects {
       ofType(TodoActions.loadTodos),
       concatLatestFrom(() => this.store.select(AuthSelectors.selectUserId)),
       filter(([, userId]) => userId != null),
-      switchMap(([, userId]) =>
+      // Dedup: ignore loadTodos while a request is already in flight (Phase 5.5.3).
+      exhaustMap(([, userId]) =>
         defer(() => this.todos.getAll(userId!)).pipe(
           takeUntil(this.lifecycle.cancelPendingRequests),
           retry(LOAD_RETRY),

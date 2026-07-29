@@ -21,7 +21,8 @@ export const todosReducer = createReducer(
 
   on(TodoActions.loadTodos, (state) => ({
     ...state,
-    loading: true,
+    // Soft refresh (SWR): keep list visible when entities already exist.
+    loading: state.ids.length === 0,
     error: null,
   })),
 
