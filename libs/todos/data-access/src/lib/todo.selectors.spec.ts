@@ -8,7 +8,6 @@ import {
   selectAllTags,
   selectFilteredTodos,
   selectTodoById,
-  selectTodoTree,
   selectTodosByTag,
   selectWeeklyCompletionStats,
 } from './todo.selectors';

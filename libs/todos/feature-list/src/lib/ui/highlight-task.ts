@@ -4,7 +4,7 @@
 export function highlightTaskParts(
   task: string,
   query: string
-): ReadonlyArray<{ text: string; match: boolean }> {
+): readonly { text: string; match: boolean }[] {
   const q = query.trim();
   if (!q) {
     return [{ text: task, match: false }];

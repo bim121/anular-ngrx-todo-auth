@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { Store } from '@ngrx/store';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import {
   CommentsFacade,
@@ -18,7 +17,6 @@ import {
   TodoTreeNode,
   buildTodoTree,
   exportTodos,
-  selectWeeklyCompletionStats,
 } from '@anular-ngrx/todos-data-access';
 import { SpinnerComponent } from '@anular-ngrx/shared-ui/spinner/spinner.component';
 import { ToastService } from '@anular-ngrx/shared-ui/toast/toast.service';
@@ -53,7 +51,6 @@ export class TodoListPageComponent {
   private readonly todosFacade = inject(TodosFacade);
   private readonly commentsFacade = inject(CommentsFacade);
   private readonly toast = inject(ToastService);
-  private readonly store = inject(Store);
   readonly uiStore = inject(TodoListUiStore);
 
   /** Bound in template for cdk-virtual-scroll-viewport itemSize. */
@@ -63,10 +60,7 @@ export class TodoListPageComponent {
   readonly availableTags = this.todosFacade.availableTags;
   readonly loading = this.todosFacade.loading;
   readonly error = this.todosFacade.error;
-  readonly weeklyStats = toSignal(
-    this.store.select(selectWeeklyCompletionStats),
-    { initialValue: [] }
-  );
+  readonly weeklyStats = this.todosFacade.weeklyStats;
 
   /**
    * Debounced search (300ms) — store keeps immediate `searchQuery` for the input;

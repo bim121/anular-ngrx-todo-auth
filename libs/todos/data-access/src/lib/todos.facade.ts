@@ -10,6 +10,7 @@ import {
   selectPendingToggleIds,
   selectTodosError,
   selectTodosLoading,
+  selectWeeklyCompletionStats,
 } from './todo.selectors';
 
 /**
@@ -49,6 +50,10 @@ export class TodosFacade {
   readonly pendingToggleIds = toSignal(
     this.store.select(selectPendingToggleIds),
     { initialValue: [] as string[] }
+  );
+  readonly weeklyStats = toSignal(
+    this.store.select(selectWeeklyCompletionStats),
+    { initialValue: [] }
   );
 
   /** Domain filter (all/active/done) — NgRx-memoized; UI chip lives in SignalStore. */
