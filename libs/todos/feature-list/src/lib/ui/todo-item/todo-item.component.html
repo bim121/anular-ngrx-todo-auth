@@ -30,8 +30,9 @@
     <button
       type="button"
       class="comments-toggle"
+      [class.active]="commentsOpen()"
       (click)="toggleComments()"
-      [attr.aria-expanded]="commentsExpanded()"
+      [attr.aria-expanded]="commentsOpen()"
     >
       Comments
       @if (comments().length > 0) {
@@ -42,42 +43,4 @@
       <ng-content />
     </div>
   </div>
-
-  @if (commentsExpanded()) {
-    <section class="comments-panel" aria-label="Comments">
-      @if (commentsLoading()) {
-        <p class="comments-status">Loading comments…</p>
-      } @else if (comments().length === 0) {
-        <p class="comments-status">No comments yet</p>
-      } @else {
-        <ul class="comments-list">
-          @for (comment of comments(); track comment.id) {
-            <li class="comment-item">
-              <span class="comment-author">{{ comment.authorName }}</span>
-              <span class="comment-body">{{ comment.body }}</span>
-            </li>
-          }
-        </ul>
-      }
-
-      <form class="comment-form" (submit)="$event.preventDefault(); submitComment()">
-        <input
-          type="text"
-          name="commentDraft"
-          class="comment-input"
-          placeholder="Add a comment…"
-          [(ngModel)]="draft"
-          [disabled]="disabled()"
-          (keyup.enter)="submitComment()"
-        />
-        <button
-          type="submit"
-          class="comment-submit"
-          [disabled]="disabled() || !draft.trim()"
-        >
-          Post
-        </button>
-      </form>
-    </section>
-  }
 </div>

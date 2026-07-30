@@ -32,6 +32,9 @@ const stressTodos = Array.from({ length: COUNT }, (_, index) => {
 });
 
 db.todos = [...otherTodos, ...stressTodos];
+if (!Array.isArray(db.comments)) {
+  db.comments = [];
+}
 
 writeFileSync(dbPath, `${JSON.stringify(db, null, 2)}\n`, 'utf8');
 console.log(

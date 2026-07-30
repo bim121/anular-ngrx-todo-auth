@@ -8,10 +8,9 @@
       [todo]="node()"
       [disabled]="loading() || isTogglePending()(node().id)"
       [comments]="commentsFor()(node().id)"
-      [commentsLoading]="commentsLoadingFor()(node().id)"
+      [commentsOpen]="commentsOpenId() === node().id"
       (toggled)="onToggle(node().id)"
       (commentsOpened)="commentsOpened.emit(node().id)"
-      (commentSubmitted)="commentSubmitted.emit({ todoId: node().id, body: $event })"
     >
       <button
         type="button"
@@ -76,6 +75,7 @@
           [isTogglePending]="isTogglePending()"
           [commentsFor]="commentsFor()"
           [commentsLoadingFor]="commentsLoadingFor()"
+          [commentsOpenId]="commentsOpenId()"
           (toggled)="toggled.emit($event)"
           (editStarted)="editStarted.emit($event)"
           (deleted)="deleted.emit($event)"

@@ -61,6 +61,7 @@ const seedData = {
       createdAt: '2026-05-29T12:00:00.000Z',
     },
   ],
+  comments: [],
   $schema: './node_modules/json-server/schema.json',
 };
 

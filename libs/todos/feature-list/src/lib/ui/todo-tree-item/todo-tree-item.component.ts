@@ -26,6 +26,8 @@ export class TodoTreeItemComponent {
   readonly isTogglePending = input<(id: string) => boolean>(() => false);
   readonly commentsFor = input<(id: string) => TodoComment[]>(() => []);
   readonly commentsLoadingFor = input<(id: string) => boolean>(() => false);
+  /** Id of the todo whose comments drawer is open (list page owns the panel). */
+  readonly commentsOpenId = input<string | null>(null);
 
   readonly toggled = output<string>();
   readonly editStarted = output<TodoTreeNode>();

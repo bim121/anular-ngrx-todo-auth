@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   output,
+  signal,
 } from '@angular/core';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { Todo, TodoTreeNode } from '@anular-ngrx/todos-data-access';
@@ -43,13 +44,22 @@ export class TodoListPageComponent {
   private readonly toast = inject(ToastService);
   readonly uiStore = inject(TodoListUiStore);
 
+  /** Bound in template for cdk-virtual-scroll-viewport itemSize. */
+  readonly TODO_VIRTUAL_ITEM_SIZE_PX = TODO_VIRTUAL_ITEM_SIZE_PX;
+
   readonly todos = this.todosFacade.todos;
   readonly availableTags = this.todosFacade.availableTags;
   readonly loading = this.todosFacade.loading;
   readonly error = this.todosFacade.error;
 
+  /**
+   * Comments live in a drawer under the viewport — CDK fixed-size virtual
+   * scroll cannot host expanded inline panels (itemSize=72).
+   */
+  readonly commentsTodoId = signal<string | null>(null);
+  commentDraft = '';
+
   readonly filteredTodoTree = computed(() => {
-    // Domain filter: NgRx parametric selector (via facade). Tag chip: UI-only join.
     let items = this.todosFacade.filteredTodos(this.uiStore.filter());
     const tag = this.uiStore.selectedTag();
 
@@ -66,14 +76,28 @@ export class TodoListPageComponent {
     return countNodes(this.filteredTodoTree());
   });
 
+  readonly commentsTodo = computed(() => {
+    const id = this.commentsTodoId();
+    if (!id) return null;
+    return this.todos().find((todo) => todo.id === id) ?? null;
+  });
+
+  readonly activeComments = computed(() => {
+    const id = this.commentsTodoId();
+    return id ? this.commentsFacade.commentsFor(id) : [];
+  });
+
+  readonly activeCommentsLoading = computed(() => {
+    const id = this.commentsTodoId();
+    return id ? this.commentsFacade.isLoading(id) : false;
+  });
+
   readonly todoToggled = output<string>();
 
   updatedTask = '';
 
   readonly commentsFor = (todoId: string) =>
     this.commentsFacade.commentsFor(todoId);
-  readonly commentsLoadingFor = (todoId: string) =>
-    this.commentsFacade.isLoading(todoId);
 
   readonly trackByTodoId = (_index: number, node: TodoTreeNode): string =>
     node.id;
@@ -119,6 +143,9 @@ export class TodoListPageComponent {
     if (this.loading()) return;
     if (confirm('Are you sure you want to delete this task?')) {
       this.todosFacade.remove(todoId);
+      if (this.commentsTodoId() === todoId) {
+        this.closeComments();
+      }
     }
   }
 
@@ -153,11 +180,27 @@ export class TodoListPageComponent {
     }
   }
 
-  onCommentsOpened(todoId: string): void {
+  onCommentsToggle(todoId: string): void {
+    if (this.commentsTodoId() === todoId) {
+      this.closeComments();
+      return;
+    }
+
+    this.commentsTodoId.set(todoId);
+    this.commentDraft = '';
     this.commentsFacade.load(todoId);
   }
 
-  onCommentSubmitted(event: { todoId: string; body: string }): void {
-    this.commentsFacade.add(event.todoId, event.body);
+  closeComments(): void {
+    this.commentsTodoId.set(null);
+    this.commentDraft = '';
+  }
+
+  submitComment(): void {
+    const todoId = this.commentsTodoId();
+    const body = this.commentDraft.trim();
+    if (!todoId || !body || this.loading()) return;
+    this.commentsFacade.add(todoId, body);
+    this.commentDraft = '';
   }
 }

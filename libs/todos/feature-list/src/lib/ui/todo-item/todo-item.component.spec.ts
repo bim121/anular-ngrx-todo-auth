@@ -59,7 +59,7 @@ describe('TodoItemComponent', () => {
     expect(toggledSpy).not.toHaveBeenCalled();
   });
 
-  it('expands comments and emits commentsOpened once', () => {
+  it('emits commentsOpened when Comments is clicked', () => {
     const openedSpy = vi.fn();
     fixture.componentRef.setInput('todo', mockTodo);
     fixture.componentRef.setInput('comments', [
@@ -80,12 +80,8 @@ describe('TodoItemComponent', () => {
     ) as HTMLButtonElement;
     toggle.click();
     fixture.detectChanges();
-    toggle.click();
-    fixture.detectChanges();
-    toggle.click();
-    fixture.detectChanges();
 
     expect(openedSpy).toHaveBeenCalledTimes(1);
-    expect(fixture.nativeElement.textContent).toContain('Hi');
+    expect(fixture.nativeElement.textContent).toContain('(1)');
   });
 });

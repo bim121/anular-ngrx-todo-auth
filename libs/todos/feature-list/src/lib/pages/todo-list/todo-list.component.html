@@ -49,7 +49,7 @@
       <p class="empty-list-message">No todos</p>
     } @else {
       <cdk-virtual-scroll-viewport
-        itemSize="72"
+        [itemSize]="TODO_VIRTUAL_ITEM_SIZE_PX"
         class="todo-viewport"
         role="list"
         aria-label="Todo list"
@@ -72,19 +72,74 @@
               [updatedTask]="updatedTask"
               [isTogglePending]="isTogglePending"
               [commentsFor]="commentsFor"
-              [commentsLoadingFor]="commentsLoadingFor"
+              [commentsOpenId]="commentsTodoId()"
               (toggled)="onTodoToggled($event)"
               (editStarted)="startEdit($event)"
               (deleted)="deleteTodo($event)"
               (editSaved)="saveEdit()"
               (editCancelled)="cancelEdit()"
               (updatedTaskChange)="updatedTask = $event"
-              (commentsOpened)="onCommentsOpened($event)"
-              (commentSubmitted)="onCommentSubmitted($event)"
+              (commentsOpened)="onCommentsToggle($event)"
             />
           </li>
         </ul>
       </cdk-virtual-scroll-viewport>
+
+      @if (commentsTodo(); as todo) {
+        <section class="comments-drawer" aria-label="Comments">
+          <header class="comments-drawer__header">
+            <div class="comments-drawer__title">
+              <strong>Comments</strong>
+              <span class="comments-drawer__task">{{ todo.task }}</span>
+            </div>
+            <button
+              type="button"
+              class="comments-drawer__close"
+              (click)="closeComments()"
+            >
+              Close
+            </button>
+          </header>
+
+          @if (activeCommentsLoading()) {
+            <p class="comments-status">Loading comments…</p>
+          } @else if (activeComments().length === 0) {
+            <p class="comments-status">No comments yet</p>
+          } @else {
+            <ul class="comments-list">
+              @for (comment of activeComments(); track comment.id) {
+                <li class="comment-item">
+                  <span class="comment-author">{{ comment.authorName }}</span>
+                  <span class="comment-body">{{ comment.body }}</span>
+                </li>
+              }
+            </ul>
+          }
+
+          <form
+            class="comment-form"
+            (submit)="$event.preventDefault(); submitComment()"
+          >
+            <input
+              type="text"
+              name="commentDraft"
+              class="comment-input"
+              placeholder="Add a comment…"
+              [value]="commentDraft"
+              (input)="commentDraft = $any($event.target).value"
+              [disabled]="loading()"
+              (keyup.enter)="submitComment()"
+            />
+            <button
+              type="submit"
+              class="comment-submit"
+              [disabled]="loading() || !commentDraft.trim()"
+            >
+              Post
+            </button>
+          </form>
+        </section>
+      }
     }
   }
 </div>
