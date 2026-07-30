@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(withInterceptors(httpInterceptorChain())),
     provideRouter(routes, withPreloading(TodosPreloadStrategy)),
-    // Skip withEventReplay() — saves ~10kB initial (hydration still enabled).
+    // Hydration without withEventReplay() — see docs/perf/hydration.md (Phase 5.6.2).
     provideClientHydration(),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     {

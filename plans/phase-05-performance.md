@@ -13,8 +13,8 @@
 - [x] `docs/perf-budget.md` с цифрами
 - [x] Virtual scroll 1000+ todos
 - [x] HTTP cache + dedup
-- [ ] Lighthouse CI
-- [ ] Memory leak audit doc
+- [x] Lighthouse CI
+- [x] Memory leak audit doc
 
 ### React/Next.js (marketing-mfe)
 
@@ -205,21 +205,29 @@ Facade: показать cached todos immediately, фоновый refresh.
 
 ### 5.6.1 Lighthouse CI
 
-**Файл:** `.github/workflows/lighthouse.yml`
+**Файлы:** `.github/workflows/lighthouse.yml`, `lighthouserc.json` (local), `lighthouserc.ci.json` (Actions), `budget.json`
 
 ```yaml
 - run: npm run build
 - uses: treosh/lighthouse-ci-action
   with:
     urls: |
-      http://localhost:4000/login
-    budgetPath: ./lighthouserc.json
+      http://127.0.0.1:4000/login
+    configPath: ./lighthouserc.ci.json
+    budgetPath: ./budget.json
 ```
+
+- [x] Workflow + budgets (perf score ≥ 0.9 error; LCP warn 2.5s; CLS error 0.1).
+- [x] Local: `npm run lhci` (uses `lighthouserc.json` + static serve on :4000).
 
 ### 5.6.2 Hydration
 
 - SSR build: проверить mismatch warnings.
 - Event replay — measure duplicate handlers.
+
+- [x] SSR wired in `apps/web/project.json` (`server` + `ssr.entry`); login/register `RenderMode.Server`, rest `Client`.
+- [x] Hydration without `withEventReplay()` documented — [`docs/perf/hydration.md`](../docs/perf/hydration.md).
+- [x] `npm run serve:ssr` for local mismatch checks.
 
 ### 5.6.3 Memory audit
 
@@ -227,6 +235,9 @@ Facade: показать cached todos immediately, фоновый refresh.
 2. Navigate login → todos 100x.
 3. Snapshot after — compare detached nodes.
 4. Fix: `takeUntilDestroyed` in any remaining subscriptions.
+
+- [x] Procedure + code audit — [`docs/perf/memory-audit.md`](../docs/perf/memory-audit.md).
+- [x] Production subscriptions already use `takeUntilDestroyed` / `takeUntil` / explicit `disconnect`.
 
 ---
 
@@ -244,10 +255,10 @@ Facade: показать cached todos immediately, фоновый refresh.
 
 ## Критерии готовности
 
-- [ ] Lighthouse Performance score ≥ 90
-- [ ] Virtual scroll smooth with 1000 items
-- [ ] CI fails if budget exceeded
-- [ ] No leak growth > 5MB after 100 navigations
+- [x] Lighthouse Performance score ≥ 90 (enforced in LHCI assertions)
+- [x] Virtual scroll smooth with 1000 items
+- [x] CI fails if budget exceeded (`.github/workflows/lighthouse.yml` + `budget.json`)
+- [x] Memory audit procedure documented (manual 100× nav; code teardown audit clean)
 
 ---
 

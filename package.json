@@ -13,6 +13,8 @@
     "build": "nx build web",
     "build:stats": "nx build web --stats-json",
     "analyze": "npm run build:stats && npx esbuild-visualizer --metadata dist/web/stats.json --filename docs/perf/bundle-stats.html --title \"web prod bundle\" --template treemap",
+    "serve:ssr": "node dist/web/server/server.mjs",
+    "lhci": "npm run build && npx --yes @lhci/cli autorun --config=./lighthouserc.json",
     "watch": "nx build web --watch --configuration development",
     "start": "nx serve web",
     "test": "nx run-many -t test --projects=web,auth-data-access,todos-data-access,todos-feature-list,shared-ui,auth-feature-login --watch=false",
