@@ -35,6 +35,13 @@ describe('TodoListUiStore', () => {
     expect(uiStore.filter()).toBe('active');
   });
 
+  it('setSearchQuery updates searchQuery signal', () => {
+    const uiStore = TestBed.inject(TodoListUiStore);
+
+    uiStore.setSearchQuery('milk');
+    expect(uiStore.searchQuery()).toBe('milk');
+  });
+
   it('setTag updates selectedTag signal', () => {
     const uiStore = TestBed.inject(TodoListUiStore);
 

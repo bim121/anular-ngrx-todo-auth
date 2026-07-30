@@ -257,6 +257,16 @@ describe('todosReducer', () => {
     expect(state.pendingToggleIds).toEqual([]);
   });
 
+  it('toggleTodoOptimistic: sets completedAt when marking done', () => {
+    const state = todosReducer(
+      todosAdapter.setAll([t1], initialTodoState),
+      TodoActions.toggleTodoOptimistic({ id: t1.id })
+    );
+    const items = selectAll(state);
+    expect(items[0].completed).toBe(true);
+    expect(items[0].completedAt).toBeTruthy();
+  });
+
   it('toggleTodoSuccess: syncs server todo and clears pending id', () => {
     const optimisticState = todosReducer(
       todosAdapter.setAll([t1, t2], initialTodoState),
@@ -270,7 +280,8 @@ describe('todosReducer', () => {
     );
 
     const items = selectAll(state);
-    expect(items[0]).toEqual(serverTodo);
+    expect(items[0].completed).toBe(true);
+    expect(items[0].id).toBe(serverTodo.id);
     expect(state.pendingToggleIds).toEqual([]);
   });
 

@@ -7,16 +7,26 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { Todo, TodoTreeNode } from '@anular-ngrx/todos-data-access';
-import { CommentsFacade, TodosFacade } from '@anular-ngrx/todos-data-access';
-import { buildTodoTree } from '@anular-ngrx/todos-data-access';
+import { Store } from '@ngrx/store';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import {
+  CommentsFacade,
+  TodosFacade,
+  Todo,
+  TodoTreeNode,
+  buildTodoTree,
+  exportTodos,
+  selectWeeklyCompletionStats,
+} from '@anular-ngrx/todos-data-access';
 import { SpinnerComponent } from '@anular-ngrx/shared-ui/spinner/spinner.component';
+import { ToastService } from '@anular-ngrx/shared-ui/toast/toast.service';
 import { TodoStatsPanelComponent } from '../../ui/todo-stats-panel/todo-stats-panel.component';
 import { TodoTreeItemComponent } from '../../ui/todo-tree-item/todo-tree-item.component';
 import { TodoFormComponent } from '../../ui/todo-form/todo-form.component';
 import { TodoFilterComponent } from '../../ui/todo-filter/todo-filter.component';
-import { ToastService } from '@anular-ngrx/shared-ui/toast/toast.service';
+import { WeeklyStatsChartComponent } from '../../ui/weekly-stats-chart/weekly-stats-chart.component';
 import { TodoListUiStore } from './todo-list-ui.store';
 
 /** Fixed row height for CDK virtual scroll (collapsed root rows). */
@@ -29,6 +39,7 @@ export const TODO_VIRTUAL_ITEM_SIZE_PX = 72;
     ScrollingModule,
     SpinnerComponent,
     TodoStatsPanelComponent,
+    WeeklyStatsChartComponent,
     TodoTreeItemComponent,
     TodoFormComponent,
     TodoFilterComponent,
@@ -42,6 +53,7 @@ export class TodoListPageComponent {
   private readonly todosFacade = inject(TodosFacade);
   private readonly commentsFacade = inject(CommentsFacade);
   private readonly toast = inject(ToastService);
+  private readonly store = inject(Store);
   readonly uiStore = inject(TodoListUiStore);
 
   /** Bound in template for cdk-virtual-scroll-viewport itemSize. */
@@ -51,6 +63,22 @@ export class TodoListPageComponent {
   readonly availableTags = this.todosFacade.availableTags;
   readonly loading = this.todosFacade.loading;
   readonly error = this.todosFacade.error;
+  readonly weeklyStats = toSignal(
+    this.store.select(selectWeeklyCompletionStats),
+    { initialValue: [] }
+  );
+
+  /**
+   * Debounced search (300ms) — store keeps immediate `searchQuery` for the input;
+   * filtering uses this signal (PF-2.1).
+   */
+  readonly debouncedSearchQuery = toSignal(
+    toObservable(this.uiStore.searchQuery).pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ),
+    { initialValue: '' }
+  );
 
   /**
    * Comments live in a drawer under the viewport — CDK fixed-size virtual
@@ -62,9 +90,13 @@ export class TodoListPageComponent {
   readonly filteredTodoTree = computed(() => {
     let items = this.todosFacade.filteredTodos(this.uiStore.filter());
     const tag = this.uiStore.selectedTag();
+    const q = this.debouncedSearchQuery().trim().toLowerCase();
 
     if (tag) {
       items = items.filter((todo) => todo.tags.includes(tag));
+    }
+    if (q) {
+      items = items.filter((todo) => todo.task.toLowerCase().includes(q));
     }
 
     return buildTodoTree(items);
@@ -126,6 +158,10 @@ export class TodoListPageComponent {
 
   addTodo(task: string): void {
     this.todosFacade.add(task);
+  }
+
+  exportCsv(): void {
+    exportTodos(this.todos(), 'csv');
   }
 
   isTogglePending = (todoId: string): boolean =>

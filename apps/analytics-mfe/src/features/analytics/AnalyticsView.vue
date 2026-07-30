@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
+import StatsChart from './StatsChart.vue';
 
 const router = useRouter();
 const { userName, logout } = useAuth();
@@ -17,7 +18,8 @@ function handleLogout(): void {
       <p class="eyebrow">analytics-mfe</p>
       <h1>Analytics dashboard</h1>
       <p v-if="userName">Welcome, {{ userName }}!</p>
-      <p class="hint">Charts and Web Vitals — Phase 5–6.</p>
+      <p class="hint">Phase 5 — Chart.js spike (completed by tag).</p>
+      <StatsChart />
       <nav class="links">
         <RouterLink to="/todos">My Todos</RouterLink>
       </nav>
@@ -38,7 +40,7 @@ function handleLogout(): void {
 }
 
 .card {
-  width: min(100%, 28rem);
+  width: min(100%, 40rem);
   padding: 2rem;
   border-radius: 1rem;
   background: #1e293b;

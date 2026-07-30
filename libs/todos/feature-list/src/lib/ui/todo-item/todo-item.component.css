@@ -52,6 +52,13 @@
   color: #6b7280;
 }
 
+.search-hit {
+  background: #fef08a;
+  color: inherit;
+  padding: 0 1px;
+  border-radius: 2px;
+}
+
 .todo-tags {
   display: flex;
   flex-wrap: wrap;

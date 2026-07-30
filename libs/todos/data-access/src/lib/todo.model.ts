@@ -10,6 +10,8 @@ export interface Todo {
   task: string;
   completed: boolean;
   createdAt?: string;
+  /** ISO timestamp when marked completed (for weekly stats). */
+  completedAt?: string | null;
   tags: string[];
   priority: TodoPriority;
   parentId?: string;

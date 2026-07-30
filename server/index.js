@@ -9,6 +9,7 @@ import { NormalizedAdapter } from 'json-server/lib/adapters/normalized-adapter.j
 import { Observer } from 'json-server/lib/adapters/observer.js';
 import { createApp } from 'json-server/lib/app.js';
 import { createApiMiddleware } from './middleware.js';
+import { startRealtimeHub } from './realtime-hub.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, '..');
@@ -64,6 +65,7 @@ app.listen(port, () => {
   console.log(chalk.bold(`JSON Server + middleware on http://${host}:${port}`));
   console.log(chalk.gray(`Database: ${dbFile}`));
   console.log(chalk.gray('Middleware: Authorization mock on /todos, GET /users/me profile, duplicate email guard on POST /users'));
+  startRealtimeHub(Number(process.env.REALTIME_PORT ?? 3001));
 });
 
 if (process.env.NODE_ENV !== 'production') {

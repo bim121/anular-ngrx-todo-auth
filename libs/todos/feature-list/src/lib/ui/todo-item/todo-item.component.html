@@ -15,7 +15,13 @@
       [class.priority-low]="todo().priority === 'low'"
       [disabled]="disabled()"
     >
-      {{ todo().task }}
+      @for (part of highlightParts(todo().task, searchQuery()); track $index) {
+        @if (part.match) {
+          <mark class="search-hit">{{ part.text }}</mark>
+        } @else {
+          <span>{{ part.text }}</span>
+        }
+      }
     </button>
     @if (todo().tags.length > 0) {
       <div class="todo-tags" aria-label="Tags">

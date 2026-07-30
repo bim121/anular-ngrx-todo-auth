@@ -26,6 +26,9 @@ const stressTodos = Array.from({ length: COUNT }, (_, index) => {
     task: `Stress todo #${n}`,
     completed: n % 7 === 0,
     createdAt: new Date(now - n * 60_000).toISOString(),
+    ...(n % 7 === 0
+      ? { completedAt: new Date(now - n * 60_000).toISOString() }
+      : {}),
     tags: tagsPool[n % tagsPool.length],
     priority: priorities[n % priorities.length],
   };

@@ -21,6 +21,8 @@ export interface TodoListUiState {
   editStatus: TodoEditStatus;
   editingId: string | null;
   selectedTag: string | null;
+  /** Immediate search input (debounce applied in the list page). */
+  searchQuery: string;
 }
 
 export const TodoListUiStore = signalStore(
@@ -29,6 +31,7 @@ export const TodoListUiStore = signalStore(
     editStatus: 'viewing',
     editingId: null,
     selectedTag: null,
+    searchQuery: '',
   }),
   withMethods((store) => ({
     setFilter(filter: TodoListFilter) {
@@ -36,6 +39,9 @@ export const TodoListUiStore = signalStore(
     },
     setTag(tag: string | null) {
       patchState(store, { selectedTag: tag });
+    },
+    setSearchQuery(searchQuery: string) {
+      patchState(store, { searchQuery });
     },
     /** viewing → editing */
     startEdit(id: string) {

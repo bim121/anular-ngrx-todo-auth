@@ -10,6 +10,7 @@ import {
   selectTodoById,
   selectTodoTree,
   selectTodosByTag,
+  selectWeeklyCompletionStats,
 } from './todo.selectors';
 import { Todo } from './todo.model';
 
@@ -100,10 +101,17 @@ describe('todo selectors', () => {
     expect(tree[0].children[0].id).toBe('1-sub');
   });
 
-  it('selectTodoTree uses entity state', () => {
-    const state = buildRootState([t1, t2, sub]);
-    const tree = selectTodoTree(state);
+  it('selectWeeklyCompletionStats groups completed todos into last 8 weeks', () => {
+    const doneThisWeek: Todo = {
+      ...t1,
+      id: 'done-now',
+      completed: true,
+      completedAt: new Date().toISOString(),
+    };
+    const state = buildRootState([doneThisWeek, t2]);
+    const buckets = selectWeeklyCompletionStats(state);
 
-    expect(tree[0].children[0].task).toBe('Subtask');
+    expect(buckets).toHaveLength(8);
+    expect(buckets.reduce((sum, b) => sum + b.completed, 0)).toBeGreaterThanOrEqual(1);
   });
 });

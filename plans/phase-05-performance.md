@@ -27,8 +27,8 @@
 ### Vue 3 (analytics-mfe)
 
 - [ ] `v-memo` on todo rows в списке
-- [ ] Chart.js/ECharts — stats widget (mock `/todos/stats`)
-- [ ] analytics-mfe: first chart on `/analytics` dashboard route
+- [x] Chart.js/ECharts — stats widget (mock `/todos/stats`)
+- [x] analytics-mfe: first chart on `/analytics` dashboard route
 - [ ] Perf baseline doc для Vue list render
 - [ ] Vitest perf smoke: render 1000 items < threshold
 
@@ -266,22 +266,22 @@ Facade: показать cached todos immediately, фоновый refresh.
 
 ### PF-2.1 Client search (V2)
 
-- [ ] Signal `searchQuery` + debounced `computed` filter
-- [ ] Highlight matches in task text
+- [x] Signal `searchQuery` + debounced `computed` filter
+- [x] Highlight matches in task text
 
 ### PF-6.1 Stats dashboard (V6)
 
-- [ ] Memoized selector `selectWeeklyCompletionStats`
-- [ ] Simple bar chart component (prepare Phase 6 DS)
-- [ ] **Vue analytics:** Chart.js spike в `analytics-mfe` — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md) Phase 5; MFE интеграция в [Phase 9](./phase-09-microfrontends.md)
+- [x] Memoized selector `selectWeeklyCompletionStats`
+- [x] Simple bar chart component (prepare Phase 6 DS)
+- [x] **Vue analytics:** Chart.js spike в `analytics-mfe` — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md) Phase 5; MFE интеграция в [Phase 9](./phase-09-microfrontends.md)
 
 ### PF-5.1 Export CSV (V5)
 
-- [ ] `exportTodos()` — Blob download, perf test on 1000 items
+- [x] `exportTodos()` — Blob download, perf test on 1000 items
 
 ### PF-1.1 WebSocket full (V1)
 
-- [ ] Завершить real-time после virtual scroll baseline
+- [x] Завершить real-time после virtual scroll baseline (`ws://localhost:3001`, reconnect/backoff, publish local mutations)
 
 ---
 

@@ -1,0 +1,18 @@
+<section class="weekly-chart" aria-label="Completions by week">
+  <h3 class="weekly-chart__title">Completed per week</h3>
+  <div class="weekly-chart__bars" role="img" [attr.aria-label]="ariaSummary()">
+    @for (bucket of buckets(); track bucket.weekLabel) {
+      <div class="weekly-chart__col">
+        <div class="weekly-chart__bar-wrap">
+          <div
+            class="weekly-chart__bar"
+            [style.height.%]="(bucket.completed / maxCount()) * 100"
+            [attr.title]="bucket.weekLabel + ': ' + bucket.completed"
+          ></div>
+        </div>
+        <span class="weekly-chart__value">{{ bucket.completed }}</span>
+        <span class="weekly-chart__label">{{ shortLabel(bucket.weekLabel) }}</span>
+      </div>
+    }
+  </div>
+</section>

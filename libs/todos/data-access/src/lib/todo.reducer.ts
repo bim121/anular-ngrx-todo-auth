@@ -90,7 +90,13 @@ export const todosReducer = createReducer(
     }
 
     return todosAdapter.updateOne(
-      { id, changes: { completed: !todo.completed } },
+      {
+        id,
+        changes: {
+          completed: !todo.completed,
+          completedAt: !todo.completed ? new Date().toISOString() : null,
+        },
+      },
       {
         ...state,
         error: null,
@@ -115,7 +121,13 @@ export const todosReducer = createReducer(
 
   on(TodoActions.toggleTodoFailure, (state, { id, previousCompleted }) =>
     todosAdapter.updateOne(
-      { id, changes: { completed: previousCompleted } },
+      {
+        id,
+        changes: {
+          completed: previousCompleted,
+          completedAt: previousCompleted ? undefined : null,
+        },
+      },
       {
         ...state,
         pendingToggleIds: state.pendingToggleIds.filter(

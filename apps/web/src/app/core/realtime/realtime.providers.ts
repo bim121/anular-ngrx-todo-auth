@@ -1,8 +1,8 @@
 import { Provider } from '@angular/core';
 import { RealtimeService } from './realtime.service';
-import { MockRealtimeService } from './mock-realtime.service';
+import { WsRealtimeService } from './ws-realtime.service';
 
-/** Default realtime transport — swap useClass when SignalR hub lands (Phase 5). */
+/** Default realtime transport — native WebSocket hub on :3001 (PF-1.1). */
 export function provideRealtimeService(): Provider {
-  return { provide: RealtimeService, useClass: MockRealtimeService };
+  return { provide: RealtimeService, useClass: WsRealtimeService };
 }

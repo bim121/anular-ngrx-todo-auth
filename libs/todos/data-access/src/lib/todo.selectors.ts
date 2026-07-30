@@ -89,6 +89,55 @@ export const selectAllTags = createSelector(selectAllTodos, (todos) =>
   [...new Set(todos.flatMap((todo) => todo.tags))].sort()
 );
 
+export interface WeeklyCompletionBucket {
+  /** ISO week label, e.g. `2026-W30`. */
+  weekLabel: string;
+  completed: number;
+}
+
+/** Monday-based ISO week key for a Date. */
+export function isoWeekLabel(date: Date): string {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
+}
+
+/**
+ * Completions for the last 8 ISO weeks (memoized).
+ * Uses `completedAt`, falling back to `createdAt` for legacy completed rows.
+ */
+export const selectWeeklyCompletionStats = createSelector(
+  selectAllTodos,
+  (todos): WeeklyCompletionBucket[] => {
+    const now = new Date();
+    const buckets = new Map<string, number>();
+
+    for (let i = 7; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i * 7);
+      buckets.set(isoWeekLabel(d), 0);
+    }
+
+    for (const todo of todos) {
+      if (!todo.completed) continue;
+      const raw = todo.completedAt ?? todo.createdAt;
+      if (!raw) continue;
+      const label = isoWeekLabel(new Date(raw));
+      if (buckets.has(label)) {
+        buckets.set(label, (buckets.get(label) ?? 0) + 1);
+      }
+    }
+
+    return [...buckets.entries()].map(([weekLabel, completed]) => ({
+      weekLabel,
+      completed,
+    }));
+  }
+);
+
 export function buildTodoTree(todos: readonly Todo[]): TodoTreeNode[] {
   const byParent = new Map<string | undefined, Todo[]>();
 

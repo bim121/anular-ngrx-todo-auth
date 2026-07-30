@@ -1,0 +1,55 @@
+.weekly-chart {
+  margin: 0 0 1rem;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.weekly-chart__title {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.weekly-chart__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  min-height: 120px;
+}
+
+.weekly-chart__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.weekly-chart__bar-wrap {
+  width: 100%;
+  height: 88px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.weekly-chart__bar {
+  width: 70%;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, #60a5fa, #2563eb);
+}
+
+.weekly-chart__value {
+  font-size: 0.7rem;
+  color: #374151;
+}
+
+.weekly-chart__label {
+  font-size: 0.65rem;
+  color: #9ca3af;
+}

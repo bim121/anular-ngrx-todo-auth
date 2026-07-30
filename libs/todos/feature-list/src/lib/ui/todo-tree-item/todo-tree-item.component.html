@@ -9,6 +9,7 @@
       [disabled]="loading() || isTogglePending()(node().id)"
       [comments]="commentsFor()(node().id)"
       [commentsOpen]="commentsOpenId() === node().id"
+      [searchQuery]="searchQuery()"
       (toggled)="onToggle(node().id)"
       (commentsOpened)="commentsOpened.emit(node().id)"
     >
@@ -76,6 +77,7 @@
           [commentsFor]="commentsFor()"
           [commentsLoadingFor]="commentsLoadingFor()"
           [commentsOpenId]="commentsOpenId()"
+          [searchQuery]="searchQuery()"
           (toggled)="toggled.emit($event)"
           (editStarted)="editStarted.emit($event)"
           (deleted)="deleted.emit($event)"

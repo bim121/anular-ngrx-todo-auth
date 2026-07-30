@@ -32,7 +32,7 @@ export class MockRealtimeService extends RealtimeService {
   readonly events$: Observable<RealtimeEvent> =
     this.eventsSubject.asObservable();
 
-  connect(userId: string): void {
+  connect(userId: string, _userName?: string): void {
     if (this.connectedUserId === userId && this.statusSubject.value === 'connected') {
       return;
     }
@@ -67,6 +67,14 @@ export class MockRealtimeService extends RealtimeService {
     if (this.statusSubject.value !== 'idle') {
       this.statusSubject.next('disconnected');
     }
+  }
+
+  publishTodoUpdate(_todo: {
+    id: string;
+    task?: string;
+    completed?: boolean;
+  }): void {
+    // Mock hub is local-only — no peers.
   }
 
   private buildDemoEvent(index: number): RealtimeEvent {
