@@ -26,11 +26,11 @@
 
 ### Vue 3 (analytics-mfe)
 
-- [ ] `v-memo` on todo rows в списке
+- [x] `v-memo` on todo rows в списке
 - [x] Chart.js/ECharts — stats widget (mock `/todos/stats`)
 - [x] analytics-mfe: first chart on `/analytics` dashboard route
-- [ ] Perf baseline doc для Vue list render
-- [ ] Vitest perf smoke: render 1000 items < threshold
+- [x] Perf baseline doc для Vue list render
+- [x] Vitest perf smoke: render 1000 items < threshold
 
 ---
 
@@ -362,13 +362,16 @@ npm run build --workspace=marketing-mfe
 
 **Критерий:** measurable reduction in component updates on filter change.
 
+- [x] `TodoRow.vue` + `v-memo` in `TodoListView.vue`
+- [x] `docs/vue/perf-v-memo.md`
+
 ### V.5.2 — Chart spike (dashboard route)
 
 ```bash
 npm install chart.js vue-chartjs --workspace=analytics-mfe
 ```
 
-**Файл:** `apps/analytics-mfe/src/features/dashboard/StatsChart.vue`
+**Файл:** `apps/analytics-mfe/src/features/analytics/StatsChart.vue`
 
 ```typescript
 // fetch mock GET /todos/stats or compute client-side from todos
@@ -382,6 +385,9 @@ const chartData = computed(() => ({
 
 **Проверка:** chart renders with mock data; no layout shift (CLS).
 
+- [x] Chart.js bar (completed by tag) on `/analytics`
+- [x] Fixed 240px chart slot (CLS)
+
 ### V.5.3 — Dashboard perf checklist
 
 | Метрика | Target |
@@ -389,6 +395,9 @@ const chartData = computed(() => ({
 | List 1000 todos scroll | smooth |
 | Chart first paint | < 500ms |
 | Memory after 50 navigations | stable |
+
+- [x] Checklist documented in `docs/vue/perf-dashboard.md`
+- [x] Vitest smoke: 1000 `TodoRow` mounts under threshold
 
 ---
 

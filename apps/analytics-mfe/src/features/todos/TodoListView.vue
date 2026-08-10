@@ -5,6 +5,7 @@ import { useAuth } from '@/composables/useAuth';
 import { useLogout } from '@/composables/useLogout';
 import { useTodoFilter } from '@/composables/useTodoFilter';
 import { useTodos } from '@/composables/useTodos';
+import TodoRow from './TodoRow.vue';
 
 const router = useRouter();
 const { userName } = useAuth();
@@ -141,31 +142,16 @@ function handleLogout(): void {
           Tip: task starting with <code>[500]</code> rolls back on toggle (mock API error).
         </p>
 
-        <ul class="list">
-          <li
+        <ul class="list" role="list">
+          <TodoRow
             v-for="todo in filteredTodos"
             :key="todo.id"
-            class="item"
-            :class="{ 'item--done': todo.completed }"
-          >
-            <label class="item__label">
-              <input
-                type="checkbox"
-                :checked="todo.completed"
-                :disabled="mutating"
-                @change="handleToggle(todo.id)"
-              />
-              <span>{{ todo.task }}</span>
-            </label>
-            <button
-              type="button"
-              class="item__delete"
-              :disabled="mutating"
-              @click="handleDelete(todo.id)"
-            >
-              Delete
-            </button>
-          </li>
+            v-memo="[todo.id, todo.completed, todo.task, mutating]"
+            :todo="todo"
+            :disabled="mutating"
+            @toggle="handleToggle"
+            @delete="handleDelete"
+          />
           <li v-if="filteredTodos.length === 0" class="empty">No todos</li>
         </ul>
       </template>
@@ -303,41 +289,11 @@ h1 {
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-.item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
-  border-top: 1px solid rgba(148, 163, 184, 0.25);
-}
-
-.item__label {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  flex: 1;
-}
-
-.item--done span {
-  text-decoration: line-through;
-  color: #94a3b8;
-}
-
-.item__delete {
-  padding: 0.35rem 0.65rem;
-  border: 1px solid #fca5a5;
+  max-height: min(60vh, 520px);
+  overflow: auto;
+  border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 0.5rem;
-  background: transparent;
-  color: #fca5a5;
-  cursor: pointer;
-}
-
-.item__delete:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  padding-inline: 0.75rem;
 }
 
 .empty {

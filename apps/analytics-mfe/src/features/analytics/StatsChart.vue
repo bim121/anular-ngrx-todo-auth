@@ -56,9 +56,9 @@ const chartOptions = {
 
 <template>
   <section class="chart-card">
-    <p v-if="loading" class="hint">Loading chart…</p>
-    <div v-else class="chart-wrap">
-      <Bar :data="chartData" :options="chartOptions" />
+    <div class="chart-wrap" :aria-busy="loading">
+      <p v-if="loading" class="hint">Loading chart…</p>
+      <Bar v-else :data="chartData" :options="chartOptions" />
     </div>
   </section>
 </template>
@@ -72,12 +72,18 @@ const chartOptions = {
   border: 1px solid #334155;
 }
 
+/* Fixed height reserves space while loading — avoids CLS (V.5.2). */
 .chart-wrap {
   height: 240px;
+  position: relative;
 }
 
 .hint {
   color: #94a3b8;
   margin: 0;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
 }
 </style>

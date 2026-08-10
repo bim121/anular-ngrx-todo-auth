@@ -6,6 +6,8 @@ export interface Todo {
   task: string;
   completed: boolean;
   createdAt?: string;
+  /** Present when API / seed includes tags (used by analytics chart). */
+  tags?: string[];
 }
 
 /** Payload to create a todo — repository assigns id / defaults. */
