@@ -3,6 +3,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import type { Todo } from '@shared/data-access';
 import { todoQueryKey } from '@marketing/core/query-client';
 import { useAuthStore } from '@marketing/stores/authStore';
@@ -87,6 +88,30 @@ export function useTodos() {
   });
 
   const todos = query.data ?? [];
+  const { mutateAsync: addAsync } = addMutation;
+  const { mutateAsync: deleteAsync } = deleteMutation;
+  const { mutateAsync: toggleAsync } = toggleMutation;
+
+  const add = useCallback(
+    (task: string) => addAsync(task),
+    [addAsync]
+  );
+
+  const remove = useCallback(
+    (id: string) => deleteAsync(id),
+    [deleteAsync]
+  );
+
+  const toggle = useCallback(
+    async (id: string) => {
+      const todo = todos.find((item) => item.id === id);
+      if (!todo) {
+        throw new Error(`Todo not found: ${id}`);
+      }
+      return toggleAsync(todo);
+    },
+    [todos, toggleAsync]
+  );
 
   return {
     todos,
@@ -96,14 +121,8 @@ export function useTodos() {
       addMutation.isPending ||
       deleteMutation.isPending ||
       toggleMutation.isPending,
-    add: (task: string) => addMutation.mutateAsync(task),
-    toggle: async (id: string) => {
-      const todo = todos.find((item) => item.id === id);
-      if (!todo) {
-        throw new Error(`Todo not found: ${id}`);
-      }
-      return toggleMutation.mutateAsync(todo);
-    },
-    remove: (id: string) => deleteMutation.mutateAsync(id),
+    add,
+    toggle,
+    remove,
   };
 }

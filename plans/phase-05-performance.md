@@ -18,10 +18,10 @@
 
 ### React/Next.js (marketing-mfe)
 
-- [ ] `@tanstack/react-virtual` — 1000 todos smooth scroll
-- [ ] React Profiler doc `docs/react/perf-profiling.md`
-- [ ] `React.memo` on todo row — measure before/after
-- [ ] Bundle analyze marketing-mfe chunk sizes
+- [x] `@tanstack/react-virtual` — 1000 todos smooth scroll
+- [x] React Profiler doc `docs/react/perf-profiling.md`
+- [x] `React.memo` on todo row — measure before/after
+- [x] Bundle analyze marketing-mfe chunk sizes
 - [ ] Lighthouse run на todo list route (если доступен)
 
 ### Vue 3 (analytics-mfe)
@@ -313,6 +313,10 @@ const rowVirtualizer = useVirtualizer({
 
 **Критерий:** 60fps scroll на 1000 items; initial render < 100ms.
 
+- [x] Virtual list in `TodoList.tsx` (`estimateSize: 72`, overscan 8)
+- [x] Fixed row CSS / `TODO_ROW_HEIGHT_PX`
+- [x] Procedure in `docs/react/perf-profiling.md`
+
 ### R.5.2 — React.memo on TodoRow
 
 ```tsx
@@ -325,6 +329,9 @@ export const TodoRow = React.memo(function TodoRow({ todo, onToggle }: Props) {
 
 **Проверка:** toggle one item — только 1 row re-render (React DevTools highlight).
 
+- [x] `TodoRow.tsx` + stable `useCallback` handlers
+- [x] Profiling checklist documented
+
 ### R.5.3 — Bundle baseline
 
 ```bash
@@ -333,6 +340,8 @@ npm run build --workspace=marketing-mfe
 ```
 
 Записать KB в `docs/perf-budget.md` секция React.
+
+- [x] Baseline recorded (~265 kB JS raw / ~83 kB gzip, 2026-08-10)
 
 ---
 

@@ -1,6 +1,6 @@
 # Perf budget (baseline)
 
-Captured 2026-07-23 (CWV) / 2026-07-28 (bundle) / 2026-07-30 (LHCI + SSR) — see [perf/baseline.md](./perf/baseline.md), [perf/bundle-audit.md](./perf/bundle-audit.md), [perf/hydration.md](./perf/hydration.md), [perf/memory-audit.md](./perf/memory-audit.md).
+Captured 2026-07-23 (CWV) / 2026-07-28 (bundle) / 2026-07-30 (LHCI + SSR) / **2026-08-10 (React marketing-mfe)** — see [perf/baseline.md](./perf/baseline.md), [perf/bundle-audit.md](./perf/bundle-audit.md), [perf/hydration.md](./perf/hydration.md), [perf/memory-audit.md](./perf/memory-audit.md), [react/perf-profiling.md](./react/perf-profiling.md).
 
 | Metric | Baseline | Target | Status |
 |--------|----------|--------|--------|
@@ -19,3 +19,21 @@ Captured 2026-07-23 (CWV) / 2026-07-28 (bundle) / 2026-07-30 (LHCI + SSR) — se
 **Local:** `npm run lhci` · SSR check: `npm run build && npm run serve:ssr`
 
 Budgets also live in `apps/web/project.json`. Treemap: [`docs/perf/bundle-stats.html`](./perf/bundle-stats.html).
+
+---
+
+## React (`marketing-mfe`) — R.5.3
+
+Vite production build (`npm run build --workspace=marketing-mfe`), 2026-08-10:
+
+| Asset | Raw | Gzip |
+|-------|-----|------|
+| `dist/assets/index-*.js` | **264.87 kB** | 82.54 kB |
+| `dist/assets/index-*.css` | 4.21 kB | 1.34 kB |
+| `dist/index.html` | 0.40 kB | 0.27 kB |
+
+Notes:
+
+- Single client entry (Vite SPA) — React + React DOM + TanStack Query + react-virtual + Zustand in one chunk.
+- Soft warn bar for React MFE JS: **300 kB raw** (informational until Next.js Phase 7 splits routes).
+- Virtual list + `React.memo`: see [react/perf-profiling.md](./react/perf-profiling.md).

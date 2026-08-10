@@ -128,10 +128,31 @@
   border-radius: 3px;
 }
 
+.todo-list-viewport {
+  height: min(60vh, 520px);
+  overflow: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  contain: strict;
+}
+
 .todo-list {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.todo-list--virtual {
+  position: relative;
+  width: 100%;
+}
+
+.todo-list__virtual-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .todo-item {
@@ -139,8 +160,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.75rem 0;
-  border-top: 1px solid #e5e7eb;
+  box-sizing: border-box;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .todo-item__label {

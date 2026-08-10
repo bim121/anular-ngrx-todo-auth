@@ -1,5 +1,7 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useMemo, useRef, useState } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { applyFilter, type TodoFilter } from './apply-filter';
+import { TodoRow, TODO_ROW_HEIGHT_PX } from './TodoRow';
 import { useTodos } from './useTodos';
 import { useAuthStore } from '@marketing/stores/authStore';
 import { useLogout } from '@marketing/hooks/useLogout';
@@ -9,6 +11,7 @@ import './TodoList.css';
 export function TodoList() {
   const userName = useAuthStore((state) => state.userName) ?? 'User';
   const logout = useLogout();
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const { todos, loading, error: queryError, mutating, add, toggle, remove } =
     useTodos();
@@ -21,6 +24,13 @@ export function TodoList() {
     () => applyFilter(todos, filter),
     [todos, filter]
   );
+
+  const rowVirtualizer = useVirtualizer({
+    count: filtered.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => TODO_ROW_HEIGHT_PX,
+    overscan: 8,
+  });
 
   const error =
     actionError ??
@@ -43,41 +53,47 @@ export function TodoList() {
     }
   }
 
-  async function handleToggle(todoId: string) {
-    if (mutating) {
-      return;
-    }
+  const handleToggle = useCallback(
+    async (todoId: string) => {
+      if (mutating) {
+        return;
+      }
 
-    setActionError(null);
+      setActionError(null);
 
-    try {
-      await toggle(todoId);
-    } catch (err) {
-      setActionError(
-        err instanceof Error ? err.message : 'Failed to update todo'
-      );
-    }
-  }
+      try {
+        await toggle(todoId);
+      } catch (err) {
+        setActionError(
+          err instanceof Error ? err.message : 'Failed to update todo'
+        );
+      }
+    },
+    [mutating, toggle]
+  );
 
-  async function handleDelete(todoId: string) {
-    if (mutating) {
-      return;
-    }
+  const handleDelete = useCallback(
+    async (todoId: string) => {
+      if (mutating) {
+        return;
+      }
 
-    if (!window.confirm('Are you sure you want to delete this task?')) {
-      return;
-    }
+      if (!window.confirm('Are you sure you want to delete this task?')) {
+        return;
+      }
 
-    setActionError(null);
+      setActionError(null);
 
-    try {
-      await remove(todoId);
-    } catch (err) {
-      setActionError(
-        err instanceof Error ? err.message : 'Failed to delete todo'
-      );
-    }
-  }
+      try {
+        await remove(todoId);
+      } catch (err) {
+        setActionError(
+          err instanceof Error ? err.message : 'Failed to delete todo'
+        );
+      }
+    },
+    [mutating, remove]
+  );
 
   return (
     <main className="todo-page">
@@ -142,37 +158,43 @@ export function TodoList() {
               Tip: task starting with <code>[500]</code> rolls back on toggle (mock API error).
             </p>
 
-            <ul className="todo-list">
-              {filtered.map((todo) => (
-                <li
-                  key={todo.id}
-                  className={
-                    todo.completed ? 'todo-item todo-item--done' : 'todo-item'
-                  }
+            {filtered.length === 0 ? (
+              <p className="todo-empty">No todos</p>
+            ) : (
+              <div
+                ref={parentRef}
+                className="todo-list-viewport"
+                data-testid="todo-virtual-viewport"
+                role="list"
+                aria-label="Todo list"
+              >
+                <div
+                  className="todo-list todo-list--virtual"
+                  style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
                 >
-                  <label className="todo-item__label">
-                    <input
-                      type="checkbox"
-                      checked={todo.completed}
-                      onChange={() => void handleToggle(todo.id)}
-                      disabled={mutating}
-                    />
-                    <span>{todo.task}</span>
-                  </label>
-                  <button
-                    type="button"
-                    className="todo-item__delete"
-                    onClick={() => void handleDelete(todo.id)}
-                    disabled={mutating}
-                  >
-                    Delete
-                  </button>
-                </li>
-              ))}
-              {filtered.length === 0 ? (
-                <li className="todo-empty">No todos</li>
-              ) : null}
-            </ul>
+                  {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                    const todo = filtered[virtualRow.index];
+                    return (
+                      <div
+                        key={todo.id}
+                        className="todo-list__virtual-row"
+                        style={{
+                          height: `${virtualRow.size}px`,
+                          transform: `translateY(${virtualRow.start}px)`,
+                        }}
+                      >
+                        <TodoRow
+                          todo={todo}
+                          disabled={mutating}
+                          onToggle={handleToggle}
+                          onDelete={handleDelete}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </>
         )}
       </section>
