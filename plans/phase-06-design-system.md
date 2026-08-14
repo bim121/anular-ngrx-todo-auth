@@ -11,8 +11,8 @@
 ## Результат фазы
 
 - [ ] `libs/shared/ui` с Button, Input, Card, Modal, Toast, Checkbox
-- [ ] Design tokens (CSS variables)
-- [ ] Light/dark theme
+- [x] Design tokens (CSS variables)
+- [x] Light/dark theme
 - [ ] Storybook 8
 - [ ] a11y pass на компонентах
 - [ ] Auth + Todos UI migrated
@@ -41,41 +41,26 @@
 
 **Файл:** `libs/shared/ui/styles/_tokens.css`
 
-```css
-:root {
-  --color-primary: #3b82f6;
-  --color-danger: #ef4444;
-  --space-1: 0.25rem;
-  --space-4: 1rem;
-  --radius-md: 0.375rem;
-  --font-sans: system-ui, sans-serif;
-  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.1);
-}
-
-[data-theme="dark"] {
-  --color-primary: #60a5fa;
-  /* ... */
-}
-```
+- [x] Canonical CSS variables (`--color-primary`, space, radius, font, shadow)
+- [x] `[data-theme="dark"]` palette + `--app-*` aliases for existing chrome
 
 ### 6.1.2 Theme service
 
-- Store slice или SignalStore: `theme: 'light' | 'dark' | 'system'`.
-- `document.documentElement.setAttribute('data-theme', ...)`.
+- [x] `ThemeStore` (`light` \| `dark` \| `system`) in `libs/shared/ui`
+- [x] `document.documentElement.setAttribute('data-theme', ...)`
+- [x] App `ThemeService` facade still publishes `UiEventsService.themeChanged$`
 
 ### 6.1.3 SSR no-flash
 
-**Файл:** `src/index.html` inline script (minimal):
-```html
-<script>
-  (function(){ /* read localStorage theme */ })();
-</script>
-```
+**Файл:** `apps/web/src/index.html` inline script (minimal):
+
+- [x] Reads `localStorage.theme` + `prefers-color-scheme` before first paint
 
 ### 6.1.4 Интеграция твоей DS
 
-- Подключить пакет твоей design system (npm link / workspace path).
-- ADR-008: wrapper components vs direct import.
+Своей внешней DS нет — **in-repo DS** в `libs/shared/ui` (не wrapper над Material).
+
+- [x] [ADR-013](../docs/adr/ADR-013-in-repo-design-system.md) — direct import of in-repo primitives (ADR-008 already used for router-store)
 
 ---
 

@@ -16,9 +16,9 @@
         type="button"
         class="theme-btn"
         (click)="toggleTheme()"
-        [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+        [attr.aria-label]="'Color theme: ' + themeButtonLabel() + '. Click to cycle light, dark, system'"
       >
-        {{ theme() === 'dark' ? 'Light' : 'Dark' }}
+        {{ themeButtonLabel() }}
       </button>
       <div class="notifications">
         <button

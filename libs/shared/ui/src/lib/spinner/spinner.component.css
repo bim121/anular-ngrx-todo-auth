@@ -2,8 +2,8 @@
   display: inline-block;
   border-radius: 50%;
   border-style: solid;
-  border-color: #e5e7eb;
-  border-top-color: #2563eb;
+  border-color: var(--color-border);
+  border-top-color: var(--color-primary);
   animation: spinner-spin 0.7s linear infinite;
 }
 

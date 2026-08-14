@@ -3,10 +3,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.75rem 1rem;
-  background: #fef2f2;
-  border-bottom: 1px solid #fecaca;
-  color: #991b1b;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-danger-subtle);
+  border-bottom: 1px solid var(--color-danger);
+  color: var(--color-danger-text);
 }
 
 .global-error-banner__text {
@@ -18,14 +18,14 @@
 .global-error-banner__dismiss {
   flex-shrink: 0;
   padding: 0.35rem 0.75rem;
-  border: 1px solid #f87171;
-  border-radius: 4px;
-  background: #fff;
-  color: #b91c1c;
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-danger-text);
   cursor: pointer;
   font-size: 0.8rem;
 }
 
 .global-error-banner__dismiss:hover {
-  background: #fee2e2;
+  background: var(--color-danger-subtle);
 }

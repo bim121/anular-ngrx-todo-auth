@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -27,7 +27,6 @@ export class MainLayoutComponent {
   readonly pageContext = inject(RoutePageContextService);
 
   readonly user = this.auth.user;
-  readonly theme = this.themeService.theme;
   readonly notifications = toSignal(this.store.select(selectAllNotifications), {
     initialValue: [],
   });
@@ -46,6 +45,20 @@ export class MainLayoutComponent {
   });
 
   readonly notificationsOpen = signal(false);
+  /** Neutral until after hydration so SSR HTML matches first client pass. */
+  private readonly themeUiReady = signal(false);
+
+  readonly themeButtonLabel = computed(() => {
+    if (!this.themeUiReady()) {
+      return 'Theme';
+    }
+    const preference = this.themeService.preference();
+    return preference.charAt(0).toUpperCase() + preference.slice(1);
+  });
+
+  constructor() {
+    afterNextRender(() => this.themeUiReady.set(true));
+  }
 
   logout(): void {
     this.auth.logout();

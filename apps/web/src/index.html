@@ -6,6 +6,28 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var preference =
+            stored === 'dark' || stored === 'light' || stored === 'system'
+              ? stored
+              : 'system';
+          var resolved =
+            preference === 'system'
+              ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+              : preference;
+          document.documentElement.setAttribute('data-theme', resolved);
+          document.documentElement.setAttribute(
+            'data-theme-preference',
+            preference
+          );
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

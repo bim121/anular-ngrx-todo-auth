@@ -1,64 +1,35 @@
-import { Injectable, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { BehaviorSubject } from 'rxjs';
-import { Theme } from './theme.model';
+import { Injectable, effect, inject } from '@angular/core';
+import { ThemePreference, ThemeStore } from '@anular-ngrx/shared-ui';
 import { UiEventsService } from './ui-events.service';
 
-export type { Theme };
+export type { ThemePreference };
+export type Theme = 'light' | 'dark';
 
 /**
- * Applies theme to the document and publishes via UiEventsService
- * so header and features stay decoupled.
+ * App facade over DS ThemeStore — publishes resolved theme on UiEventsService
+ * so header and features stay decoupled (Phase 4.5.4 / 6.1.2).
  */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
+  private readonly store = inject(ThemeStore);
   private readonly events = inject(UiEventsService);
-  private readonly themeSubject = new BehaviorSubject<Theme>(this.readInitialTheme());
 
-  readonly themeChanged$ = this.themeSubject.asObservable();
-  readonly theme = toSignal(this.themeChanged$, {
-    initialValue: 'light' as Theme,
-  });
+  readonly preference = this.store.preference;
+  /** Resolved light/dark applied to the document. */
+  readonly theme = this.store.resolved;
 
   constructor() {
-    this.apply(this.themeSubject.value);
-    this.events.publishTheme(this.themeSubject.value);
+    effect(() => {
+      this.events.publishTheme(this.store.resolved());
+    });
   }
 
-  setTheme(theme: Theme): void {
-    if (theme === this.themeSubject.value) {
-      return;
-    }
-    this.themeSubject.next(theme);
-    this.apply(theme);
-    this.events.publishTheme(theme);
+  setTheme(theme: ThemePreference): void {
+    this.store.setPreference(theme);
   }
 
+  /** light → dark → system → light */
   toggle(): void {
-    this.setTheme(this.themeSubject.value === 'light' ? 'dark' : 'light');
-  }
-
-  private apply(theme: Theme): void {
-    if (typeof document === 'undefined') {
-      return;
-    }
-    document.documentElement.setAttribute('data-theme', theme);
-    try {
-      localStorage.setItem('theme', theme);
-    } catch {
-      /* ignore quota / private mode */
-    }
-  }
-
-  private readInitialTheme(): Theme {
-    if (typeof localStorage === 'undefined') {
-      return 'light';
-    }
-    try {
-      const saved = localStorage.getItem('theme');
-      return saved === 'dark' ? 'dark' : 'light';
-    } catch {
-      return 'light';
-    }
+    this.store.cycle();
   }
 }

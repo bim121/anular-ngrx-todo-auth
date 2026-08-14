@@ -1,3 +1,5 @@
+export * from './lib/theme/theme.model';
+export * from './lib/theme/theme.store';
 export * from './lib/spinner/spinner.component';
 export * from './lib/toast/toast.service';
 export * from './lib/toast/toast.model';
