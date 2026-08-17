@@ -8,6 +8,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpinnerComponent {
-  /** Visual size: sm (inline) or md (block). */
-  size = input<'sm' | 'md'>('md');
+  /** Visual size: sm (inline), md (block), lg (hero). */
+  size = input<'sm' | 'md' | 'lg'>('md');
 }
+

@@ -20,9 +20,13 @@
   color: var(--color-text);
 }
 
-.form-field__control:focus {
+.form-field__control:focus-visible {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 0.2rem var(--color-focus-ring);
+  outline: none;
+}
+
+.form-field__control:focus {
   outline: none;
 }
 
@@ -30,6 +34,11 @@
   color: var(--color-danger);
   font-size: 0.85rem;
   margin-top: var(--space-1);
+}
+
+.form-field__errors:empty {
+  display: none;
+  margin: 0;
 }
 
 .form-field__errors span {

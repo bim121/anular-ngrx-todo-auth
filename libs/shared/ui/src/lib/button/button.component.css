@@ -1,0 +1,92 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0;
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+:host:disabled,
+:host.ds-btn--loading {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+:host:focus {
+  outline: none;
+}
+
+:host:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.ds-btn__label {
+  display: inline-flex;
+  align-items: center;
+}
+
+:host.ds-btn--sm {
+  min-height: 2rem;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+}
+
+:host.ds-btn--md {
+  min-height: 2.5rem;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+}
+
+:host.ds-btn--lg {
+  min-height: 3rem;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  font-size: 1rem;
+}
+
+:host.ds-btn--primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+:host.ds-btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+:host.ds-btn--secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+
+:host.ds-btn--secondary:hover:not(:disabled) {
+  background: var(--color-bg);
+}
+
+:host.ds-btn--ghost {
+  background: transparent;
+  color: var(--color-primary);
+}
+
+:host.ds-btn--ghost:hover:not(:disabled) {
+  background: var(--color-primary-subtle);
+}
+
+:host.ds-btn--danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+:host.ds-btn--danger:hover:not(:disabled) {
+  background: var(--color-danger-hover);
+}

@@ -12,11 +12,13 @@ import { FieldTree, FormField } from '@angular/forms/signals';
 export class FormFieldComponent {
   readonly label = input.required<string>();
   readonly controlId = input.required<string>();
-  readonly field = input.required<FieldTree<string>>();
+  /** Signal-forms field. Omit when projecting a CVA control (`app-input`). */
+  readonly field = input<FieldTree<string> | undefined>(undefined);
   readonly type = input<string>('text');
   readonly placeholder = input<string>('');
+  readonly hint = input<string>('');
   readonly pendingMessage = input<string>('');
   readonly showPendingHint = input(false);
 
-  readonly fieldState = computed(() => this.field()());
+  readonly fieldState = computed(() => this.field()?.());
 }

@@ -1,0 +1,14 @@
+<label class="ds-checkbox__label">
+  <input
+    class="ds-checkbox__input"
+    type="checkbox"
+    [id]="inputId() || null"
+    [checked]="checked()"
+    [disabled]="isDisabled()"
+    [attr.aria-checked]="checked()"
+    (change)="onNativeChange($event)"
+    (blur)="markTouched()"
+  />
+  <span class="ds-checkbox__box" aria-hidden="true"></span>
+  <span class="ds-checkbox__text"><ng-content /></span>
+</label>

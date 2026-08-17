@@ -1,0 +1,10 @@
+<input
+  class="ds-input"
+  [id]="inputId() || null"
+  [type]="type()"
+  [value]="value()"
+  [placeholder]="placeholder()"
+  [disabled]="isDisabled()"
+  (input)="onInput($event)"
+  (blur)="markTouched()"
+/>

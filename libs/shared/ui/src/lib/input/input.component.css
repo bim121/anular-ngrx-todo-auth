@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.ds-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.ds-input:focus {
+  outline: none;
+}
+
+.ds-input:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 0.2rem var(--color-focus-ring);
+}
+
+.ds-input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

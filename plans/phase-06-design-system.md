@@ -78,14 +78,20 @@
 - `host` bindings для class.
 - Focus visible styles.
 
+- [x] `button[app-button]` — host classes, `:focus-visible`, spinner when `loading`
+
 ### 6.2.2 Input / FormField
 
 - `FormFieldComponent`: label + hint + error slot.
 - Works with reactive + signal forms (ControlValueAccessor).
 
+- [x] Signal-forms `[field]` path kept; CVA `app-input` + `[dsError]` slot when `field` omitted
+
 ### 6.2.3 Card, Checkbox, Spinner
 
 - Checkbox: keyboard Space, aria-checked.
+
+- [x] `app-card`, `app-checkbox` (CVA + Space + `aria-checked`), Spinner `sm|md|lg`
 
 ---
 
