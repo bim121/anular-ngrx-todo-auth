@@ -1,20 +1,5 @@
 <div class="toast-container" aria-live="polite" aria-atomic="false">
-  @for (toast of toastService.toasts$ | async; track toast.id) {
-    <div
-      class="toast"
-      [class.toast--success]="toast.type === 'success'"
-      [class.toast--error]="toast.type === 'error'"
-      role="status"
-    >
-      <span class="toast__message">{{ toast.message }}</span>
-      <button
-        type="button"
-        class="toast__close"
-        aria-label="Dismiss notification"
-        (click)="toastService.dismiss(toast.id)"
-      >
-        ×
-      </button>
-    </div>
+  @for (toast of toasts(); track toast.id) {
+    <app-toast [toast]="toast" (dismissed)="dismiss($event)" />
   }
 </div>

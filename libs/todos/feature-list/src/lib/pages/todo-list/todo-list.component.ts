@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, firstValueFrom } from 'rxjs';
 import {
   CommentsFacade,
   TodosFacade,
@@ -20,6 +20,7 @@ import {
 } from '@anular-ngrx/todos-data-access';
 import { SpinnerComponent } from '@anular-ngrx/shared-ui/spinner/spinner.component';
 import { ToastService } from '@anular-ngrx/shared-ui/toast/toast.service';
+import { ModalService } from '@anular-ngrx/shared-ui/modal/modal.service';
 import { TodoStatsPanelComponent } from '../../ui/todo-stats-panel/todo-stats-panel.component';
 import { TodoTreeItemComponent } from '../../ui/todo-tree-item/todo-tree-item.component';
 import { TodoFormComponent } from '../../ui/todo-form/todo-form.component';
@@ -51,6 +52,7 @@ export class TodoListPageComponent {
   private readonly todosFacade = inject(TodosFacade);
   private readonly commentsFacade = inject(CommentsFacade);
   private readonly toast = inject(ToastService);
+  private readonly modal = inject(ModalService);
   readonly uiStore = inject(TodoListUiStore);
 
   /** Bound in template for cdk-virtual-scroll-viewport itemSize. */
@@ -169,13 +171,22 @@ export class TodoListPageComponent {
     this.todoToggled.emit(todoId);
   }
 
-  deleteTodo(todoId: string): void {
+  async deleteTodo(todoId: string): Promise<void> {
     if (this.loading()) return;
-    if (confirm('Are you sure you want to delete this task?')) {
-      this.todosFacade.remove(todoId);
-      if (this.commentsTodoId() === todoId) {
-        this.closeComments();
-      }
+    const confirmed = await firstValueFrom(
+      this.modal.confirm({
+        title: 'Delete task',
+        message: 'Are you sure you want to delete this task?',
+        confirmLabel: 'Delete',
+        danger: true,
+      })
+    );
+    if (!confirmed) {
+      return;
+    }
+    this.todosFacade.remove(todoId);
+    if (this.commentsTodoId() === todoId) {
+      this.closeComments();
     }
   }
 

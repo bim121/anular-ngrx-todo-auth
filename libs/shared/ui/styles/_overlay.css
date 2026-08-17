@@ -1,0 +1,38 @@
+/**
+ * CDK overlay + DS modal pane (Phase 6.3).
+ * Imported from the app global stylesheet.
+ */
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 1200;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cdk-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  background: rgb(15 23 42 / 0.55);
+}
+
+.cdk-global-overlay-wrapper,
+.cdk-overlay-wrapper {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cdk-overlay-pane {
+  position: absolute;
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+
+.ds-modal-pane {
+  width: min(28rem, calc(100vw - 2rem));
+  max-height: min(90vh, 40rem);
+}

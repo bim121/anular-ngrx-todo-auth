@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  padding: var(--space-6);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-sans);
+}
+
+.ds-modal__title {
+  margin: 0 0 var(--space-3);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.ds-modal__body {
+  margin: 0 0 var(--space-6);
+  color: var(--color-muted);
+  line-height: 1.45;
+}
+
+.ds-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}

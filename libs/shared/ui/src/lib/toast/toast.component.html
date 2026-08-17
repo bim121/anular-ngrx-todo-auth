@@ -1,0 +1,12 @@
+<span class="ds-toast__message">{{ toast().message }}</span>
+<button
+  app-button
+  type="button"
+  variant="ghost"
+  size="sm"
+  class="ds-toast__close"
+  aria-label="Dismiss notification"
+  (click)="dismissed.emit(toast().id)"
+>
+  ×
+</button>

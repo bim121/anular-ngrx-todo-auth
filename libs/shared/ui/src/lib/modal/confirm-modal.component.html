@@ -1,0 +1,15 @@
+<h2 id="ds-confirm-title" class="ds-modal__title">{{ data.title }}</h2>
+<p id="ds-confirm-message" class="ds-modal__body">{{ data.message }}</p>
+<div class="ds-modal__actions">
+  <button app-button type="button" variant="secondary" (click)="cancel()">
+    {{ data.cancelLabel ?? 'Cancel' }}
+  </button>
+  <button
+    app-button
+    type="button"
+    [variant]="data.danger ? 'danger' : 'primary'"
+    (click)="confirm()"
+  >
+    {{ data.confirmLabel ?? 'Confirm' }}
+  </button>
+</div>

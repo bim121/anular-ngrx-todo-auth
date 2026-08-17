@@ -10,7 +10,7 @@
 
 ## Результат фазы
 
-- [ ] `libs/shared/ui` с Button, Input, Card, Modal, Toast, Checkbox
+- [x] `libs/shared/ui` с Button, Input, Card, Modal, Toast, Checkbox
 - [x] Design tokens (CSS variables)
 - [x] Light/dark theme
 - [ ] Storybook 8
@@ -101,19 +101,24 @@
 
 - Already from Phase 1 — migrate to DS Toast in lib.
 
+- [x] `app-toast` on tokens; error `role="alert"`; dismiss via DS Button
+
 ### 6.3.2 Modal
 
 - `cdk-dialog` or custom focus trap.
 - `role="dialog"`, `aria-modal="true"`.
 - Escape closes.
 
+- [x] `ModalService` + confirm dialog (focus trap, Escape, backdrop)
+- [x] Todo delete uses confirm modal
+
 ### 6.3.3 a11y checklist per component
 
 **Файл:** `libs/shared/ui/A11Y.md`
 
-- [ ] Color contrast 4.5:1
-- [ ] Focus order
-- [ ] Screen reader labels
+- [x] Color contrast 4.5:1
+- [x] Focus order
+- [x] Screen reader labels
 
 ---
 
