@@ -19,9 +19,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   },
 })
 export class InputComponent implements ControlValueAccessor {
+  /** Forwards to the native input `id` (pair with FormField `controlId`). */
   readonly inputId = input('');
+  /** Native input type (`text`, `email`, `password`, …). */
   readonly type = input('text');
   readonly placeholder = input('');
+  /** Disabled from the template; CVA `setDisabledState` also applies. */
   readonly disabled = input(false);
 
   readonly value = signal('');

@@ -13,7 +13,7 @@
 - [x] `libs/shared/ui` с Button, Input, Card, Modal, Toast, Checkbox
 - [x] Design tokens (CSS variables)
 - [x] Light/dark theme
-- [ ] Storybook 8
+- [x] Storybook 10 (`nx storybook shared-ui`)
 - [ ] a11y pass на компонентах
 - [ ] Auth + Todos UI migrated
 
@@ -127,10 +127,14 @@
 ### 6.4.1 Setup
 
 ```bash
-npx storybook@latest init --type angular
+nx storybook shared-ui
+# or: npm run storybook:ui
 ```
 
-Target: `libs/shared/ui`.
+Target: `libs/shared/ui` (Nx 21 + Angular 21 → Storybook **10** + `@storybook/angular-vite`; webpack Storybook 8/9 cannot load Angular 21). Port **6006** (analytics-mfe already uses 4400).
+
+- [x] `.storybook/main.ts` + `preview.ts` (tokens, theme toolbar, autodocs)
+- [x] Targets `storybook` / `build-storybook` on `shared-ui`
 
 ### 6.4.2 Stories (minimum)
 
@@ -142,10 +146,15 @@ Target: `libs/shared/ui`.
 | Modal | open/close |
 | Checkbox | checked/unchecked |
 
+- [x] `*.stories.ts` next to primitives + `composition.stories.ts`
+
 ### 6.4.3 Docs addon
 
 - Autodocs from JSDoc on inputs.
 - Composition examples.
+
+- [x] `tags: ['autodocs']` + JSDoc on Button/Input/Card/Checkbox inputs
+- [x] Composition: Card + FormField + Checkbox + Buttons
 
 ---
 
@@ -168,7 +177,7 @@ Chromatic/Percy — 5 stories on PR.
 
 ## Критерии готовности
 
-- [ ] `nx storybook ui` runs
+- [x] `nx storybook shared-ui` runs
 - [ ] No raw form controls in feature templates
 - [ ] axe DevTools 0 critical on login/todos
 - [ ] Theme persists + SSR no flash

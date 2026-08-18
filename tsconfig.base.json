@@ -15,25 +15,63 @@
     "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
-      "@anular-ngrx/auth-data-access": ["libs/auth/data-access/src/index.ts"],
-      "@anular-ngrx/auth-data-access/*": ["libs/auth/data-access/src/lib/*"],
-      "@anular-ngrx/auth-feature-login": ["libs/auth/feature-login/src/index.ts"],
-      "@anular-ngrx/auth-feature-login/*": ["libs/auth/feature-login/src/lib/*"],
-      "@anular-ngrx/shared-ui": ["libs/shared/ui/src/index.ts"],
-      "@anular-ngrx/shared-ui/*": ["libs/shared/ui/src/lib/*"],
-      "@anular-ngrx/todos-data-access": ["libs/todos/data-access/src/index.ts"],
-      "@anular-ngrx/todos-data-access/*": ["libs/todos/data-access/src/lib/*"],
-      "@anular-ngrx/todos-feature-list": ["libs/todos/feature-list/src/index.ts"],
-      "@anular-ngrx/todos-feature-list/*": ["libs/todos/feature-list/src/lib/*"],
-      "@app/core/*": ["apps/web/src/app/core/*"],
-      "@app/features/notifications/*": ["apps/web/src/app/features/notifications/*"],
-      "@app/layout/*": ["apps/web/src/app/layout/*"],
-      "@app/shared/*": ["apps/web/src/app/shared/*"],
-      "@app/shared/validators/*": ["apps/web/src/app/shared/validators/*"],
-      "@shared/api-types/*": ["libs/shared/api-types/src/*"],
-      "@shared/data-access": ["libs/shared/data-access/src/index.ts"],
-      "@shared/data-access/*": ["libs/shared/data-access/src/*"],
-      "@shared/validators/*": ["libs/shared/validators/*"]
+      "@anular-ngrx/auth-data-access": [
+        "libs/auth/data-access/src/index.ts"
+      ],
+      "@anular-ngrx/auth-data-access/*": [
+        "libs/auth/data-access/src/lib/*"
+      ],
+      "@anular-ngrx/auth-feature-login": [
+        "libs/auth/feature-login/src/index.ts"
+      ],
+      "@anular-ngrx/auth-feature-login/*": [
+        "libs/auth/feature-login/src/lib/*"
+      ],
+      "@anular-ngrx/shared-ui": [
+        "libs/shared/ui/src/index.ts"
+      ],
+      "@anular-ngrx/shared-ui/*": [
+        "libs/shared/ui/src/lib/*"
+      ],
+      "@anular-ngrx/todos-data-access": [
+        "libs/todos/data-access/src/index.ts"
+      ],
+      "@anular-ngrx/todos-data-access/*": [
+        "libs/todos/data-access/src/lib/*"
+      ],
+      "@anular-ngrx/todos-feature-list": [
+        "libs/todos/feature-list/src/index.ts"
+      ],
+      "@anular-ngrx/todos-feature-list/*": [
+        "libs/todos/feature-list/src/lib/*"
+      ],
+      "@app/core/*": [
+        "apps/web/src/app/core/*"
+      ],
+      "@app/features/notifications/*": [
+        "apps/web/src/app/features/notifications/*"
+      ],
+      "@app/layout/*": [
+        "apps/web/src/app/layout/*"
+      ],
+      "@app/shared/*": [
+        "apps/web/src/app/shared/*"
+      ],
+      "@app/shared/validators/*": [
+        "apps/web/src/app/shared/validators/*"
+      ],
+      "@shared/api-types/*": [
+        "libs/shared/api-types/src/*"
+      ],
+      "@shared/data-access": [
+        "libs/shared/data-access/src/index.ts"
+      ],
+      "@shared/data-access/*": [
+        "libs/shared/data-access/src/*"
+      ],
+      "@shared/validators/*": [
+        "libs/shared/validators/*"
+      ]
     }
   },
   "angularCompilerOptions": {

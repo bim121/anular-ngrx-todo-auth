@@ -15,4 +15,12 @@ module.exports = [
       ],
     },
   },
+  {
+    files: ['**/*.stories.ts'],
+    rules: {
+      '@angular-eslint/component-class-suffix': 'off',
+      '@angular-eslint/prefer-on-push-component-change-detection': 'off',
+      '@angular-eslint/prefer-standalone': 'off',
+    },
+  },
 ];

@@ -26,9 +26,13 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   },
 })
 export class ButtonComponent {
+  /** Visual style of the button. */
   readonly variant = input<ButtonVariant>('primary');
+  /** Control height and padding. */
   readonly size = input<ButtonSize>('md');
+  /** Native disabled; also implied when `loading` is true. */
   readonly disabled = input(false);
+  /** Shows an inline spinner and blocks clicks. */
   readonly loading = input(false);
 
   readonly isDisabled = computed(() => this.disabled() || this.loading());

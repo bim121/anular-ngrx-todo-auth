@@ -6,6 +6,7 @@ In-repo **design system** for the Angular app (Phase 6).
 - **Theme:** `ThemeStore` (`light` | `dark` | `system`) writes `data-theme` on `<html>`.
 - **Primitives:** Button, Card, Spinner, FormField, Input (CVA), Checkbox (CVA).
 - **Overlays:** Toast (`app-toast` + container), Modal (`ModalService` / CDK Dialog).
+- **Storybook 10:** `nx storybook shared-ui` (http://localhost:6006) · `npm run storybook:ui`
 - **a11y:** [A11Y.md](./A11Y.md)
 
 ```html

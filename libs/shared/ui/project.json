@@ -4,7 +4,10 @@
   "sourceRoot": "libs/shared/ui/src",
   "prefix": "app",
   "projectType": "library",
-  "tags": ["scope:shared", "type:ui"],
+  "tags": [
+    "scope:shared",
+    "type:ui"
+  ],
   "targets": {
     "lint": {
       "executor": "@angular-eslint/builder:lint",
@@ -21,7 +24,48 @@
         "buildTarget": "web:build:development",
         "providersFile": "apps/web/src/testing/test-providers.ts",
         "tsConfig": "apps/web/tsconfig.spec.json",
-        "include": ["**/*.spec.ts"]
+        "include": [
+          "**/*.spec.ts"
+        ]
+      }
+    },
+    "storybook": {
+      "executor": "@storybook/angular-vite:start-storybook",
+      "options": {
+        "port": 6006,
+        "configDir": "libs/shared/ui/.storybook",
+        "compodoc": false,
+        "zoneless": true,
+        "styles": [
+          "libs/shared/ui/styles/_tokens.css",
+          "libs/shared/ui/styles/_overlay.css"
+        ]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular-vite:build-storybook",
+      "outputs": [
+        "{options.outputDir}"
+      ],
+      "options": {
+        "outputDir": "dist/storybook/shared-ui",
+        "configDir": "libs/shared/ui/.storybook",
+        "compodoc": false,
+        "zoneless": true,
+        "styles": [
+          "libs/shared/ui/styles/_tokens.css",
+          "libs/shared/ui/styles/_overlay.css"
+        ]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
       }
     }
   }

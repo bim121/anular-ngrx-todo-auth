@@ -24,6 +24,8 @@
     "dev": "concurrently \"npm run api\" \"nx serve web\"",
     "dev:marketing": "npm run dev --workspace=marketing-mfe",
     "dev:analytics": "npm run dev --workspace=analytics-mfe",
+    "storybook:ui": "nx storybook shared-ui",
+    "build-storybook:ui": "nx build-storybook shared-ui",
     "build:marketing": "npm run build --workspace=marketing-mfe",
     "build:analytics": "npm run build --workspace=analytics-mfe",
     "typecheck": "tsc -b && npm run typecheck --workspace=marketing-mfe && npm run typecheck --workspace=analytics-mfe",
@@ -32,6 +34,7 @@
   "private": true,
   "packageManager": "npm@10.9.3",
   "dependencies": {
+    "@angular/animations": "^21.2.20",
     "@angular/cdk": "^21.2.14",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
@@ -54,18 +57,22 @@
     "ws": "^8.21.1"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.7.0",
     "@angular-devkit/core": "^21.2.11",
     "@angular-devkit/schematics": "^21.2.11",
     "@angular/build": "^21.2.11",
     "@angular/cli": "^21.2.11",
     "@angular/compiler-cli": "^21.2.0",
+    "@angular/platform-browser-dynamic": "^21.2.20",
     "@eslint/js": "^10.0.1",
     "@ngrx/store-devtools": "^21.1.0",
     "@nx/angular": "21.6.3",
     "@nx/eslint-plugin": "^21.6.3",
     "@nx/js": "21.6.3",
+    "@nx/web": "21.6.3",
     "@nx/workspace": "21.6.3",
     "@schematics/angular": "^21.2.11",
+    "@storybook/angular-vite": "^10.5.9",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
@@ -84,8 +91,11 @@
     "nx": "21.6.3",
     "prettier": "^3.8.1",
     "puppeteer": "^25.3.0",
+    "storybook": "^10.5.9",
+    "ts-node": "10.9.1",
     "typescript": "~5.9.2",
     "typescript-eslint": "8.59.2",
+    "vite": "^8.2.1",
     "vitest": "^4.0.8"
   }
 }

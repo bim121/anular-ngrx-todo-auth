@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "exclude": ["../**/*.spec.ts"],
+  "include": ["../src/**/*.stories.ts", "*.js", "*.ts"]
+}

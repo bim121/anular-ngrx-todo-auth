@@ -27,7 +27,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   },
 })
 export class CheckboxComponent implements ControlValueAccessor {
+  /** Forwards to the native checkbox `id`. */
   readonly inputId = input('');
+  /** Disabled from the template; CVA `setDisabledState` also applies. */
   readonly disabled = input(false);
 
   readonly checked = signal(false);

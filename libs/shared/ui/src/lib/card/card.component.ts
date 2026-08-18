@@ -11,5 +11,6 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   },
 })
 export class CardComponent {
+  /** Optional heading rendered as `<h2>`. */
   readonly title = input<string>('');
 }
