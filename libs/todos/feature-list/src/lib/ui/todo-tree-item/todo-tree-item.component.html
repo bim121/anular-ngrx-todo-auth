@@ -14,17 +14,21 @@
       (commentsOpened)="commentsOpened.emit(node().id)"
     >
       <button
+        app-button
         type="button"
+        variant="secondary"
+        size="sm"
         (click)="onStartEdit(node())"
-        class="edit-btn"
         [disabled]="loading() || saving()"
       >
         Edit
       </button>
       <button
+        app-button
         type="button"
+        variant="danger"
+        size="sm"
         (click)="onDelete(node().id)"
-        class="delete-btn"
         [disabled]="loading() || saving()"
       >
         Delete
@@ -32,29 +36,32 @@
     </app-todo-item>
   } @else {
     <div class="edit-mode">
-      <input
-        type="text"
+      <app-input
+        inputId="edit-task"
+        name="updatedTask"
         [ngModel]="updatedTask()"
         (ngModelChange)="updatedTaskChange.emit($event)"
-        name="updatedTask"
-        class="edit-input"
-        (keyup.enter)="editSaved.emit()"
-        (keyup.escape)="editCancelled.emit()"
+        (keydown.enter)="editSaved.emit()"
+        (keydown.escape)="editCancelled.emit()"
         [disabled]="loading() || saving()"
       />
       <div class="actions">
         <button
+          app-button
           type="button"
+          size="sm"
           (click)="editSaved.emit()"
-          class="save-btn"
           [disabled]="loading() || saving()"
+          [loading]="saving()"
         >
-          {{ saving() ? 'Saving…' : 'Save' }}
+          Save
         </button>
         <button
+          app-button
           type="button"
+          variant="secondary"
+          size="sm"
           (click)="editCancelled.emit()"
-          class="cancel-btn"
           [disabled]="loading() || saving()"
         >
           Cancel

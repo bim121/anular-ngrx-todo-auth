@@ -5,13 +5,21 @@ import {
   output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ButtonComponent } from '@anular-ngrx/shared-ui';
+import { InputComponent } from '@anular-ngrx/shared-ui/input/input.component';
 import { TodoComment, TodoTreeNode } from '@anular-ngrx/todos-data-access';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
 
 @Component({
   selector: 'app-todo-tree-item',
   standalone: true,
-  imports: [FormsModule, TodoItemComponent, TodoTreeItemComponent],
+  imports: [
+    FormsModule,
+    ButtonComponent,
+    InputComponent,
+    TodoItemComponent,
+    TodoTreeItemComponent,
+  ],
   templateUrl: './todo-tree-item.component.html',
   styleUrl: './todo-tree-item.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -18,6 +18,10 @@ import {
   buildTodoTree,
   exportTodos,
 } from '@anular-ngrx/todos-data-access';
+import { FormsModule } from '@angular/forms';
+import { ButtonComponent, CardComponent } from '@anular-ngrx/shared-ui';
+import { FormFieldComponent } from '@anular-ngrx/shared-ui/form-field/form-field.component';
+import { InputComponent } from '@anular-ngrx/shared-ui/input/input.component';
 import { SpinnerComponent } from '@anular-ngrx/shared-ui/spinner/spinner.component';
 import { ToastService } from '@anular-ngrx/shared-ui/toast/toast.service';
 import { ModalService } from '@anular-ngrx/shared-ui/modal/modal.service';
@@ -35,8 +39,13 @@ export const TODO_VIRTUAL_ITEM_SIZE_PX = 72;
   selector: 'app-todo-list-page',
   standalone: true,
   imports: [
+    FormsModule,
     ScrollingModule,
     SpinnerComponent,
+    ButtonComponent,
+    CardComponent,
+    FormFieldComponent,
+    InputComponent,
     TodoStatsPanelComponent,
     WeeklyStatsChartComponent,
     TodoTreeItemComponent,

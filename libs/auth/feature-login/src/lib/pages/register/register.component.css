@@ -1,18 +1,20 @@
 :host {
-  color: #333;
+  color: var(--color-text);
 }
 
 .auth-container {
   width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
 }
 
 .auth-loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  color: #4b5563;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  color: var(--color-muted);
   font-size: 0.9rem;
 }
 
@@ -21,40 +23,34 @@
   pointer-events: none;
 }
 
-button[type='submit'] {
+.auth-submit {
   width: 100%;
-  padding: 0.75rem;
-  background: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-button[type='submit']:disabled {
-  background: #a0cfff;
-  cursor: not-allowed;
 }
 
 .error-message {
-  color: #dc3545;
+  color: var(--color-danger-text);
   font-size: 0.85rem;
-  margin-top: 0.25rem;
+  margin-top: var(--space-2);
 }
 
 .server-error {
-  margin-top: 1rem;
+  margin-top: var(--space-4);
   text-align: center;
-}
-
-.hint-message {
-  color: #6b7280;
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
 }
 
 .switch-form {
-  margin-top: 1rem;
+  margin-top: var(--space-4);
+  margin-bottom: 0;
   text-align: center;
   font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.switch-form a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.switch-form a:hover {
+  text-decoration: underline;
 }

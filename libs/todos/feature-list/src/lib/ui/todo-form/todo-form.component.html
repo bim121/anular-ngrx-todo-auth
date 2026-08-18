@@ -1,13 +1,16 @@
 <form (ngSubmit)="onSubmit()" class="add-todo-form">
-  <input
-    type="text"
-    [(ngModel)]="task"
+  <app-input
+    inputId="new-task"
     name="newTask"
     placeholder="What needs to be done?"
-    required
+    [(ngModel)]="task"
     [disabled]="disabled()"
   />
-  <button type="submit" [disabled]="disabled() || !task.trim()">
+  <button
+    app-button
+    type="submit"
+    [disabled]="disabled() || !task.trim()"
+  >
     Add Task
   </button>
 </form>

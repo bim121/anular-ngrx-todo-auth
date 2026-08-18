@@ -7,12 +7,19 @@ import {
   markRegisterFieldsTouched,
   RegisterFormModel,
 } from '@anular-ngrx/auth-data-access/auth-signal-form.schema';
+import { ButtonComponent, CardComponent } from '@anular-ngrx/shared-ui';
 import { FormFieldComponent } from '@anular-ngrx/shared-ui/form-field/form-field.component';
 import { SpinnerComponent } from '@anular-ngrx/shared-ui/spinner/spinner.component';
 
 @Component({
   selector: 'app-register',
-  imports: [RouterLink, SpinnerComponent, FormFieldComponent],
+  imports: [
+    RouterLink,
+    SpinnerComponent,
+    FormFieldComponent,
+    ButtonComponent,
+    CardComponent,
+  ],
   templateUrl: './register.component.html',
   standalone: true,
   styleUrl: './register.component.css',

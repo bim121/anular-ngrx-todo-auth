@@ -1,40 +1,48 @@
 <div class="auth-container">
-  @if (loading()) {
-    <div class="auth-loading" aria-busy="true">
-      <app-spinner />
-      <span>Signing in…</span>
-    </div>
-  }
+  <app-card>
+    @if (loading()) {
+      <div class="auth-loading" aria-busy="true">
+        <app-spinner />
+        <span>Signing in…</span>
+      </div>
+    }
 
-  <form
-    novalidate
-    (submit)="submit($event)"
-    [class.auth-form--busy]="loading()"
-  >
-    <app-form-field
-      label="Email"
-      controlId="email"
-      type="email"
-      [field]="loginForm.email"
-    />
+    <form
+      novalidate
+      (submit)="submit($event)"
+      [class.auth-form--busy]="loading()"
+    >
+      <app-form-field
+        label="Email"
+        controlId="email"
+        type="email"
+        [field]="loginForm.email"
+      />
 
-    <app-form-field
-      label="Password"
-      controlId="password"
-      type="password"
-      [field]="loginForm.password"
-    />
+      <app-form-field
+        label="Password"
+        controlId="password"
+        type="password"
+        [field]="loginForm.password"
+      />
 
-    <button type="submit" [disabled]="loginForm().invalid() || loading()">
-      {{ loading() ? 'Logging in…' : 'Login' }}
-    </button>
-  </form>
+      <button
+        app-button
+        type="submit"
+        class="auth-submit"
+        [disabled]="loginForm().invalid() || loading()"
+        [loading]="loading()"
+      >
+        Login
+      </button>
+    </form>
 
-  @if (error(); as err) {
-    <div class="error-message server-error">{{ err }}</div>
-  }
+    @if (error(); as err) {
+      <div class="error-message server-error">{{ err }}</div>
+    }
 
-  <p class="switch-form">
-    Don't have an account? <a routerLink="/register">Register here</a>
-  </p>
+    <p class="switch-form">
+      Don't have an account? <a routerLink="/register">Register here</a>
+    </p>
+  </app-card>
 </div>

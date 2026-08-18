@@ -37,7 +37,7 @@ describe('TodoItemComponent', () => {
     fixture.detectChanges();
 
     const checkbox = fixture.nativeElement.querySelector(
-      '.todo-checkbox'
+      '.todo-checkbox input[type="checkbox"]'
     ) as HTMLInputElement;
     checkbox.dispatchEvent(new Event('change'));
 
@@ -52,7 +52,7 @@ describe('TodoItemComponent', () => {
     fixture.detectChanges();
 
     const checkbox = fixture.nativeElement.querySelector(
-      '.todo-checkbox'
+      '.todo-checkbox input[type="checkbox"]'
     ) as HTMLInputElement;
     checkbox.dispatchEvent(new Event('change'));
 

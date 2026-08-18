@@ -1,14 +1,16 @@
 .auth-container {
   width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
 }
 
 .auth-loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  color: #4b5563;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  color: var(--color-muted);
   font-size: 0.9rem;
 }
 
@@ -17,76 +19,37 @@
   pointer-events: none;
 }
 
-.hint-message {
-  color: #6b7280;
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-}
-.auth-container h2 {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #333;
-}
-.form-group {
-  margin-bottom: 20px;
-}
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: #555;
-  font-weight: 500;
-}
-.form-group input {
-  width: calc(100% - 24px); /* Account for padding */
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-.form-group input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-    outline: none;
-}
-button[type="submit"] {
+.auth-submit {
   width: 100%;
-  padding: 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
 }
-button[type="submit"]:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-button[type="submit"]:disabled {
-  background-color: #a0cfff;
-  cursor: not-allowed;
-}
+
 .error-message {
-  color: #dc3545;
+  color: var(--color-danger-text);
   font-size: 0.85rem;
-  margin-top: 5px;
+  margin-top: var(--space-2);
 }
+
 .server-error {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    padding: 10px;
-    border-radius: 4px;
-    margin-top: 15px;
+  background-color: var(--color-danger-subtle);
+  border: 1px solid var(--color-danger);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-4);
 }
+
 .switch-form {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.9rem;
+  text-align: center;
+  margin-top: var(--space-5);
+  margin-bottom: 0;
+  font-size: 0.9rem;
+  color: var(--color-muted);
 }
+
 .switch-form a {
-    color: #007bff;
-    text-decoration: none;
+  color: var(--color-primary);
+  text-decoration: none;
 }
+
 .switch-form a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }

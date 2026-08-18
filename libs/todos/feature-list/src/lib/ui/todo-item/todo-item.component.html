@@ -1,14 +1,18 @@
 <div class="todo-item-root">
   <div class="view-mode">
-    <input
-      type="checkbox"
-      [checked]="todo().completed"
-      (change)="onToggle()"
+    <app-checkbox
       class="todo-checkbox"
+      [ngModel]="todo().completed"
+      (ngModelChange)="onToggle()"
       [disabled]="disabled()"
-    />
+    >
+      <span class="visually-hidden">{{ todo().task }}</span>
+    </app-checkbox>
     <button
+      app-button
       type="button"
+      variant="ghost"
+      size="sm"
       (click)="onToggle()"
       class="todo-task"
       [class.priority-high]="todo().priority === 'high'"
@@ -34,7 +38,10 @@
       {{ todo().priority }}
     </span>
     <button
+      app-button
       type="button"
+      variant="ghost"
+      size="sm"
       class="comments-toggle"
       [class.active]="commentsOpen()"
       (click)="toggleComments()"

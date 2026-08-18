@@ -14,8 +14,8 @@
 - [x] Design tokens (CSS variables)
 - [x] Light/dark theme
 - [x] Storybook 10 (`nx storybook shared-ui`)
-- [ ] a11y pass на компонентах
-- [ ] Auth + Todos UI migrated
+- [x] a11y pass на компонентах
+- [x] Auth + Todos UI migrated
 
 ### React/Next.js (marketing-mfe)
 
@@ -164,23 +164,31 @@ Target: `libs/shared/ui` (Nx 21 + Angular 21 → Storybook **10** + `@storybook/
 
 Replace raw `<button>`, `<input>` with DS.
 
+- [x] Login / Register: `app-card` + `app-form-field` + `button[app-button]` (`loading` while submitting)
+
 ### 6.5.2 Todo list
 
 - `TodoItem` uses DS Checkbox + Button.
 - Empty state Card.
 
+- [x] `app-checkbox` + DS buttons on `TodoItem`; Edit/Delete/Save/Cancel on tree item
+- [x] Add-task `app-input` + `app-button`; search/comment via FormField + Input
+- [x] Empty list `app-card title="No todos"`
+
 ### 6.5.3 Visual regression (optional)
 
 Chromatic/Percy — 5 stories on PR.
+
+- [ ] Skipped (optional)
 
 ---
 
 ## Критерии готовности
 
 - [x] `nx storybook shared-ui` runs
-- [ ] No raw form controls in feature templates
-- [ ] axe DevTools 0 critical on login/todos
-- [ ] Theme persists + SSR no flash
+- [x] No raw form controls in feature templates
+- [x] axe DevTools 0 critical on login/todos
+- [x] Theme persists + SSR no flash
 
 ---
 

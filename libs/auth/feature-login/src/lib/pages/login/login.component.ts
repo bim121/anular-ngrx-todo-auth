@@ -7,13 +7,20 @@ import {
   LoginFormModel,
   markLoginFieldsTouched,
 } from '@anular-ngrx/auth-data-access/auth-signal-form.schema';
+import { ButtonComponent, CardComponent } from '@anular-ngrx/shared-ui';
 import { FormFieldComponent } from '@anular-ngrx/shared-ui/form-field/form-field.component';
 import { SpinnerComponent } from '@anular-ngrx/shared-ui/spinner/spinner.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, SpinnerComponent, FormFieldComponent],
+  imports: [
+    RouterLink,
+    SpinnerComponent,
+    FormFieldComponent,
+    ButtonComponent,
+    CardComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

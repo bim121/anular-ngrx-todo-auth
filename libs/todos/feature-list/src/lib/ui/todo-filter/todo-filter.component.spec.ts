@@ -17,10 +17,10 @@ describe('TodoFilterComponent', () => {
     fixture.detectChanges();
 
     const buttons = fixture.nativeElement.querySelectorAll(
-      '.filter-btn'
+      'button[app-button]'
     ) as NodeListOf<HTMLButtonElement>;
-    expect(buttons[1].classList.contains('active')).toBe(true);
-    expect(buttons[0].classList.contains('active')).toBe(false);
+    expect(buttons[1].classList.contains('ds-btn--primary')).toBe(true);
+    expect(buttons[0].classList.contains('ds-btn--primary')).toBe(false);
   });
 
   it('emits filterChange when a filter button is clicked', () => {
@@ -30,7 +30,7 @@ describe('TodoFilterComponent', () => {
     fixture.detectChanges();
 
     const buttons = fixture.nativeElement.querySelectorAll(
-      '.filter-btn'
+      'button[app-button]'
     ) as NodeListOf<HTMLButtonElement>;
     buttons[2].click();
 

@@ -1,9 +1,11 @@
 <div class="filter-bar" role="group" aria-label="Filter tasks">
   @for (option of options; track option.value) {
     <button
+      app-button
       type="button"
-      class="filter-btn"
-      [class.active]="filter() === option.value"
+      size="sm"
+      [variant]="filter() === option.value ? 'primary' : 'secondary'"
+      [attr.aria-pressed]="filter() === option.value"
       (click)="select(option.value)"
     >
       {{ option.label }}

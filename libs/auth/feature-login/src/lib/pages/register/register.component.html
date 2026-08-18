@@ -1,58 +1,65 @@
 <div class="auth-container">
-  @if (loading()) {
-    <div class="auth-loading" aria-busy="true">
-      <app-spinner />
-      <span>Creating account…</span>
-    </div>
-  }
+  <app-card>
+    @if (loading()) {
+      <div class="auth-loading" aria-busy="true">
+        <app-spinner />
+        <span>Creating account…</span>
+      </div>
+    }
 
-  <form
-    novalidate
-    (submit)="submit($event)"
-    [class.auth-form--busy]="loading()"
-  >
-    <app-form-field
-      label="Name (Optional)"
-      controlId="name"
-      [field]="registerForm.name"
-    />
-
-    <app-form-field
-      label="Email"
-      controlId="email"
-      type="email"
-      [field]="registerForm.email"
-      [showPendingHint]="true"
-      pendingMessage="Checking email availability…"
-    />
-
-    <app-form-field
-      label="Password"
-      controlId="password"
-      type="password"
-      [field]="registerForm.password"
-    />
-
-    <app-form-field
-      label="Confirm password"
-      controlId="passwordConfirm"
-      type="password"
-      [field]="registerForm.passwordConfirm"
-    />
-
-    <button
-      type="submit"
-      [disabled]="registerForm().invalid() || registerForm().pending() || loading()"
+    <form
+      novalidate
+      (submit)="submit($event)"
+      [class.auth-form--busy]="loading()"
     >
-      {{ loading() ? 'Registering…' : 'Register' }}
-    </button>
-  </form>
+      <app-form-field
+        label="Name (Optional)"
+        controlId="name"
+        [field]="registerForm.name"
+      />
 
-  @if (error(); as err) {
-    <div class="error-message server-error">{{ err }}</div>
-  }
+      <app-form-field
+        label="Email"
+        controlId="email"
+        type="email"
+        [field]="registerForm.email"
+        [showPendingHint]="true"
+        pendingMessage="Checking email availability…"
+      />
 
-  <p class="switch-form">
-    Already have an account? <a routerLink="/login">Login here</a>
-  </p>
+      <app-form-field
+        label="Password"
+        controlId="password"
+        type="password"
+        [field]="registerForm.password"
+      />
+
+      <app-form-field
+        label="Confirm password"
+        controlId="passwordConfirm"
+        type="password"
+        [field]="registerForm.passwordConfirm"
+      />
+
+      <button
+        app-button
+        type="submit"
+        class="auth-submit"
+        [disabled]="
+          registerForm().invalid() || registerForm().pending() || loading()
+        "
+        [loading]="loading()"
+      >
+        Register
+      </button>
+    </form>
+
+    @if (error(); as err) {
+      <div class="error-message server-error">{{ err }}</div>
+    }
+
+    <p class="switch-form">
+      Already have an account? <a routerLink="/login">Login here</a>
+    </p>
+  </app-card>
 </div>

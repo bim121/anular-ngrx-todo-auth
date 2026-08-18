@@ -17,18 +17,25 @@
     }
 
     <div class="list-toolbar">
-      <label class="search-field">
-        <span class="visually-hidden">Search todos</span>
-        <input
+      <app-form-field
+        class="search-field"
+        label="Search tasks"
+        controlId="todo-search"
+      >
+        <app-input
+          inputId="todo-search"
           type="search"
-          class="search-input"
+          name="todoSearch"
           placeholder="Search tasks…"
-          [value]="uiStore.searchQuery()"
-          (input)="uiStore.setSearchQuery($any($event.target).value)"
+          [ngModel]="uiStore.searchQuery()"
+          (ngModelChange)="uiStore.setSearchQuery($event)"
         />
-      </label>
+      </app-form-field>
       <button
+        app-button
         type="button"
+        variant="secondary"
+        size="sm"
         class="export-btn"
         (click)="exportCsv()"
         [disabled]="todos().length === 0"
@@ -45,18 +52,22 @@
     @if (availableTags().length > 0) {
       <div class="tag-bar" role="group" aria-label="Filter by tag">
         <button
+          app-button
           type="button"
-          class="tag-filter-btn"
-          [class.active]="uiStore.selectedTag() === null"
+          size="sm"
+          [variant]="uiStore.selectedTag() === null ? 'primary' : 'secondary'"
+          [attr.aria-pressed]="uiStore.selectedTag() === null"
           (click)="uiStore.setTag(null)"
         >
           All tags
         </button>
         @for (tag of availableTags(); track tag) {
           <button
+            app-button
             type="button"
-            class="tag-filter-btn"
-            [class.active]="uiStore.selectedTag() === tag"
+            size="sm"
+            [variant]="uiStore.selectedTag() === tag ? 'primary' : 'secondary'"
+            [attr.aria-pressed]="uiStore.selectedTag() === tag"
             (click)="uiStore.setTag(tag)"
           >
             {{ tag }}
@@ -68,7 +79,11 @@
     <span class="todo-count">{{ visibleTodoCount() }} items</span>
 
     @if (filteredTodoTree().length === 0) {
-      <p class="empty-list-message">No todos</p>
+      <app-card title="No todos">
+        <p class="empty-list-message">
+          Add a task to get started, or change filters.
+        </p>
+      </app-card>
     } @else {
       <cdk-virtual-scroll-viewport
         [itemSize]="TODO_VIRTUAL_ITEM_SIZE_PX"
@@ -116,8 +131,10 @@
               <span class="comments-drawer__task">{{ todo.task }}</span>
             </div>
             <button
+              app-button
               type="button"
-              class="comments-drawer__close"
+              variant="ghost"
+              size="sm"
               (click)="closeComments()"
             >
               Close
@@ -143,19 +160,23 @@
             class="comment-form"
             (submit)="$event.preventDefault(); submitComment()"
           >
-            <input
-              type="text"
-              name="commentDraft"
-              class="comment-input"
-              placeholder="Add a comment…"
-              [value]="commentDraft"
-              (input)="commentDraft = $any($event.target).value"
-              [disabled]="loading()"
-              (keyup.enter)="submitComment()"
-            />
+            <app-form-field
+              class="comment-field"
+              label="Add a comment"
+              controlId="comment-draft"
+            >
+              <app-input
+                inputId="comment-draft"
+                name="commentDraft"
+                placeholder="Add a comment…"
+                [(ngModel)]="commentDraft"
+                [disabled]="loading()"
+              />
+            </app-form-field>
             <button
+              app-button
               type="submit"
-              class="comment-submit"
+              size="sm"
               [disabled]="loading() || !commentDraft.trim()"
             >
               Post

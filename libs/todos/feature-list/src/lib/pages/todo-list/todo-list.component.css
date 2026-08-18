@@ -1,26 +1,32 @@
 .todo-list-container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .skeleton {
   height: 80px;
-  margin-bottom: 16px;
-  border-radius: 6px;
-  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    var(--color-bg) 50%,
+    var(--color-border) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s infinite;
 }
 
 .list-toolbar {
   display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 12px;
+  gap: var(--space-2);
+  align-items: flex-end;
+  margin-bottom: var(--space-3);
 }
 
 .search-field {
@@ -28,98 +34,57 @@
   min-width: 0;
 }
 
-.search-input {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font: inherit;
-}
-
 .export-btn {
   flex-shrink: 0;
-  padding: 8px 12px;
-  border: 1px solid #2563eb;
-  border-radius: 6px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.875rem;
-}
-
-.export-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  margin-bottom: var(--space-5);
 }
 
 @keyframes skeleton-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .todo-count {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--color-muted);
 }
 
 .tag-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.tag-filter-btn {
-  padding: 4px 10px;
-  border: 1px solid #c7d2fe;
-  border-radius: 999px;
-  background: #eef2ff;
-  color: #3730a3;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.tag-filter-btn.active {
-  background: #3730a3;
-  color: #fff;
-  border-color: #3730a3;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
 .todo-loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  color: #31708f;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  color: var(--color-muted);
 }
 
-.loading-message, .error-message, .empty-list-message {
+.error-message {
   text-align: center;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 4px;
+  padding: var(--space-4);
+  margin: var(--space-3) 0;
+  border-radius: var(--radius-md);
+  color: var(--color-danger-text);
+  background-color: var(--color-danger-subtle);
 }
-.loading-message { color: #31708f; background-color: #d9edf7; }
-.error-message { color: #a94442; background-color: #f2dede; }
-.empty-list-message { color: #888; }
 
-/* CDK virtual scroll — fixed row height (itemSize=72). */
+.empty-list-message {
+  margin: 0;
+  color: var(--color-muted);
+}
+
 .todo-viewport {
   height: min(70vh, 520px);
   width: 100%;
@@ -136,8 +101,8 @@
   align-items: center;
   height: 72px;
   box-sizing: border-box;
-  padding: 0 4px;
-  border-bottom: 1px solid #eee;
+  padding: 0 var(--space-1);
+  border-bottom: 1px solid var(--color-border);
   overflow: hidden;
 }
 
@@ -145,23 +110,22 @@
   opacity: 0.85;
 }
 
-/* Comments drawer — outside virtual scroll so expanded UI does not clip/overlap. */
 .comments-drawer {
-  margin-top: 12px;
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #f9fafb;
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
 }
 
 .comments-drawer__header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .comments-drawer__title {
@@ -173,26 +137,16 @@
 
 .comments-drawer__task {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.comments-drawer__close {
-  flex-shrink: 0;
-  padding: 4px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
 .comments-status {
   margin: 0;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--color-muted);
 }
 
 .comments-list {
@@ -201,7 +155,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   max-height: 220px;
   overflow: auto;
 }
@@ -215,64 +169,20 @@
 
 .comment-author {
   font-weight: 600;
-  color: #111827;
+  color: var(--color-text);
 }
 
 .comment-body {
-  color: #374151;
+  color: var(--color-text);
 }
 
 .comment-form {
   display: flex;
-  gap: 6px;
+  gap: var(--space-2);
+  align-items: flex-end;
 }
 
-.comment-input {
+.comment-field {
   flex: 1;
-  padding: 6px 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font: inherit;
-  background: #fff;
-}
-
-.comment-submit {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  background: #2563eb;
-  color: #fff;
-  cursor: pointer;
-  font: inherit;
-}
-
-.comment-submit:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.actions button {
-  margin-left: 8px;
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-.edit-btn { background-color: #f0ad4e; color: white; }
-.delete-btn { background-color: #d9534f; color: white; }
-.save-btn { background-color: #5cb85c; color: white; }
-.cancel-btn { background-color: #777; color: white; }
-
-.edit-mode {
-    display: flex;
-    width: 100%;
-    align-items: center;
-}
-.edit-mode .edit-input {
-    flex-grow: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 10px;
+  min-width: 0;
 }

@@ -4,6 +4,7 @@ import {
   input,
   output,
 } from '@angular/core';
+import { ButtonComponent } from '@anular-ngrx/shared-ui';
 import { TodoFilter } from '@anular-ngrx/todos-data-access';
 
 export type { TodoFilter };
@@ -11,6 +12,7 @@ export type { TodoFilter };
 @Component({
   selector: 'app-todo-filter',
   standalone: true,
+  imports: [ButtonComponent],
   templateUrl: './todo-filter.component.html',
   styleUrl: './todo-filter.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

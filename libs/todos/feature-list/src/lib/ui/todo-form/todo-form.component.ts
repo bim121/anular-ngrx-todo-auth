@@ -5,11 +5,13 @@ import {
   output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ButtonComponent } from '@anular-ngrx/shared-ui';
+import { InputComponent } from '@anular-ngrx/shared-ui/input/input.component';
 
 @Component({
   selector: 'app-todo-form',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ButtonComponent, InputComponent],
   templateUrl: './todo-form.component.html',
   styleUrl: './todo-form.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
