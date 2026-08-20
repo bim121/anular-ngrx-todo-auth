@@ -30,13 +30,11 @@
     @if (todo().tags.length > 0) {
       <div class="todo-tags" aria-label="Tags">
         @for (tag of todo().tags; track tag) {
-          <span class="tag-chip">{{ tag }}</span>
+          <app-tag-chip>{{ tag }}</app-tag-chip>
         }
       </div>
     }
-    <span class="priority-badge" [attr.data-priority]="todo().priority">
-      {{ todo().priority }}
-    </span>
+    <app-priority-badge [priority]="todo().priority" />
     <button
       app-button
       type="button"

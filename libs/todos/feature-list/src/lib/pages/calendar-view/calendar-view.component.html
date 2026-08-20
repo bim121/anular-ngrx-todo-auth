@@ -1,0 +1,69 @@
+<div class="calendar">
+  <header class="calendar__header">
+    <div>
+      <h2 class="calendar__title">
+        {{ monthLabel() | date: 'MMMM yyyy' : 'UTC' }}
+      </h2>
+      @if (overdueCount() > 0) {
+        <p class="calendar__overdue" role="status">
+          {{ overdueCount() }} overdue
+        </p>
+      }
+    </div>
+    <div class="calendar__nav">
+      <button app-button type="button" variant="secondary" size="sm" (click)="prevMonth()">
+        Prev
+      </button>
+      <button app-button type="button" variant="ghost" size="sm" (click)="goToday()">
+        Today
+      </button>
+      <button app-button type="button" variant="secondary" size="sm" (click)="nextMonth()">
+        Next
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="calendar__loading" aria-busy="true">
+      <app-spinner />
+      <span>Loading calendar…</span>
+    </div>
+  } @else if (error(); as err) {
+    <p class="calendar__error" role="alert">{{ err }}</p>
+  } @else {
+    <div class="calendar__weekdays" aria-hidden="true">
+      @for (label of weekdayLabels; track label) {
+        <span>{{ label }}</span>
+      }
+    </div>
+
+    <div class="calendar__grid" role="grid" aria-label="Month calendar">
+      @for (day of days(); track day.iso) {
+        <div
+          class="calendar__day"
+          role="gridcell"
+          [class.calendar__day--outside]="!day.inMonth"
+          [class.calendar__day--today]="day.isToday"
+          [attr.aria-label]="day.iso"
+        >
+          <span class="calendar__day-num">{{ day.date | date: 'd' : 'UTC' }}</span>
+          <ul class="calendar__events">
+            @for (todo of day.todos; track todo.id) {
+              <li>
+                <app-card class="calendar__event">
+                  <p class="calendar__event-task">{{ todo.task }}</p>
+                  <div class="calendar__event-meta">
+                    <app-priority-badge [priority]="todo.priority" />
+                    @for (tag of todo.tags; track tag) {
+                      <app-tag-chip>{{ tag }}</app-tag-chip>
+                    }
+                  </div>
+                </app-card>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -37,8 +37,10 @@ describe('JsonServerTodoRepository', () => {
           userId,
           task: 'A',
           completed: false,
+          status: 'todo',
           tags: [],
           priority: 'medium',
+          dueDate: null,
         },
       ]);
     });
@@ -57,14 +59,17 @@ describe('JsonServerTodoRepository', () => {
       expect(todo.task).toBe('Buy milk');
       expect(todo.userId).toBe(userId);
       expect(todo.completed).toBe(false);
+      expect(todo.status).toBe('todo');
       expect(todo.tags).toEqual([]);
       expect(todo.priority).toBe('medium');
+      expect(todo.dueDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 
     const req = httpMock.expectOne('http://localhost:3000/todos');
     expect(req.request.method).toBe('POST');
     expect(req.request.body.task).toBe('Buy milk');
     expect(req.request.body.userId).toBe(userId);
+    expect(req.request.body.status).toBe('todo');
     req.flush(req.request.body);
   });
 });

@@ -58,6 +58,30 @@ export const TODOS_ROUTES: Routes = [
         } satisfies RoutePageData,
       },
       {
+        path: 'kanban',
+        loadComponent: () =>
+          import('@anular-ngrx/todos-feature-list').then(
+            (m) => m.KanbanBoardComponent
+          ),
+        canActivate: [authGuard],
+        data: {
+          title: 'Kanban',
+          breadcrumb: 'Kanban',
+        } satisfies RoutePageData,
+      },
+      {
+        path: 'calendar',
+        loadComponent: () =>
+          import('@anular-ngrx/todos-feature-list').then(
+            (m) => m.CalendarViewComponent
+          ),
+        canActivate: [authGuard],
+        data: {
+          title: 'Calendar',
+          breadcrumb: 'Calendar',
+        } satisfies RoutePageData,
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('@anular-ngrx/auth-feature-login').then(

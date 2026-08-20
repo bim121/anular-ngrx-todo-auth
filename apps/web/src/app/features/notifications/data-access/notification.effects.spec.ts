@@ -3,6 +3,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable, ReplaySubject } from 'rxjs';
 import { NotificationEffects } from './notification.effects';
 import * as TodoActions from '@anular-ngrx/todos-data-access/todo.actions';
+import { Todo } from '@anular-ngrx/todos-data-access';
 import * as NotificationActions from './notification.actions';
 
 describe('NotificationEffects', () => {
@@ -20,13 +21,14 @@ describe('NotificationEffects', () => {
   });
 
   it('todoAssignedOnAdd$: dispatches todoAssigned on addTodoSuccess', async () => {
-    const todo = {
+    const todo: Todo = {
       id: 't1',
       userId: 'u1',
       task: 'New task',
       completed: false,
+      status: 'todo',
       tags: [] as string[],
-      priority: 'medium' as const,
+      priority: 'medium',
     };
 
     const promise = new Promise<ReturnType<typeof NotificationActions.todoAssigned>>((resolve) => {

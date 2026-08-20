@@ -5,7 +5,7 @@ import {
   output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ButtonComponent } from '@anular-ngrx/shared-ui';
+import { ButtonComponent, PriorityBadgeComponent, TagChipComponent } from '@anular-ngrx/shared-ui';
 import { CheckboxComponent } from '@anular-ngrx/shared-ui/checkbox/checkbox.component';
 import { TodoComment, Todo } from '@anular-ngrx/todos-data-access';
 import { highlightTaskParts } from '../highlight-task';
@@ -13,7 +13,13 @@ import { highlightTaskParts } from '../highlight-task';
 @Component({
   selector: 'app-todo-item',
   standalone: true,
-  imports: [FormsModule, ButtonComponent, CheckboxComponent],
+  imports: [
+    FormsModule,
+    ButtonComponent,
+    CheckboxComponent,
+    TagChipComponent,
+    PriorityBadgeComponent,
+  ],
   templateUrl: './todo-item.component.html',
   styleUrl: './todo-item.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

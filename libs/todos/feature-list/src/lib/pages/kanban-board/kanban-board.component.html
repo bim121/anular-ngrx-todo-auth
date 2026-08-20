@@ -1,0 +1,57 @@
+<div class="kanban">
+  <header class="kanban__header">
+    <h2 class="kanban__title">Kanban</h2>
+    <p class="kanban__hint">
+      Drag cards between columns. REST loads the full list today — Phase 13 GraphQL
+      will fetch one board query instead.
+    </p>
+  </header>
+
+  @if (loading()) {
+    <div class="kanban__loading" aria-busy="true">
+      <app-spinner />
+      <span>Loading board…</span>
+    </div>
+  } @else if (error(); as err) {
+    <p class="kanban__error" role="alert">{{ err }}</p>
+  } @else {
+    <div class="kanban__board" role="region" aria-label="Kanban board">
+      @for (col of columns(); track col.status) {
+        <section
+          class="kanban__column"
+          [attr.aria-label]="col.label"
+        >
+          <header class="kanban__column-head">
+            <h3>{{ col.label }}</h3>
+            <span class="kanban__count">{{ col.todos.length }}</span>
+          </header>
+
+          <div
+            class="kanban__list"
+            cdkDropList
+            [id]="'kanban-' + col.status"
+            [cdkDropListData]="col.todos"
+            [cdkDropListConnectedTo]="connectedTo(col.status)"
+            (cdkDropListDropped)="onDrop($event, col.status)"
+          >
+            @for (todo of col.todos; track trackById($index, todo)) {
+              <app-card class="kanban__card" cdkDrag [cdkDragData]="todo">
+                <div class="kanban__card-body" cdkDragHandle>
+                  <p class="kanban__task">{{ todo.task }}</p>
+                  <div class="kanban__meta">
+                    <app-priority-badge [priority]="todo.priority" />
+                    @for (tag of todo.tags; track tag) {
+                      <app-tag-chip>{{ tag }}</app-tag-chip>
+                    }
+                  </div>
+                </div>
+              </app-card>
+            } @empty {
+              <p class="kanban__empty">Drop tasks here</p>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  }
+</div>

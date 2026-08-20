@@ -196,15 +196,15 @@ Chromatic/Percy — 5 stories on PR.
 
 ### PF-3.3 Kanban board (V3)
 
-- [ ] CDK drag-drop + DS cards
-- [ ] Columns: todo / in-progress / done
-- [ ] **Подготовка к GraphQL:** Kanban over-fetching → [Phase 13-GraphQL](./phase-13-graphql-client.md)
-- [ ] **Vue analytics layout:** dashboard sidebar + chart grid в `analytics-mfe` — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md) Phase 6
+- [x] CDK drag-drop + DS cards
+- [x] Columns: todo / in-progress / done
+- [x] **Подготовка к GraphQL:** Kanban over-fetching → [Phase 13-GraphQL](./phase-13-graphql-client.md) (documented in `KanbanBoardComponent` JSDoc + UI hint)
+- [x] **Vue analytics layout:** dashboard sidebar + chart grid в `analytics-mfe` — см. [multi-stack-roadmap.md](./multi-stack-roadmap.md) Phase 6
 
 ### PF-3.4 Calendar view (V3)
 
-- [ ] Month grid + todos with `dueDate`
-- [ ] `TagChip`, `PriorityBadge` components
+- [x] Month grid + todos with `dueDate`
+- [x] `TagChip`, `PriorityBadge` components
 
 ---
 
@@ -278,6 +278,9 @@ marketing-mfe `globals.css`:
 2. Route `/analytics` uses `DashboardLayout`.
 3. Integrate Phase 5 `StatsChart` into `ChartPanel`.
 
+- [x] `DashboardLayout` + `/analytics` grid
+- [x] `StatCard` / `ChartPanel` on shared tokens (`_tokens.css`)
+
 **Проверка:** axe DevTools 0 critical on dashboard.
 
 ### V.6.2 — StatCard & ChartPanel
@@ -294,11 +297,15 @@ marketing-mfe `globals.css`:
 
 **Tokens:** import shared CSS variables; no hardcoded hex in components.
 
+- [x] StatCard / ChartPanel use CSS variables
+
 ### V.6.3 — Theme + a11y
 
 - Theme toggle in sidebar footer — `data-theme` on `<html>`.
 - ChartPanel: `aria-label` on canvas wrapper.
 - Focus order: sidebar links → main content.
+
+- [x] Theme toggle + aria-labels on chart panels
 
 **Критерий:** dashboard matches design token spec; charts readable in dark mode.
 

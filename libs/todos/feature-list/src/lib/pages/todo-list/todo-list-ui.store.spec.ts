@@ -3,6 +3,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import * as TodoActions from '@anular-ngrx/todos-data-access/todo.actions';
+import { Todo } from '@anular-ngrx/todos-data-access';
 import { TodoListUiStore } from './todo-list-ui.store';
 
 describe('TodoListUiStore', () => {
@@ -68,11 +69,12 @@ describe('TodoListUiStore', () => {
 
   it('edit machine: editing → saving → viewing on update success', () => {
     const uiStore = TestBed.inject(TodoListUiStore);
-    const todo = {
+    const todo: Todo = {
       id: 'todo-1',
       userId: 'u1',
       task: 'A',
       completed: false,
+      status: 'todo',
       tags: [] as string[],
       priority: 'medium' as const,
     };

@@ -1,5 +1,7 @@
 export * from './lib/pages/todo-list/todo-list.component';
 export * from './lib/pages/todo-list/todo-list-ui.store';
+export * from './lib/pages/kanban-board/kanban-board.component';
+export * from './lib/pages/calendar-view/calendar-view.component';
 export * from './lib/ui/todo-item/todo-item.component';
 export * from './lib/ui/todo-form/todo-form.component';
 export * from './lib/ui/todo-filter/todo-filter.component';

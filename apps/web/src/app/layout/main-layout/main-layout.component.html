@@ -2,6 +2,11 @@
   <header class="main-header">
     <div class="main-header__start">
       <a routerLink="/todos" class="brand">Todo App</a>
+      <nav class="main-nav" aria-label="Primary">
+        <a routerLink="/todos" routerLinkActive="active">List</a>
+        <a routerLink="/kanban" routerLinkActive="active">Kanban</a>
+        <a routerLink="/calendar" routerLinkActive="active">Calendar</a>
+      </nav>
       @if (pageContext.activePage(); as page) {
         <nav class="breadcrumbs" aria-label="Breadcrumb">
           <a routerLink="/todos">Home</a>

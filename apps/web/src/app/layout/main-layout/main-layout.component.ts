@@ -1,6 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { AuthFacade } from '@anular-ngrx/auth-data-access';
@@ -15,7 +15,7 @@ import { ThemeService } from '@app/core/ui/theme.service';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, NgOptimizedImage],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgOptimizedImage],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

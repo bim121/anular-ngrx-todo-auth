@@ -41,10 +41,15 @@ export class TodoEffects {
     this.actions$.pipe(
       ofType(routerNavigatedAction),
       concatLatestFrom(() => this.store.select(AuthSelectors.selectUserId)),
-      filter(
-        ([action, userId]) =>
-          userId != null && action.payload.routerState.url.includes('/todos')
-      ),
+      filter(([action, userId]) => {
+        if (userId == null) return false;
+        const url = action.payload.routerState.url;
+        return (
+          url.includes('/todos') ||
+          url.includes('/kanban') ||
+          url.includes('/calendar')
+        );
+      }),
       map(() => TodoActions.loadTodos())
     )
   );
@@ -109,7 +114,15 @@ export class TodoEffects {
         }
 
         return this.todos
-          .update({ id, completed: todo.completed }, userId)
+          .update(
+            {
+              id,
+              completed: todo.completed,
+              status: todo.status,
+              completedAt: todo.completedAt ?? null,
+            },
+            userId
+          )
           .pipe(
             map((updated) => TodoActions.toggleTodoSuccess({ todo: updated })),
             catchError((error) =>

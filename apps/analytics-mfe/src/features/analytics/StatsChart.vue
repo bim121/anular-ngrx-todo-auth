@@ -37,7 +37,7 @@ const chartData = computed(() => {
     datasets: [
       {
         label: 'Completed by tag',
-        backgroundColor: '#8b5cf6',
+        backgroundColor: '#3b82f6',
         data: labels.map((label) => byTag.get(label) ?? 0),
       },
     ],
@@ -49,37 +49,26 @@ const chartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: { display: false },
-    title: { display: true, text: 'Completed todos by tag (Chart.js spike)' },
+    title: { display: false },
   },
 };
 </script>
 
 <template>
-  <section class="chart-card">
-    <div class="chart-wrap" :aria-busy="loading">
-      <p v-if="loading" class="hint">Loading chart…</p>
-      <Bar v-else :data="chartData" :options="chartOptions" />
-    </div>
-  </section>
+  <div class="chart-wrap" :aria-busy="loading" aria-label="Bar chart of completed todos by tag">
+    <p v-if="loading" class="hint">Loading chart…</p>
+    <Bar v-else :data="chartData" :options="chartOptions" />
+  </div>
 </template>
 
 <style scoped>
-.chart-card {
-  margin-top: 1.25rem;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  background: #0b1220;
-  border: 1px solid #334155;
-}
-
-/* Fixed height reserves space while loading — avoids CLS (V.5.2). */
 .chart-wrap {
   height: 240px;
   position: relative;
 }
 
 .hint {
-  color: #94a3b8;
+  color: var(--color-muted, #6b7280);
   margin: 0;
   position: absolute;
   inset: 0;

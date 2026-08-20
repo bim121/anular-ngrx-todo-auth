@@ -118,6 +118,7 @@ describe('store meta-reducers', () => {
             userId: 'u1',
             task: 'A',
             completed: false,
+            status: 'todo',
             tags: [],
             priority: 'medium' as const,
           },

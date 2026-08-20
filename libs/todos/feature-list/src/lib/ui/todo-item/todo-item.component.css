@@ -58,33 +58,6 @@
   gap: var(--space-1);
 }
 
-.tag-chip {
-  font-size: 0.75rem;
-  padding: 2px var(--space-2);
-  border-radius: 999px;
-  background: var(--color-primary-subtle);
-  color: var(--color-primary);
-}
-
-.priority-badge {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  color: var(--color-text);
-}
-
-.priority-badge[data-priority='high'] {
-  background: var(--color-danger-subtle);
-  color: var(--color-danger-text);
-}
-
-.priority-badge[data-priority='low'] {
-  background: var(--color-success-subtle);
-  color: var(--color-success-text);
-}
-
 .comments-toggle.active {
   background: var(--color-primary-subtle);
 }

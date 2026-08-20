@@ -1,15 +1,22 @@
 import { Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { Todo, TodoFilter } from './todo.model';
+import {
+  Todo,
+  TodoFilter,
+  TodoStatus,
+  kanbanStatusPatch,
+} from './todo.model';
 import * as TodoActions from './todo.actions';
 import {
   selectAllTags,
   selectAllTodos,
   selectFilteredTodos,
   selectPendingToggleIds,
+  selectTodosByKanbanStatus,
   selectTodosError,
   selectTodosLoading,
+  selectTodosWithDueDate,
   selectWeeklyCompletionStats,
 } from './todo.selectors';
 
@@ -38,6 +45,19 @@ export class TodosFacade {
     }),
   } as const;
 
+  private readonly kanbanByStatus = {
+    todo: toSignal(this.store.select(selectTodosByKanbanStatus('todo')), {
+      initialValue: [] as Todo[],
+    }),
+    'in-progress': toSignal(
+      this.store.select(selectTodosByKanbanStatus('in-progress')),
+      { initialValue: [] as Todo[] }
+    ),
+    done: toSignal(this.store.select(selectTodosByKanbanStatus('done')), {
+      initialValue: [] as Todo[],
+    }),
+  } as const;
+
   readonly availableTags = toSignal(this.store.select(selectAllTags), {
     initialValue: [] as string[],
   });
@@ -55,10 +75,19 @@ export class TodosFacade {
     this.store.select(selectWeeklyCompletionStats),
     { initialValue: [] }
   );
+  readonly todosWithDueDate = toSignal(
+    this.store.select(selectTodosWithDueDate),
+    { initialValue: [] as Todo[] }
+  );
 
   /** Domain filter (all/active/done) — NgRx-memoized; UI chip lives in SignalStore. */
   filteredTodos(filter: TodoFilter): Todo[] {
     return this.filteredByStatus[filter]();
+  }
+
+  /** Kanban column contents (PF-3.3). */
+  todosByKanbanStatus(status: TodoStatus): Todo[] {
+    return this.kanbanByStatus[status]();
   }
 
   /**
@@ -76,6 +105,15 @@ export class TodosFacade {
 
   update(todo: Partial<Todo> & { id: string }): void {
     this.store.dispatch(TodoActions.updateTodo({ todo }));
+  }
+
+  /** Optimistic Kanban column move — patches status + completed. */
+  moveToStatus(id: string, status: TodoStatus): void {
+    this.store.dispatch(
+      TodoActions.updateTodo({
+        todo: { id, ...kanbanStatusPatch(status) },
+      })
+    );
   }
 
   remove(id: string): void {

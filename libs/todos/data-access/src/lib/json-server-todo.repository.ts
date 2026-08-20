@@ -4,7 +4,9 @@ import { Observable, catchError, map, throwError, timeout } from 'rxjs';
 import {
   CreateTodoDto,
   DEFAULT_TODO_PRIORITY,
+  DEFAULT_TODO_STATUS,
   Todo,
+  defaultDueDate,
   normalizeTodo,
 } from './todo.model';
 import { TodoRepository } from './todo.repository';
@@ -28,12 +30,15 @@ export class JsonServerTodoRepository extends TodoRepository {
   }
 
   create(dto: CreateTodoDto): Observable<Todo> {
+    const status = dto.status ?? DEFAULT_TODO_STATUS;
     const newTodo: Todo = {
       id: crypto.randomUUID(),
       userId: dto.userId,
       task: dto.task,
-      completed: false,
+      completed: status === 'done',
+      status,
       createdAt: new Date().toISOString(),
+      dueDate: dto.dueDate ?? defaultDueDate(7),
       tags: dto.tags ?? [],
       priority: dto.priority ?? DEFAULT_TODO_PRIORITY,
       ...(dto.parentId != null ? { parentId: dto.parentId } : {}),

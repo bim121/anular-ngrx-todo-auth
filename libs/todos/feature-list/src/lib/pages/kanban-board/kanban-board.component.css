@@ -1,0 +1,143 @@
+.kanban {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-5);
+}
+
+.kanban__header {
+  margin-bottom: var(--space-5);
+}
+
+.kanban__title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.25rem;
+  color: var(--color-text);
+}
+
+.kanban__hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  max-width: 40rem;
+}
+
+.kanban__loading,
+.kanban__error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  color: var(--color-muted);
+}
+
+.kanban__error {
+  color: var(--color-danger-text);
+  background: var(--color-danger-subtle);
+  border-radius: var(--radius-md);
+}
+
+.kanban__board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .kanban__board {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kanban__column {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  min-height: 16rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.kanban__column-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.kanban__column-head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.kanban__count {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.kanban__list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  min-height: 12rem;
+}
+
+.kanban__card {
+  cursor: grab;
+  padding: var(--space-3) !important;
+  box-shadow: var(--shadow-md);
+}
+
+.kanban__card:active {
+  cursor: grabbing;
+}
+
+.kanban__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.kanban__task {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  line-height: 1.35;
+}
+
+.kanban__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.kanban__empty {
+  margin: auto;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.35;
+}
+
+.cdk-drop-list-dragging .kanban__card:not(.cdk-drag-placeholder) {
+  transition: transform 200ms ease;
+}

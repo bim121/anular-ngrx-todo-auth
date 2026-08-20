@@ -1,85 +1,121 @@
 <script setup lang="ts">
-import { RouterLink, useRouter } from 'vue-router';
+import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
+import { useTodos } from '@/composables/useTodos';
+import DashboardLayout from '@/layouts/DashboardLayout.vue';
+import StatCard from '@/components/StatCard.vue';
+import ChartPanel from '@/components/ChartPanel.vue';
 import StatsChart from './StatsChart.vue';
 
 const router = useRouter();
 const { userName, logout } = useAuth();
+const { todos, load } = useTodos();
+const ready = ref(false);
+const theme = ref<'light' | 'dark'>('light');
+
+onMounted(async () => {
+  const stored = document.documentElement.getAttribute('data-theme');
+  theme.value = stored === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme.value);
+  await load();
+  ready.value = true;
+});
+
+const total = computed(() => todos.value.length);
+const completed = computed(() => todos.value.filter((t) => t.completed).length);
+const active = computed(() => total.value - completed.value);
 
 function handleLogout(): void {
   logout();
   router.push('/login');
 }
+
+function toggleTheme(): void {
+  theme.value = theme.value === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme.value);
+}
 </script>
 
 <template>
-  <main class="page">
-    <section class="card">
-      <p class="eyebrow">analytics-mfe</p>
+  <DashboardLayout
+    :user-name="userName"
+    :theme-label="theme === 'dark' ? 'Dark' : 'Light'"
+    @logout="handleLogout"
+    @toggle-theme="toggleTheme"
+  >
+    <header class="page-head">
       <h1>Analytics dashboard</h1>
-      <p v-if="userName">Welcome, {{ userName }}!</p>
-      <p class="hint">Phase 5 — Chart.js spike (completed by tag).</p>
+      <p class="hint">Phase 6 — sidebar layout + Chart.js panel (tokens via data-theme).</p>
+    </header>
+
+    <div class="stats-row">
+      <StatCard title="Total todos" :value="ready ? total : '…'" />
+      <StatCard title="Active" :value="ready ? active : '…'" />
+      <StatCard title="Completed" :value="ready ? completed : '…'" />
+    </div>
+
+    <ChartPanel title="Completed by tag" aria-label="Completed todos by tag chart">
       <StatsChart />
-      <nav class="links">
-        <RouterLink to="/todos">My Todos</RouterLink>
-      </nav>
-      <button type="button" @click="handleLogout">Logout</button>
-    </section>
-  </main>
+    </ChartPanel>
+
+    <div class="grid-2">
+      <ChartPanel title="Focus" aria-label="Todo summary">
+        <p class="summary">
+          {{ ready ? `${active} open · ${completed} done` : 'Loading…' }}
+        </p>
+      </ChartPanel>
+      <ChartPanel title="Tips" aria-label="Dashboard tips">
+        <p class="summary">
+          Kanban over-fetching on Angular will move to GraphQL in Phase 13; this
+          dashboard already filters client-side from the same REST list.
+        </p>
+      </ChartPanel>
+    </div>
+  </DashboardLayout>
 </template>
 
 <style scoped>
-.page {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 1.5rem;
-  background: #0f172a;
-  color: #f8fafc;
-  font-family: system-ui, sans-serif;
-}
-
-.card {
-  width: min(100%, 40rem);
-  padding: 2rem;
-  border-radius: 1rem;
-  background: #1e293b;
-  border: 1px solid #334155;
-}
-
-.eyebrow {
-  margin: 0 0 0.5rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #a78bfa;
+.page-head {
+  margin-bottom: 1.25rem;
 }
 
 h1 {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.35rem;
+  font-size: 1.5rem;
 }
 
 .hint {
-  color: #94a3b8;
+  margin: 0;
+  color: var(--color-muted, #6b7280);
+  font-size: 0.9rem;
 }
 
-.links {
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
   margin-top: 1rem;
 }
 
-.links a {
-  color: #c4b5fd;
-  font-weight: 600;
-  text-decoration: none;
+.summary {
+  margin: 0;
+  color: var(--color-muted, #6b7280);
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
-button {
-  margin-top: 1.5rem;
-  padding: 0.7rem 1rem;
-  border: none;
-  border-radius: 0.5rem;
-  background: #475569;
-  color: white;
-  cursor: pointer;
+@media (max-width: 720px) {
+  .stats-row,
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

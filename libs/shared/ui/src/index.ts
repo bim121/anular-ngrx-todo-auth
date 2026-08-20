@@ -13,6 +13,8 @@ export * from './lib/modal/confirm-modal.component';
 export * from './lib/global-error-banner/global-error-banner.component';
 export * from './lib/global-error.service';
 export * from './lib/effects-lifecycle.service';
+export * from './lib/tag-chip/tag-chip.component';
+export * from './lib/priority-badge/priority-badge.component';
 // Forms-backed primitives stay off the main barrel so initial routes do not pull @angular/forms.
 // Import: `@anular-ngrx/shared-ui/form-field/form-field.component`
 // Import: `@anular-ngrx/shared-ui/input/input.component`

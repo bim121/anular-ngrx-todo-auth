@@ -10,6 +10,7 @@ describe('TodoItemComponent', () => {
     userId: 'u1',
     task: 'Write tests',
     completed: false,
+    status: 'todo',
     tags: ['dev'],
     priority: 'medium',
   };

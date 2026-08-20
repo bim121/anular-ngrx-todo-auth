@@ -14,6 +14,7 @@ describe('todosReducer', () => {
     userId: 'u1',
     task: 'A',
     completed: false,
+    status: 'todo',
     tags: [],
     priority: 'medium',
   };
@@ -22,6 +23,7 @@ describe('todosReducer', () => {
     userId: 'u1',
     task: 'B',
     completed: false,
+    status: 'todo',
     tags: [],
     priority: 'medium',
   };

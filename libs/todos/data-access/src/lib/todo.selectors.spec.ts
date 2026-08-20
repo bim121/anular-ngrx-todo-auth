@@ -19,6 +19,7 @@ describe('todo selectors', () => {
     userId: 'u1',
     task: 'A',
     completed: false,
+    status: 'todo',
     tags: ['work', 'ngrx'],
     priority: 'high',
   };
@@ -27,6 +28,7 @@ describe('todo selectors', () => {
     userId: 'u1',
     task: 'B',
     completed: true,
+    status: 'done',
     tags: ['work'],
     priority: 'low',
   };
@@ -35,6 +37,7 @@ describe('todo selectors', () => {
     userId: 'u1',
     task: 'Subtask',
     completed: false,
+    status: 'todo',
     tags: ['ngrx'],
     priority: 'medium',
     parentId: '1',

@@ -3,7 +3,13 @@ import {
   createSelector,
   MemoizedSelector,
 } from '@ngrx/store';
-import { Todo, TodoFilter, TodoTreeNode, TodosState } from './todo.model';
+import {
+  Todo,
+  TodoFilter,
+  TodoStatus,
+  TodoTreeNode,
+  TodosState,
+} from './todo.model';
 import { applyTodoFilter } from './todo-filter.strategy';
 import {
   selectAll,
@@ -87,6 +93,26 @@ export const selectTodosByTag = (tag: string): TodosByTagSelector => {
 
 export const selectAllTags = createSelector(selectAllTodos, (todos) =>
   [...new Set(todos.flatMap((todo) => todo.tags))].sort()
+);
+
+const selectTodosByKanbanStatusMap = {
+  todo: createSelector(selectAllTodos, (todos) =>
+    todos.filter((t) => t.status === 'todo')
+  ),
+  'in-progress': createSelector(selectAllTodos, (todos) =>
+    todos.filter((t) => t.status === 'in-progress')
+  ),
+  done: createSelector(selectAllTodos, (todos) =>
+    todos.filter((t) => t.status === 'done')
+  ),
+} as const;
+
+export const selectTodosByKanbanStatus = (status: TodoStatus) =>
+  selectTodosByKanbanStatusMap[status];
+
+/** Todos that have a dueDate (calendar). */
+export const selectTodosWithDueDate = createSelector(selectAllTodos, (todos) =>
+  todos.filter((t) => !!t.dueDate)
 );
 
 export interface WeeklyCompletionBucket {

@@ -89,12 +89,14 @@ export const todosReducer = createReducer(
       return state;
     }
 
+    const nextCompleted = !todo.completed;
     return todosAdapter.updateOne(
       {
         id,
         changes: {
-          completed: !todo.completed,
-          completedAt: !todo.completed ? new Date().toISOString() : null,
+          completed: nextCompleted,
+          status: nextCompleted ? 'done' : 'todo',
+          completedAt: nextCompleted ? new Date().toISOString() : null,
         },
       },
       {
@@ -125,6 +127,7 @@ export const todosReducer = createReducer(
         id,
         changes: {
           completed: previousCompleted,
+          status: previousCompleted ? 'done' : 'todo',
           completedAt: previousCompleted ? undefined : null,
         },
       },
