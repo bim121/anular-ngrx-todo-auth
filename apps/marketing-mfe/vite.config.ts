@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,7 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '../..');
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       '@marketing/core': resolve(__dirname, 'src/core'),
@@ -19,6 +20,7 @@ export default defineConfig({
       '@marketing/providers': resolve(__dirname, 'src/providers'),
       '@shared/validators': resolve(rootDir, 'libs/shared/validators'),
       '@shared/data-access': resolve(rootDir, 'libs/shared/data-access/src'),
+      '@shared/design-tokens': resolve(rootDir, 'libs/shared/design-tokens'),
     },
   },
   server: {

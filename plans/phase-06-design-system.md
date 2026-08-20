@@ -19,19 +19,19 @@
 
 ### React/Next.js (marketing-mfe)
 
-- [ ] shadcn/ui Button, Card, Input в marketing-mfe
-- [ ] Import `libs/shared/design-tokens` (CSS variables)
-- [ ] Login + todo list на DS components
-- [ ] Dark theme via tokens (match Angular)
+- [x] shadcn/ui Button, Card, Input в marketing-mfe
+- [x] Import `libs/shared/design-tokens` (CSS variables)
+- [x] Login + todo list на DS components
+- [x] Dark theme via tokens (match Angular)
 - [ ] Storybook или Ladle для React primitives (optional)
 
 ### Vue 3 (analytics-mfe)
 
-- [ ] Dashboard layout: sidebar + chart grid
-- [ ] Shared tokens CSS variables из `libs/shared/design-tokens`
-- [ ] `StatCard`, `ChartPanel` components
-- [ ] Light/dark theme toggle в analytics shell
-- [ ] a11y pass на dashboard route
+- [x] Dashboard layout: sidebar + chart grid
+- [x] Shared tokens CSS variables из `libs/shared/design-tokens`
+- [x] `StatCard`, `ChartPanel` components
+- [x] Light/dark theme toggle в analytics shell
+- [x] a11y pass на dashboard route
 
 ---
 
@@ -225,6 +225,10 @@ npx shadcn@latest add button card input
 2. Import `@shared/design-tokens/styles/tokens.css` в global styles.
 3. Replace raw HTML buttons/inputs in login + todo features.
 
+- [x] Tailwind + shadcn-style Button / Card / Input / Checkbox
+- [x] `globals.css` imports shared design tokens
+- [x] Login + todos migrated off raw controls
+
 **Проверка:** visual parity with Angular DS Button/Input (same `--color-primary`).
 
 ### R.6.2 — Token integration
@@ -243,6 +247,9 @@ marketing-mfe `globals.css`:
 @import '@shared/design-tokens/styles/tokens.css';
 ```
 
+- [x] Canonical `design-tokens` package; Angular `_tokens.css` re-exports it
+- [x] Theme toggle — components follow `[data-theme="dark"]`
+
 **Критерий:** toggle dark theme — shadcn components update via `[data-theme="dark"]`.
 
 ### R.6.3 — Component migration checklist
@@ -252,6 +259,8 @@ marketing-mfe `globals.css`:
 | Login | Button, Input, Card |
 | Todo list | Checkbox (shadcn), Card empty state |
 | Header | Button ghost variant |
+
+- [x] Login / Todo list / Header on DS components (no raw `<button>` / `<input>` in features)
 
 **Критерий:** no raw `<button>` / `<input>` in feature templates.
 
@@ -279,7 +288,7 @@ marketing-mfe `globals.css`:
 3. Integrate Phase 5 `StatsChart` into `ChartPanel`.
 
 - [x] `DashboardLayout` + `/analytics` grid
-- [x] `StatCard` / `ChartPanel` on shared tokens (`_tokens.css`)
+- [x] `StatCard` / `ChartPanel` on shared tokens (`design-tokens`)
 
 **Проверка:** axe DevTools 0 critical on dashboard.
 

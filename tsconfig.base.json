@@ -63,6 +63,9 @@
       "@shared/api-types/*": [
         "libs/shared/api-types/src/*"
       ],
+      "@shared/design-tokens/*": [
+        "libs/shared/design-tokens/*"
+      ],
       "@shared/data-access": [
         "libs/shared/data-access/src/index.ts"
       ],

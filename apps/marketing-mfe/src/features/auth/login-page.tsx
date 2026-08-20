@@ -7,7 +7,17 @@ import { loginUser } from '@marketing/core/api';
 import { useAuthStore } from '@marketing/stores/authStore';
 import { ANGULAR_APP_URL } from '@marketing/core/env';
 import { Toast } from '@marketing/shared/ui/toast';
-import './login-page.css';
+import { Button } from '@marketing/shared/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@marketing/shared/ui/card';
+import { Input } from '@marketing/shared/ui/input';
+import { ThemeToggle } from '@marketing/shared/ui/theme-toggle';
 
 export function LoginPage() {
   const login = useAuthStore((state) => state.login);
@@ -70,101 +80,111 @@ export function LoginPage() {
   }
 
   return (
-    <main className="login-page">
-      <section className="login-card">
-        <header>
-          <p className="login-card__eyebrow">marketing-mfe</p>
-          <h1>Sign in</h1>
-          <p className="login-card__hint">
-            React hooks + TanStack Query — same json-server as the Angular app.
+    <main className="grid min-h-screen place-items-center bg-[var(--color-bg)] p-6">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
+
+      <Card className="w-full max-w-md border-[var(--color-border)] shadow-[var(--shadow-lg)]">
+        <CardHeader>
+          <p className="text-xs font-medium uppercase tracking-widest text-[var(--color-primary)]">
+            marketing-mfe
           </p>
-        </header>
+          <CardTitle>Sign in</CardTitle>
+          <CardDescription>
+            React + shadcn primitives — shared `--color-primary` with Angular DS.
+          </CardDescription>
+        </CardHeader>
 
-        {success ? (
-          <div className="login-success">
-            <Toast type="success" message={success} />
-            <p className="login-card__redirect">
-              <a href={ANGULAR_APP_URL}>Open Angular app →</a>
-              <span className="login-card__redirect-hint">
-                {' '}
-                (needs <code>npm start</code> on port 4200)
-              </span>
-            </p>
-          </div>
-        ) : null}
+        <CardContent className="grid gap-4">
+          {success ? (
+            <div className="grid gap-2">
+              <Toast type="success" message={success} />
+              <p className="text-sm">
+                <a
+                  className="font-semibold text-[var(--color-primary)] underline-offset-2 hover:underline"
+                  href={ANGULAR_APP_URL}
+                >
+                  Open Angular app →
+                </a>
+                <span className="text-[var(--color-muted)]">
+                  {' '}
+                  (needs <code>npm start</code> on port 4200)
+                </span>
+              </p>
+            </div>
+          ) : null}
 
-        {error ? (
-          <Toast type="error" message={error} onDismiss={() => setError(null)} />
-        ) : null}
+          {error ? (
+            <Toast type="error" message={error} onDismiss={() => setError(null)} />
+          ) : null}
 
-        <form className="login-form" onSubmit={handleSubmit} noValidate>
-          <label className="login-form__field">
-            <span>Email</span>
-            <input
-              type="email"
-              name="email"
-              autoComplete="email"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                if (emailError) {
-                  setEmailError(null);
-                }
-              }}
-              placeholder="test@example.com"
-              aria-invalid={emailError ? 'true' : undefined}
-              aria-describedby={emailError ? 'email-error' : undefined}
-              disabled={loading}
-            />
-            {emailError ? (
-              <span id="email-error" className="login-form__error" role="alert">
-                {emailError}
-              </span>
-            ) : null}
-          </label>
+          <form className="grid gap-4" onSubmit={handleSubmit} noValidate>
+            <label className="grid gap-1.5 text-sm">
+              <span>Email</span>
+              <Input
+                type="email"
+                name="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  if (emailError) {
+                    setEmailError(null);
+                  }
+                }}
+                placeholder="test@example.com"
+                aria-invalid={emailError ? 'true' : undefined}
+                aria-describedby={emailError ? 'email-error' : undefined}
+                disabled={loading}
+              />
+              {emailError ? (
+                <span id="email-error" className="text-xs text-[var(--color-danger-text)]" role="alert">
+                  {emailError}
+                </span>
+              ) : null}
+            </label>
 
-          <label className="login-form__field">
-            <span>Password</span>
-            <input
-              type="password"
-              name="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                if (passwordError) {
-                  setPasswordError(null);
-                }
-              }}
-              placeholder="password123"
-              aria-invalid={passwordError ? 'true' : undefined}
-              aria-describedby={passwordError ? 'password-error' : undefined}
-              disabled={loading}
-            />
-            {passwordError ? (
-              <span
-                id="password-error"
-                className="login-form__error"
-                role="alert"
-              >
-                {passwordError}
-              </span>
-            ) : null}
-          </label>
+            <label className="grid gap-1.5 text-sm">
+              <span>Password</span>
+              <Input
+                type="password"
+                name="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  if (passwordError) {
+                    setPasswordError(null);
+                  }
+                }}
+                placeholder="password123"
+                aria-invalid={passwordError ? 'true' : undefined}
+                aria-describedby={passwordError ? 'password-error' : undefined}
+                disabled={loading}
+              />
+              {passwordError ? (
+                <span
+                  id="password-error"
+                  className="text-xs text-[var(--color-danger-text)]"
+                  role="alert"
+                >
+                  {passwordError}
+                </span>
+              ) : null}
+            </label>
 
-          <button
-            type="submit"
-            className="login-form__submit"
-            disabled={loading}
-          >
-            {loading ? 'Signing in…' : 'Sign in'}
-          </button>
-        </form>
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Signing in…' : 'Sign in'}
+            </Button>
+          </form>
+        </CardContent>
 
-        <p className="login-card__footer">
-          Test user: <code>test@example.com</code> / <code>password123</code>
-        </p>
-      </section>
+        <CardFooter>
+          Test user: <code className="mx-1">test@example.com</code> /{' '}
+          <code>password123</code>
+        </CardFooter>
+      </Card>
     </main>
   );
 }

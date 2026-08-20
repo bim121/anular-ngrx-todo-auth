@@ -25,7 +25,8 @@
       "@marketing/providers/*": ["src/providers/*"],
       "@shared/data-access": ["../../libs/shared/data-access/src/index.ts"],
       "@shared/data-access/*": ["../../libs/shared/data-access/src/*"],
-      "@shared/validators/*": ["../../libs/shared/validators/*"]
+      "@shared/validators/*": ["../../libs/shared/validators/*"],
+      "@shared/design-tokens/*": ["../../libs/shared/design-tokens/*"]
     }
   },
   "include": ["src", "../../libs/shared/data-access/src"]

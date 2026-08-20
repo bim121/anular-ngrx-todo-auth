@@ -6,7 +6,7 @@ import {
   TODO_REPOSITORY,
   createJsonServerTodoRepository,
 } from './services/json-server-todo.repository';
-import '../../../libs/shared/ui/styles/_tokens.css';
+import '@shared/design-tokens/styles/tokens.css';
 import './styles.css';
 
 const app = createApp(App);

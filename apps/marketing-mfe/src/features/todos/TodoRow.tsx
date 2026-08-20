@@ -1,5 +1,7 @@
 import { memo } from 'react';
 import type { Todo } from '@shared/data-access';
+import { Button } from '@marketing/shared/ui/button';
+import { Checkbox } from '@marketing/shared/ui/checkbox';
 
 export const TODO_ROW_HEIGHT_PX = 72;
 
@@ -27,22 +29,23 @@ export const TodoRow = memo(function TodoRow({
       role="listitem"
     >
       <label className="todo-item__label">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={todo.completed}
           onChange={() => onToggle(todo.id)}
           disabled={disabled}
         />
         <span>{todo.task}</span>
       </label>
-      <button
+      <Button
         type="button"
-        className="todo-item__delete"
+        variant="outline"
+        size="sm"
+        className="border-[var(--color-danger-subtle)] text-[var(--color-danger-text)] hover:bg-[var(--color-danger-subtle)]"
         onClick={() => onDelete(todo.id)}
         disabled={disabled}
       >
         Delete
-      </button>
+      </Button>
     </div>
   );
 });
