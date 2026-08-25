@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Meta, Title } from '@angular/platform-browser';
 import { provideRouter, Router, Routes } from '@angular/router';
 import { RoutePageContextService } from './route-page-context.service';
 
@@ -14,18 +15,28 @@ const routes: Routes = [
   {
     path: 'todos',
     component: DummyPageComponent,
-    data: { title: 'My Todos', breadcrumb: 'Todos' },
+    data: {
+      title: 'My Todos',
+      breadcrumb: 'Todos',
+      description: 'View and manage your personal todo list.',
+    },
   },
   {
     path: 'login',
     component: DummyPageComponent,
-    data: { title: 'Sign In', breadcrumb: 'Login' },
+    data: {
+      title: 'Login',
+      breadcrumb: 'Login',
+      description: 'Sign in to manage your tasks securely.',
+    },
   },
 ];
 
 describe('RoutePageContextService (zoneless + router navigation)', () => {
   let router: Router;
   let service: RoutePageContextService;
+  let title: Title;
+  let meta: Meta;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,6 +45,8 @@ describe('RoutePageContextService (zoneless + router navigation)', () => {
 
     router = TestBed.inject(Router);
     service = TestBed.inject(RoutePageContextService);
+    title = TestBed.inject(Title);
+    meta = TestBed.inject(Meta);
   });
 
   it('exposes activePage signal from initial route', async () => {
@@ -42,6 +55,7 @@ describe('RoutePageContextService (zoneless + router navigation)', () => {
     expect(service.activePage()).toEqual({
       title: 'My Todos',
       breadcrumb: 'Todos',
+      description: 'View and manage your personal todo list.',
     });
   });
 
@@ -50,8 +64,26 @@ describe('RoutePageContextService (zoneless + router navigation)', () => {
     await router.navigateByUrl('/login');
 
     expect(service.activePage()).toEqual({
-      title: 'Sign In',
+      title: 'Login',
       breadcrumb: 'Login',
+      description: 'Sign in to manage your tasks securely.',
     });
+  });
+
+  it('syncs document title and SEO meta tags on navigation', async () => {
+    await router.navigateByUrl('/login');
+    await TestBed.flushEffects();
+
+    expect(title.getTitle()).toBe('Login | Todo App');
+    expect(meta.getTag('name="description"')?.content).toBe(
+      'Sign in to manage your tasks securely.',
+    );
+    expect(meta.getTag('property="og:title"')?.content).toBe('Login | Todo App');
+    expect(meta.getTag('property="og:description"')?.content).toBe(
+      'Sign in to manage your tasks securely.',
+    );
+    expect(
+      meta.getTag('rel="canonical"')?.getAttribute('href'),
+    ).toBe('http://localhost:4200/login');
   });
 });

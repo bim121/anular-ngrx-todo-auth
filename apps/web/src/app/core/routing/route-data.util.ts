@@ -12,10 +12,14 @@ export function getLeafRoutePageData(root: ActivatedRouteSnapshot): RoutePageDat
     return null;
   }
 
-  const { title, breadcrumb } = route.data;
+  const { title, breadcrumb, description } = route.data;
 
-  if (typeof title === 'string' && typeof breadcrumb === 'string') {
-    return { title, breadcrumb };
+  if (
+    typeof title === 'string' &&
+    typeof breadcrumb === 'string' &&
+    typeof description === 'string'
+  ) {
+    return { title, breadcrumb, description };
   }
 
   return null;

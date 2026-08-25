@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { guestGuard } from './core/guards/guest.guard';
 import { RoutePageData } from './core/routing/route-page-data.model';
+import { titleResolver } from './core/routing/title.resolver';
 
 export const AUTH_ROUTES: Routes = [
   {
@@ -15,9 +16,11 @@ export const AUTH_ROUTES: Routes = [
         loadComponent: () =>
           import('@anular-ngrx/auth-feature-login').then((m) => m.LoginComponent),
         canActivate: [guestGuard],
+        resolve: { title: titleResolver },
         data: {
-          title: 'Sign In',
+          title: 'Login',
           breadcrumb: 'Login',
+          description: 'Sign in to manage your tasks securely.',
         } satisfies RoutePageData,
       },
       {
@@ -27,9 +30,11 @@ export const AUTH_ROUTES: Routes = [
             (m) => m.RegisterComponent
           ),
         canActivate: [guestGuard],
+        resolve: { title: titleResolver },
         data: {
           title: 'Create Account',
           breadcrumb: 'Register',
+          description: 'Create a free account and start organizing your todos.',
         } satisfies RoutePageData,
       },
     ],

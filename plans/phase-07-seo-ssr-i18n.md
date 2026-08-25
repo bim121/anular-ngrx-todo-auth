@@ -38,6 +38,11 @@
 
 ## Неделя 1 — Meta & titles
 
+- [x] `titleResolver` + route `data.title` / `data.description`
+- [x] `RoutePageContextService` syncs title, OG, Twitter, canonical on `NavigationEnd`
+- [x] Per-route meta on `/login`, `/register`, `/todos`, `/kanban`, `/calendar`, `/profile`
+- [x] Canonical via `environment.siteUrl`
+
 ### 7.1.1 TitleStrategy or resolver
 
 ```typescript

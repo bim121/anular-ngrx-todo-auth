@@ -12,6 +12,6 @@ import { ToastContainerComponent } from '@anular-ngrx/shared-ui/toast/toast-cont
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  /** Eager init: syncs `document.title` from route `data` on every navigation. */
+  /** Eager init: syncs document title + SEO meta from route `data` on every navigation. */
   private readonly _routePageContext = inject(RoutePageContextService);
 }

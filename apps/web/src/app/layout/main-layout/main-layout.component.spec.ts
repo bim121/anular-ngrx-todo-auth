@@ -48,7 +48,11 @@ describe('MainLayoutComponent (NgRx + zoneless)', () => {
         {
           provide: RoutePageContextService,
           useValue: {
-            activePage: () => ({ title: 'My Todos', breadcrumb: 'Todos' }),
+            activePage: () => ({
+              title: 'My Todos',
+              breadcrumb: 'Todos',
+              description: 'View and manage your personal todo list.',
+            }),
           },
         },
       ],

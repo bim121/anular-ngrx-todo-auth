@@ -16,6 +16,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { provideRealtimeService } from './core/realtime/realtime.providers';
 import { RealtimeEffects } from './core/realtime/realtime.effects';
 import { RoutePageData } from './core/routing/route-page-data.model';
+import { titleResolver } from './core/routing/title.resolver';
 import {
   notificationsFeatureKey,
   notificationsReducer,
@@ -52,9 +53,11 @@ export const TODOS_ROUTES: Routes = [
             (m) => m.TodoListPageComponent
           ),
         canActivate: [authGuard],
+        resolve: { title: titleResolver },
         data: {
           title: 'My Todos',
           breadcrumb: 'Todos',
+          description: 'View and manage your personal todo list.',
         } satisfies RoutePageData,
       },
       {
@@ -64,9 +67,11 @@ export const TODOS_ROUTES: Routes = [
             (m) => m.KanbanBoardComponent
           ),
         canActivate: [authGuard],
+        resolve: { title: titleResolver },
         data: {
           title: 'Kanban',
           breadcrumb: 'Kanban',
+          description: 'Organize tasks on a kanban board by status.',
         } satisfies RoutePageData,
       },
       {
@@ -76,9 +81,11 @@ export const TODOS_ROUTES: Routes = [
             (m) => m.CalendarViewComponent
           ),
         canActivate: [authGuard],
+        resolve: { title: titleResolver },
         data: {
           title: 'Calendar',
           breadcrumb: 'Calendar',
+          description: 'See upcoming todos and due dates on your calendar.',
         } satisfies RoutePageData,
       },
       {
@@ -88,9 +95,11 @@ export const TODOS_ROUTES: Routes = [
             (m) => m.UserProfileComponent
           ),
         canActivate: [authGuard],
+        resolve: { title: titleResolver },
         data: {
           title: 'My Profile',
           breadcrumb: 'Profile',
+          description: 'Manage your account settings and preferences.',
         } satisfies RoutePageData,
       },
     ],

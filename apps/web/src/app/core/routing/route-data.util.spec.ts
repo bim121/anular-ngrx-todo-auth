@@ -16,12 +16,17 @@ describe('getLeafRoutePageData', () => {
     const root = buildRouteTree(
       {},
       { title: 'Ignored' },
-      { title: 'My Todos', breadcrumb: 'Todos' },
+      {
+        title: 'My Todos',
+        breadcrumb: 'Todos',
+        description: 'View and manage your personal todo list.',
+      },
     );
 
     expect(getLeafRoutePageData(root)).toEqual({
       title: 'My Todos',
       breadcrumb: 'Todos',
+      description: 'View and manage your personal todo list.',
     });
   });
 
