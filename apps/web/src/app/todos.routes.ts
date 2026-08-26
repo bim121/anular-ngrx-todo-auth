@@ -17,6 +17,8 @@ import { provideRealtimeService } from './core/realtime/realtime.providers';
 import { RealtimeEffects } from './core/realtime/realtime.effects';
 import { RoutePageData } from './core/routing/route-page-data.model';
 import { titleResolver } from './core/routing/title.resolver';
+import { todosResolver } from './core/routing/todos.resolver';
+import { TODOS_RESOLVE_KEY } from '@anular-ngrx/todos-data-access';
 import {
   notificationsFeatureKey,
   notificationsReducer,
@@ -53,7 +55,7 @@ export const TODOS_ROUTES: Routes = [
             (m) => m.TodoListPageComponent
           ),
         canActivate: [authGuard],
-        resolve: { title: titleResolver },
+        resolve: { title: titleResolver, [TODOS_RESOLVE_KEY]: todosResolver },
         data: {
           title: 'My Todos',
           breadcrumb: 'Todos',
@@ -67,7 +69,7 @@ export const TODOS_ROUTES: Routes = [
             (m) => m.KanbanBoardComponent
           ),
         canActivate: [authGuard],
-        resolve: { title: titleResolver },
+        resolve: { title: titleResolver, [TODOS_RESOLVE_KEY]: todosResolver },
         data: {
           title: 'Kanban',
           breadcrumb: 'Kanban',
@@ -81,7 +83,7 @@ export const TODOS_ROUTES: Routes = [
             (m) => m.CalendarViewComponent
           ),
         canActivate: [authGuard],
-        resolve: { title: titleResolver },
+        resolve: { title: titleResolver, [TODOS_RESOLVE_KEY]: todosResolver },
         data: {
           title: 'Calendar',
           breadcrumb: 'Calendar',

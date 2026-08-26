@@ -57,6 +57,15 @@ export const authReducer = createReducer(
         })
     ),
 
+    on(AuthActions.restoreAuthFromSession, (state, { user, token }) =>
+        withStatus(state, 'authenticated', {
+            user,
+            token,
+            error: null,
+            _persistedAt: Date.now(),
+        })
+    ),
+
     on(AuthActions.loginFailure, (state, {error}) =>
         withStatus(state, 'error', {
             user: null,

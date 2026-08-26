@@ -1,9 +1,9 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 /**
- * SSR strategy (Phase 5.6.2):
- * - Auth screens: server-rendered so we can verify hydration on `/login`.
- * - App shell (todos/profile): client-only — needs auth + API; avoid prerender flakes in CI.
+ * SSR strategy (Phase 7.2 / 7.3):
+ * - Auth screens: server-rendered for hydration checks.
+ * - Todo data routes: server-rendered with TransferState + session cookie.
  */
 export const serverRoutes: ServerRoute[] = [
   {
@@ -12,6 +12,18 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'register',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'todos',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'kanban',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'calendar',
     renderMode: RenderMode.Server,
   },
   {

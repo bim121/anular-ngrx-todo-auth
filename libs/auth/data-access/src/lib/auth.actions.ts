@@ -33,4 +33,10 @@ export const loginFailure = createAction(
 
 export const logoutUser = createAction(
     '[App Logout] Logout User'
-)
+);
+
+/** SSR: restore session from httpOnly cookie before guards/resolvers (Phase 7.2.4). */
+export const restoreAuthFromSession = createAction(
+    '[SSR Session] Restore Auth From Session',
+    props<{ user: User; token: string }>()
+);

@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { TransferState } from '@angular/core';
+import { Router } from '@angular/router';
 import { provideMockActions } from '@ngrx/effects/testing';
 import {
   firstValueFrom,
@@ -19,6 +21,30 @@ import { Todo } from './todo.model';
 import { Store } from '@ngrx/store';
 import { routerNavigatedAction } from '@ngrx/router-store';
 import * as TodoActions from './todo.actions';
+import { TODOS_RESOLVE_KEY } from './todos-transfer.state';
+
+const emptyRouterRoot = {
+  firstChild: null,
+  data: {},
+} as never;
+
+function createRouterMock(root = emptyRouterRoot) {
+  return {
+    routerState: {
+      snapshot: {
+        root,
+      },
+    },
+  };
+}
+
+function createTransferStateMock(hasTodos = false) {
+  return {
+    hasKey: vi.fn(() => hasTodos),
+    get: vi.fn(() => []),
+    remove: vi.fn(),
+  };
+}
 
 describe('TodoEffects loadTodos$', () => {
   let actions$: ReplaySubject<unknown>;
@@ -46,11 +72,61 @@ describe('TodoEffects loadTodos$', () => {
           provide: ToastService,
           useValue: { success: vi.fn(), error: vi.fn() },
         },
+        { provide: Router, useValue: createRouterMock() },
+        { provide: TransferState, useValue: createTransferStateMock() },
       ],
     });
 
     effects = TestBed.inject(TodoEffects);
     lifecycle = TestBed.inject(EffectsLifecycleService);
+  });
+
+  it('uses TransferState todos before HTTP when present', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        TodoEffects,
+        provideMockActions(() => actions$ as Observable<unknown>),
+        { provide: TodoRepository, useValue: { getAll: getAllMock } },
+        {
+          provide: Store,
+          useValue: {
+            select: (selector: unknown) =>
+              selector === selectUserId ? of('user-1') : of(undefined),
+          },
+        },
+        {
+          provide: ToastService,
+          useValue: { success: vi.fn(), error: vi.fn() },
+        },
+        { provide: Router, useValue: createRouterMock() },
+        {
+          provide: TransferState,
+          useValue: {
+            hasKey: vi.fn(() => true),
+            get: vi.fn(() => [
+              {
+                id: '1',
+                userId: 'user-1',
+                task: 'Transferred',
+                completed: false,
+                status: 'todo' as const,
+                tags: [],
+                priority: 'medium' as const,
+              },
+            ]),
+            remove: vi.fn(),
+          },
+        },
+      ],
+    });
+
+    const transferEffects = TestBed.inject(TodoEffects);
+    actions$.next(TodoActions.loadTodos());
+    const action = await firstValueFrom(transferEffects.loadTodos$);
+
+    expect(getAllMock).not.toHaveBeenCalled();
+    expect(action.type).toBe(TodoActions.loadTodosSuccess.type);
   });
 
   it('passes userId from store to getAll', async () => {
@@ -205,6 +281,8 @@ describe('TodoEffects loadTodosOnNavigation$', () => {
           provide: ToastService,
           useValue: { success: vi.fn(), error: vi.fn() },
         },
+        { provide: Router, useValue: createRouterMock() },
+        { provide: TransferState, useValue: createTransferStateMock() },
       ],
     });
 
@@ -229,6 +307,73 @@ describe('TodoEffects loadTodosOnNavigation$', () => {
 
     const action = await firstValueFrom(effects.loadTodosOnNavigation$);
     expect(action).toEqual(TodoActions.loadTodos());
+  });
+
+  it('skips loadTodos when route resolver already provided todos', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        TodoEffects,
+        provideMockActions(() => actions$ as Observable<unknown>),
+        { provide: TodoRepository, useValue: {} },
+        {
+          provide: Store,
+          useValue: {
+            select: (selector: unknown) =>
+              selector === selectUserId ? of('user-1') : of(undefined),
+          },
+        },
+        {
+          provide: ToastService,
+          useValue: { success: vi.fn(), error: vi.fn() },
+        },
+        {
+          provide: Router,
+          useValue: createRouterMock({
+            firstChild: null,
+            data: {
+              [TODOS_RESOLVE_KEY]: [
+                {
+                  id: '1',
+                  userId: 'user-1',
+                  task: 'From resolver',
+                  completed: false,
+                  status: 'todo',
+                  tags: [],
+                  priority: 'medium',
+                },
+              ],
+            },
+          } as never),
+        },
+        { provide: TransferState, useValue: createTransferStateMock() },
+      ],
+    });
+
+    const resolvedEffects = TestBed.inject(TodoEffects);
+    let loadTodosEmitted = false;
+    resolvedEffects.loadTodosOnNavigation$.subscribe(() => {
+      loadTodosEmitted = true;
+    });
+
+    actions$.next(
+      routerNavigatedAction({
+        payload: {
+          routerState: {
+            url: '/todos',
+            params: {},
+            queryParams: {},
+          } as never,
+          event: { id: 1 } as never,
+        },
+      })
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(loadTodosEmitted).toBe(false);
+
+    const hydrateAction = await firstValueFrom(resolvedEffects.hydrateTodosFromRoute$);
+    expect(hydrateAction.type).toBe(TodoActions.loadTodosSuccess.type);
   });
 
   it('does not dispatch when user is not authenticated', async () => {
@@ -463,6 +608,8 @@ describe('TodoEffects marbles', () => {
             provide: ToastService,
             useValue: { success: vi.fn(), error: vi.fn() },
           },
+          { provide: Router, useValue: createRouterMock() },
+          { provide: TransferState, useValue: createTransferStateMock() },
         ],
       });
 

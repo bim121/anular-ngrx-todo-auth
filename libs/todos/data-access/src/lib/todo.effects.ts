@@ -1,4 +1,5 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, TransferState } from '@angular/core';
+import { Router } from '@angular/router';
 import { concatLatestFrom } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -22,6 +23,12 @@ import * as AuthSelectors from '@anular-ngrx/auth-data-access/auth.selectors';
 import * as TodoSelectors from './todo.selectors';
 import { TodoRepository } from './todo.repository';
 import * as TodoActions from './todo.actions';
+import { Todo } from './todo.model';
+import { consumeTransferredTodos } from './todos-transfer.state';
+import {
+  getLeafRouteResolvedTodos,
+  isTodoDataRoute,
+} from './todos-route.util';
 
 /**
  * Retries for read-only API calls (loadTodos). Mutations must not retry.
@@ -34,21 +41,39 @@ export class TodoEffects {
   private readonly actions$ = inject(Actions);
   private readonly todos = inject(TodoRepository);
   private readonly store = inject(Store);
+  private readonly router = inject(Router);
+  private readonly transferState = inject(TransferState);
   private readonly lifecycle = inject(EffectsLifecycleService);
   private readonly toast = inject(ToastService);
+
+  /** Seed store from route resolver (SSR TransferState path) — skip HTTP (Phase 7.2.3). */
+  hydrateTodosFromRoute$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(routerNavigatedAction),
+      map(() => getLeafRouteResolvedTodos(this.router.routerState.snapshot.root)),
+      filter((todos): todos is Todo[] => todos !== null),
+      map((todos) => TodoActions.loadTodosSuccess({ todos }))
+    )
+  );
 
   loadTodosOnNavigation$ = createEffect(() =>
     this.actions$.pipe(
       ofType(routerNavigatedAction),
       concatLatestFrom(() => this.store.select(AuthSelectors.selectUserId)),
       filter(([action, userId]) => {
-        if (userId == null) return false;
+        if (userId == null) {
+          return false;
+        }
+
         const url = action.payload.routerState.url;
-        return (
-          url.includes('/todos') ||
-          url.includes('/kanban') ||
-          url.includes('/calendar')
+        if (!isTodoDataRoute(url)) {
+          return false;
+        }
+
+        const resolved = getLeafRouteResolvedTodos(
+          this.router.routerState.snapshot.root
         );
+        return resolved === null;
       }),
       map(() => TodoActions.loadTodos())
     )
@@ -59,15 +84,19 @@ export class TodoEffects {
       ofType(TodoActions.loadTodos),
       concatLatestFrom(() => this.store.select(AuthSelectors.selectUserId)),
       filter(([, userId]) => userId != null),
-      // Dedup: ignore loadTodos while a request is already in flight (Phase 5.5.3).
-      exhaustMap(([, userId]) =>
-        defer(() => this.todos.getAll(userId!)).pipe(
+      exhaustMap(([, userId]) => {
+        const transferred = consumeTransferredTodos(this.transferState);
+        if (transferred) {
+          return of(TodoActions.loadTodosSuccess({ todos: transferred }));
+        }
+
+        return defer(() => this.todos.getAll(userId!)).pipe(
           takeUntil(this.lifecycle.cancelPendingRequests),
           retry(LOAD_RETRY),
           map((todos) => TodoActions.loadTodosSuccess({ todos })),
           catchError((error) => of(TodoActions.loadTodosFailure({ error })))
-        )
-      )
+        );
+      })
     )
   );
 

@@ -11,11 +11,11 @@
 ## Результат фазы
 
 - [ ] Meta/OG/Twitter на всех routes
-- [ ] TransferState для todos (authenticated SSR path)
+- [x] TransferState для todos (authenticated SSR path)
 - [ ] Prerender login/register
 - [ ] i18n en/ru
 - [ ] sitemap, robots, JSON-LD
-- [ ] ADR-004 cookie auth for SSR
+- [x] ADR-004 cookie auth for SSR
 
 ### React/Next.js (marketing-mfe)
 
@@ -81,6 +81,12 @@ Use environment `siteUrl`.
 ---
 
 ## Неделя 2 — SSR data transfer
+
+- [x] `todosResolver` + `TransferState` (no double-fetch after hydration)
+- [x] `hydrateTodosFromRoute$` seeds NgRx store from resolver data
+- [x] ADR-004 httpOnly `session` cookie + Express mock `/api/session`
+- [x] SSR auth restore via `restoreAuthFromSession` + `provideSsrAuthRestore()`
+- [x] Todo routes use `RenderMode.Server` in `app.routes.server.ts`
 
 ### 7.2.1 Problem
 

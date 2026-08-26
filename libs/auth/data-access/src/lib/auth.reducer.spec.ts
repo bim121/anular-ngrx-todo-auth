@@ -86,6 +86,19 @@ describe('authReducer', () => {
     expect(state.error).toBeNull();
   });
 
+  it('restoreAuthFromSession: hydrates authenticated SSR session', () => {
+    const state = authReducer(
+      initialState,
+      AuthActions.restoreAuthFromSession({ user, token: 'token-123' })
+    );
+
+    expect(state.status).toBe('authenticated');
+    expect(state.user).toEqual(user);
+    expect(state.token).toBe('token-123');
+    expect(state.isLoggedIn).toBe(true);
+    expect(state._persistedAt).not.toBeNull();
+  });
+
   it('loginFailure: transitions to error', () => {
     const state = authReducer(
       { ...initialState, isLoading: true, status: 'submitting' },

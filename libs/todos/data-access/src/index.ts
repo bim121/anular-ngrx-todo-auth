@@ -18,5 +18,7 @@ export * from './lib/json-server-comment.repository';
 export * from './lib/comment-repository.providers';
 export * from './lib/comments.facade';
 export * from './lib/export-todos';
+export * from './lib/todos-transfer.state';
+export * from './lib/todos-route.util';
 // HttpTodoRepository skeleton — Phase 13; keep off main barrel:
 // `@anular-ngrx/todos-data-access/http-todo.repository`
