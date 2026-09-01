@@ -51,18 +51,25 @@ export class AuthEffects {
     { dispatch: false }
   );
 
+  private localeSegment(): string {
+    const segment = this.router.url.split('?')[0]?.split('/').filter(Boolean)[0];
+    return segment === 'ru' ? 'ru' : 'en';
+  }
+
   authNavigation$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType(fromAuth.loginSuccess, fromAuth.logoutUser),
         tap((action) => {
+          const locale = this.localeSegment();
+
           if (action.type === fromAuth.loginSuccess.type) {
-            this.router.navigate(['/todos']);
+            this.router.navigate(['/', locale, 'todos']);
             return;
           }
 
           this.lifecycle.notifyCancelPendingRequests();
-          this.router.navigate(['/login']);
+          this.router.navigate(['/', locale, 'login']);
         })
       ),
     { dispatch: false }

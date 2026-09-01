@@ -3,7 +3,7 @@
     @if (loading()) {
       <div class="auth-loading" aria-busy="true">
         <app-spinner />
-        <span>Signing in…</span>
+        <span i18n="@@login.signingIn">Signing in…</span>
       </div>
     }
 
@@ -33,7 +33,7 @@
         [disabled]="loginForm().invalid() || loading()"
         [loading]="loading()"
       >
-        Login
+        <span i18n="@@login.submit">Login</span>
       </button>
     </form>
 
@@ -42,7 +42,8 @@
     }
 
     <p class="switch-form">
-      Don't have an account? <a routerLink="/register">Register here</a>
+      <span i18n="@@login.noAccount">Don't have an account?</span>
+      <a routerLink="../register" i18n="@@login.registerLink">Register here</a>
     </p>
   </app-card>
 </div>

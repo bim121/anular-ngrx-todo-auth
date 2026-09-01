@@ -57,6 +57,7 @@ export const TODOS_ROUTES: Routes = [
         canActivate: [authGuard],
         resolve: { title: titleResolver, [TODOS_RESOLVE_KEY]: todosResolver },
         data: {
+          pageKey: 'todos',
           title: 'My Todos',
           breadcrumb: 'Todos',
           description: 'View and manage your personal todo list.',
@@ -71,6 +72,7 @@ export const TODOS_ROUTES: Routes = [
         canActivate: [authGuard],
         resolve: { title: titleResolver, [TODOS_RESOLVE_KEY]: todosResolver },
         data: {
+          pageKey: 'kanban',
           title: 'Kanban',
           breadcrumb: 'Kanban',
           description: 'Organize tasks on a kanban board by status.',
@@ -85,6 +87,7 @@ export const TODOS_ROUTES: Routes = [
         canActivate: [authGuard],
         resolve: { title: titleResolver, [TODOS_RESOLVE_KEY]: todosResolver },
         data: {
+          pageKey: 'calendar',
           title: 'Calendar',
           breadcrumb: 'Calendar',
           description: 'See upcoming todos and due dates on your calendar.',
@@ -99,6 +102,7 @@ export const TODOS_ROUTES: Routes = [
         canActivate: [authGuard],
         resolve: { title: titleResolver },
         data: {
+          pageKey: 'profile',
           title: 'My Profile',
           breadcrumb: 'Profile',
           description: 'Manage your account settings and preferences.',

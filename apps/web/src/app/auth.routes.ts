@@ -18,6 +18,7 @@ export const AUTH_ROUTES: Routes = [
         canActivate: [guestGuard],
         resolve: { title: titleResolver },
         data: {
+          pageKey: 'login',
           title: 'Login',
           breadcrumb: 'Login',
           description: 'Sign in to manage your tasks securely.',
@@ -32,6 +33,7 @@ export const AUTH_ROUTES: Routes = [
         canActivate: [guestGuard],
         resolve: { title: titleResolver },
         data: {
+          pageKey: 'register',
           title: 'Create Account',
           breadcrumb: 'Register',
           description: 'Create a free account and start organizing your todos.',

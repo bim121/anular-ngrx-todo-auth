@@ -83,7 +83,9 @@ describe('RoutePageContextService (zoneless + router navigation)', () => {
       'Sign in to manage your tasks securely.',
     );
     expect(
-      meta.getTag('rel="canonical"')?.getAttribute('href'),
+      document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
     ).toBe('http://localhost:4200/login');
+    expect(document.querySelector('link[hreflang="en"]')).toBeTruthy();
+    expect(document.querySelector('link[hreflang="ru"]')).toBeTruthy();
   });
 });

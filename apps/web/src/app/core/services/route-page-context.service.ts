@@ -1,4 +1,5 @@
-import { effect, inject, Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable, DOCUMENT } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -10,18 +11,26 @@ import {
   buildDocumentTitle,
   buildPageDescription,
 } from '@app/core/seo/seo-meta.util';
+import { localizeRoutePage } from '@app/core/i18n/route-i18n';
+import {
+  syncCanonicalLink,
+  syncHreflangLinks,
+} from '@app/core/i18n/hreflang.util';
 
 @Injectable({ providedIn: 'root' })
 export class RoutePageContextService {
   private readonly router = inject(Router);
   private readonly title = inject(Title);
   private readonly meta = inject(Meta);
+  private readonly document = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly activePageSource$ = merge(
     of(void 0),
     this.router.events.pipe(filter((e) => e instanceof NavigationEnd)),
   ).pipe(
     map(() => getLeafRoutePageData(this.router.routerState.snapshot.root)),
+    map((page) => (page ? localizeRoutePage(page) : null)),
     distinctUntilChanged(
       (a, b) =>
         a?.title === b?.title &&
@@ -37,14 +46,20 @@ export class RoutePageContextService {
   });
 
   constructor() {
-    effect(() => {
-      const page = this.activePage();
-      const path = this.router.url.split('?')[0] ?? '/';
-      this.syncSeoMeta(page, path);
-    });
+    this.activePageSource$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((page) => {
+        const path = this.router.url.split('?')[0] ?? '/';
+        this.syncSeoMeta(page, path);
+      });
   }
 
   private syncSeoMeta(page: RoutePageData | null, path: string): void {
+    const head = this.document.head;
+    if (!head) {
+      return;
+    }
+
     const documentTitle = buildDocumentTitle(page);
     const description = buildPageDescription(page);
     const canonicalUrl = buildCanonicalUrl(path);
@@ -58,6 +73,7 @@ export class RoutePageContextService {
     this.meta.updateTag({ name: 'twitter:card', content: 'summary' });
     this.meta.updateTag({ name: 'twitter:title', content: documentTitle });
     this.meta.updateTag({ name: 'twitter:description', content: description });
-    this.meta.updateTag({ rel: 'canonical', href: canonicalUrl });
+    syncCanonicalLink(head, canonicalUrl);
+    syncHreflangLinks(head, path);
   }
 }

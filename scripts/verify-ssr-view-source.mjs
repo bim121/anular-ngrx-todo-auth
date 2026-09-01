@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
- * Phase 7.3.2 — smoke-check SSR/prerender HTML (run while serve:ssr is up).
+ * Phase 7.3.2 / 7.4 — smoke-check SSR/prerender HTML (run while serve:ssr is up).
  * Usage: node scripts/verify-ssr-view-source.mjs [baseUrl]
  */
 const baseUrl = (process.argv[2] ?? 'http://localhost:4000').replace(/\/$/, '');
 
 const checks = [
   {
-    path: '/login',
-    name: 'login prerender',
+    path: '/en/login',
+    name: 'en login prerender',
     assert(html) {
       const failures = [];
       if (!html.includes('<app-root')) {
@@ -23,12 +23,32 @@ const checks = [
       if (!html.includes('rel="canonical"')) {
         failures.push('missing canonical link');
       }
+      if (!html.includes('hreflang="en"')) {
+        failures.push('missing hreflang=en');
+      }
+      if (!html.includes('hreflang="ru"')) {
+        failures.push('missing hreflang=ru');
+      }
       return failures;
     },
   },
   {
-    path: '/register',
-    name: 'register prerender',
+    path: '/ru/login',
+    name: 'ru login prerender',
+    assert(html) {
+      const failures = [];
+      if (!html.includes('<app-root')) {
+        failures.push('missing <app-root>');
+      }
+      if (!/Вход|Login/i.test(html)) {
+        failures.push('missing login copy');
+      }
+      return failures;
+    },
+  },
+  {
+    path: '/en/register',
+    name: 'en register prerender',
     assert(html) {
       const failures = [];
       if (!html.includes('<app-root')) {
@@ -41,14 +61,13 @@ const checks = [
     },
   },
   {
-    path: '/todos',
+    path: '/en/todos',
     name: 'todos SSR shell',
     assert(html) {
       const failures = [];
       if (!html.includes('<app-root')) {
         failures.push('missing <app-root>');
       }
-      // Unauthenticated users may get redirect HTML or login shell — still SSR output.
       if (html.length < 200) {
         failures.push('response too small');
       }

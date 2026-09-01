@@ -185,7 +185,7 @@ describe('AuthEffects (marble)', () => {
           AuthEffects,
           provideMockActions(() => actions$ as Observable<unknown>),
           { provide: AuthService, useValue: {} },
-          { provide: Router, useValue: { navigate } },
+          { provide: Router, useValue: { navigate, url: '/en/login' } },
           {
             provide: ToastService,
             useValue: { success: vi.fn(), error: vi.fn() },
@@ -197,7 +197,7 @@ describe('AuthEffects (marble)', () => {
       expectObservable(effects.authNavigation$).toBe('-a', { a: action });
     });
 
-    expect(navigate).toHaveBeenCalledWith(['/todos']);
+    expect(navigate).toHaveBeenCalledWith(['/', 'en', 'todos']);
   });
 
   it('authNavigation$: navigates to /login on logout', () => {
@@ -210,7 +210,7 @@ describe('AuthEffects (marble)', () => {
           of(AuthActions.logoutUser()) as Observable<unknown>
         ),
         { provide: AuthService, useValue: {} },
-        { provide: Router, useValue: { navigate } },
+        { provide: Router, useValue: { navigate, url: '/en/todos' } },
         {
           provide: ToastService,
           useValue: { success: vi.fn(), error: vi.fn() },
@@ -225,7 +225,7 @@ describe('AuthEffects (marble)', () => {
     effects.authNavigation$.subscribe();
 
     expect(cancelSpy).toHaveBeenCalled();
-    expect(navigate).toHaveBeenCalledWith(['/login']);
+    expect(navigate).toHaveBeenCalledWith(['/', 'en', 'login']);
   });
 
   it('analyticsLog$: logs action type in dev mode', () => {

@@ -1,15 +1,15 @@
 <div class="main-layout">
   <header class="main-header">
     <div class="main-header__start">
-      <a routerLink="/todos" class="brand">Todo App</a>
+      <a [routerLink]="['/', locale(), 'todos']" class="brand">Todo App</a>
       <nav class="main-nav" aria-label="Primary">
-        <a routerLink="/todos" routerLinkActive="active">List</a>
-        <a routerLink="/kanban" routerLinkActive="active">Kanban</a>
-        <a routerLink="/calendar" routerLinkActive="active">Calendar</a>
+        <a [routerLink]="['/', locale(), 'todos']" routerLinkActive="active">List</a>
+        <a [routerLink]="['/', locale(), 'kanban']" routerLinkActive="active">Kanban</a>
+        <a [routerLink]="['/', locale(), 'calendar']" routerLinkActive="active">Calendar</a>
       </nav>
       @if (pageContext.activePage(); as page) {
         <nav class="breadcrumbs" aria-label="Breadcrumb">
-          <a routerLink="/todos">Home</a>
+          <a [routerLink]="['/', locale(), 'todos']">Home</a>
           <span class="breadcrumbs__sep" aria-hidden="true">/</span>
           <span class="breadcrumbs__current" aria-current="page">{{ page.breadcrumb }}</span>
         </nav>
@@ -60,7 +60,7 @@
         }
       </div>
       @if (user(); as user) {
-        <a routerLink="/profile" class="profile-link">
+        <a [routerLink]="['/', locale(), 'profile']" class="profile-link">
           @if (avatarUrl(); as src) {
             <img
               class="profile-avatar"

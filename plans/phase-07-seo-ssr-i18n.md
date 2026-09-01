@@ -13,7 +13,7 @@
 - [x] Meta/OG/Twitter на всех routes
 - [x] TransferState для todos (authenticated SSR path)
 - [x] Prerender login/register
-- [ ] i18n en/ru
+- [x] i18n en/ru
 - [ ] sitemap, robots, JSON-LD
 - [x] ADR-004 cookie auth for SSR
 
@@ -231,7 +231,7 @@ Build script generates static URLs for prerendered routes.
 
 - [ ] Lighthouse SEO ≥ 95
 - [ ] No duplicate GET todos on first paint (network tab)
-- [ ] `/en` and `/ru` work
+- [x] `/en` and `/ru` work
 - [ ] Rich results test (Google) valid JSON-LD
 
 ---

@@ -37,7 +37,7 @@ describe('guestGuard', () => {
         },
         {
           provide: Router,
-          useValue: { createUrlTree: createUrlTreeSpy },
+          useValue: { createUrlTree: createUrlTreeSpy, url: '/en/login' },
         },
       ],
     });
@@ -55,7 +55,7 @@ describe('guestGuard', () => {
     isLoggedIn$.next(true);
     const result = await toPromise(runGuard());
 
-    expect(createUrlTreeSpy).toHaveBeenCalledWith(['/todos']);
+    expect(createUrlTreeSpy).toHaveBeenCalledWith(['/', 'en', 'todos']);
     expect(result).toBe(fakeUrlTree);
   });
 });

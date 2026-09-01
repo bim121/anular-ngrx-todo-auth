@@ -11,6 +11,7 @@ import {
 import * as NotificationActions from '@app/features/notifications/data-access/notification.actions';
 import { RoutePageContextService } from '@app/core/services/route-page-context.service';
 import { ThemeService } from '@app/core/ui/theme.service';
+import { LocaleService } from '@app/core/i18n/locale.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -25,6 +26,7 @@ export class MainLayoutComponent {
   private readonly auth = inject(AuthFacade);
   private readonly themeService = inject(ThemeService);
   readonly pageContext = inject(RoutePageContextService);
+  readonly locale = inject(LocaleService).locale;
 
   readonly user = this.auth.user;
   readonly notifications = toSignal(this.store.select(selectAllNotifications), {

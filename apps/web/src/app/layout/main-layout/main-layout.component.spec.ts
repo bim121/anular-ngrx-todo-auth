@@ -10,6 +10,7 @@ import {
   selectUnreadNotificationsCount,
 } from '@app/features/notifications/data-access/notification.selectors';
 import { RoutePageContextService } from '@app/core/services/route-page-context.service';
+import { LocaleService } from '@app/core/i18n/locale.service';
 import { MainLayoutComponent } from './main-layout.component';
 
 describe('MainLayoutComponent (NgRx + zoneless)', () => {
@@ -46,6 +47,12 @@ describe('MainLayoutComponent (NgRx + zoneless)', () => {
           },
         },
         {
+          provide: LocaleService,
+          useValue: {
+            locale: signal('en'),
+          },
+        },
+        {
           provide: RoutePageContextService,
           useValue: {
             activePage: () => ({
@@ -68,7 +75,7 @@ describe('MainLayoutComponent (NgRx + zoneless)', () => {
 
     const link = fixture.nativeElement.querySelector('.profile-link');
     expect(link?.textContent).toContain('Alice');
-    expect(link?.getAttribute('href')).toBe('/profile');
+    expect(link?.getAttribute('href')).toBe('/en/profile');
     const avatar = link?.querySelector('img.profile-avatar');
     expect(avatar).toBeTruthy();
     expect(avatar?.getAttribute('width')).toBe('36');
