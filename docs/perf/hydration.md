@@ -28,12 +28,15 @@ How to measure duplicate handlers if you re-enable replay:
 
 ## SSR routes in this repo
 
-Configured in `apps/web/src/app/app.routes.server.ts`:
+Configured in `apps/web/src/app/app.routes.server.ts` (Phase 7.3 hybrid rendering):
 
 | Path | Mode | Why |
 |------|------|-----|
-| `login` / `register` | `RenderMode.Server` | Public screens — good hydration smoke targets |
-| `**` (todos, profile, …) | `RenderMode.Client` | Need auth + API; avoid flaky prerender in CI |
+| `login` / `register` | `RenderMode.Prerender` | Public SEO pages — static HTML at build time |
+| `todos` / `kanban` / `calendar` | `RenderMode.Server` | Auth + TransferState — per-request SSR |
+| `**` (profile, …) | `RenderMode.Client` | Client-only fallback |
+
+View-source checklist: [docs/seo/view-source-checklist.md](../seo/view-source-checklist.md)
 
 Build outputs (after `npm run build`):
 

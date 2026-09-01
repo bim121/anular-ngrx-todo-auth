@@ -1,4 +1,4 @@
-import { createReducer, on } from "@ngrx/store";
+import { ActionReducer, createReducer, on } from "@ngrx/store";
 import { AuthState, AuthStatus } from './auth.model';
 import * as AuthActions from "./auth.actions";
 
@@ -28,7 +28,7 @@ function withStatus(
     };
 }
 
-export const authReducer = createReducer(
+export const authReducerBase = createReducer(
     initialState,
 
     on(AuthActions.registerUser, (state) =>
@@ -77,4 +77,35 @@ export const authReducer = createReducer(
     on(AuthActions.logoutUser, () => ({
         ...initialState
     }))
-)
+);
+
+/** Ensures guards can proceed after first auth action (SSR/prerender has no localStorage meta-reducer). */
+function withAuthPersistenceReady(
+    reducer: ActionReducer<AuthState>
+): ActionReducer<AuthState> {
+    return (state, action) => {
+        const next = reducer(state, action);
+        if (next._persistedAt != null) {
+            return next;
+        }
+
+        const hasSession = !!(next.isLoggedIn || next.token);
+        const status: AuthStatus =
+            next.status === 'authenticated' ||
+            next.status === 'submitting' ||
+            next.status === 'error'
+                ? next.status
+                : hasSession
+                    ? 'authenticated'
+                    : 'idle';
+
+        return {
+            ...next,
+            status,
+            isLoggedIn: status === 'authenticated',
+            _persistedAt: Date.now(),
+        };
+    };
+}
+
+export const authReducer = withAuthPersistenceReady(authReducerBase);

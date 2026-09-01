@@ -23,7 +23,8 @@
           }
         ],
         "styles": ["apps/web/src/styles.css"],
-        "outputPath": "dist/web"
+        "outputPath": "dist/web",
+        "outputMode": "server"
       },
       "configurations": {
         "production": {

@@ -1,8 +1,7 @@
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { TransferState } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
-import { PLATFORM_ID } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectUserId } from '@anular-ngrx/auth-data-access';
 import {
@@ -31,6 +30,11 @@ export const todosResolver: ResolveFn<Todo[]> = () => {
       switchMap((storeUserId) => {
         const userId = storeUserId ?? session.getUserIdFromRequest();
         if (!userId) {
+          return of([]);
+        }
+
+        // Route extraction / prerender must not block on json-server during build.
+        if (isPlatformServer(platformId) && !session.getUserIdFromRequest()) {
           return of([]);
         }
 

@@ -2,7 +2,13 @@ import { FormsModule } from '@angular/forms';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular-vite';
 import { CheckboxComponent } from './checkbox.component';
 
-const meta: Meta<CheckboxComponent & { checked: boolean; label: string }> = {
+type CheckboxStoryArgs = {
+  modelChecked: boolean;
+  label: string;
+  disabled: boolean;
+};
+
+const meta: Meta<CheckboxStoryArgs> = {
   title: 'DS/Checkbox',
   component: CheckboxComponent,
   tags: ['autodocs'],
@@ -12,19 +18,19 @@ const meta: Meta<CheckboxComponent & { checked: boolean; label: string }> = {
     }),
   ],
   argTypes: {
-    checked: { control: 'boolean' },
+    modelChecked: { control: 'boolean' },
     disabled: { control: 'boolean' },
     label: { control: 'text' },
   },
   args: {
-    checked: false,
+    modelChecked: false,
     disabled: false,
     label: 'Mark as done',
   },
   render: (args) => ({
     props: args,
     template: `
-      <app-checkbox [(ngModel)]="checked" [disabled]="disabled">
+      <app-checkbox [(ngModel)]="modelChecked" [disabled]="disabled">
         {{ label }}
       </app-checkbox>
     `,
@@ -32,12 +38,12 @@ const meta: Meta<CheckboxComponent & { checked: boolean; label: string }> = {
 };
 
 export default meta;
-type Story = StoryObj<CheckboxComponent & { checked: boolean; label: string }>;
+type Story = StoryObj<CheckboxStoryArgs>;
 
 export const Unchecked: Story = {
-  args: { checked: false },
+  args: { modelChecked: false },
 };
 
 export const Checked: Story = {
-  args: { checked: true },
+  args: { modelChecked: true },
 };

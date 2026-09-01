@@ -4,7 +4,9 @@ import {
   isMainModule,
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
+import compression from 'compression';
 import express from 'express';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   encodeSessionPayload,
@@ -26,6 +28,19 @@ const sessionCookieOptions = {
   path: '/',
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
+
+/** Gzip/Brotli-compatible compression for HTML + JSON API responses (Phase 7.3.3). */
+app.use(
+  compression({
+    threshold: 1024,
+    filter: (req, res) => {
+      if (req.headers['x-no-compression']) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+  })
+);
 
 app.use(express.json());
 
@@ -54,15 +69,49 @@ app.delete('/api/session', (_req, res) => {
 });
 
 /**
- * Serve static files from /browser
+ * Serve static files from /browser with long-cache hashed assets (Phase 7.3.3).
  */
 app.use(
   express.static(browserDistFolder, {
     maxAge: '1y',
     index: false,
     redirect: false,
+    setHeaders(res, filePath) {
+      const fileName = filePath.replace(/\\/g, '/').split('/').pop() ?? '';
+
+      if (fileName === 'index.html') {
+        res.setHeader('Cache-Control', 'no-cache');
+        return;
+      }
+
+      if (/\.[a-zA-Z0-9]{8,}\.(js|css|mjs|woff2?)$/i.test(fileName)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+    },
   }),
 );
+
+/** Serve build-time prerendered HTML before Angular engine (Phase 7.3). */
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    next();
+    return;
+  }
+
+  const pathname = req.path.replace(/\/$/, '') || '/';
+  if (pathname === '/') {
+    next();
+    return;
+  }
+
+  const prerenderedFile = join(browserDistFolder, pathname.slice(1), 'index.html');
+  if (existsSync(prerenderedFile)) {
+    res.sendFile(prerenderedFile);
+    return;
+  }
+
+  next();
+});
 
 /**
  * Handle all other requests by rendering the Angular application.

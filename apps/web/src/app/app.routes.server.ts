@@ -1,18 +1,19 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 /**
- * SSR strategy (Phase 7.2 / 7.3):
- * - Auth screens: server-rendered for hydration checks.
- * - Todo data routes: server-rendered with TransferState + session cookie.
+ * Hybrid rendering (Phase 7.3):
+ * - Public auth screens: prerendered static HTML (SEO + fast TTFB).
+ * - Authenticated todo views: per-request SSR + TransferState (Phase 7.2).
+ * - Everything else: client-only.
  */
 export const serverRoutes: ServerRoute[] = [
   {
     path: 'login',
-    renderMode: RenderMode.Server,
+    renderMode: RenderMode.Prerender,
   },
   {
     path: 'register',
-    renderMode: RenderMode.Server,
+    renderMode: RenderMode.Prerender,
   },
   {
     path: 'todos',

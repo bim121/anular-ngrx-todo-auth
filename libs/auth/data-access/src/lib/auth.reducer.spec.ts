@@ -6,10 +6,11 @@ describe('authReducer', () => {
   const user: User = { id: 'u1', name: 'Test', email: 'test@example.com' };
   const authResponse: AuthResponse = { user, accessToken: 'token-123' };
 
-  it('returns initial state for unknown action', () => {
+  it('returns idle auth and marks persistence ready on first action', () => {
     const state = authReducer(undefined, { type: 'NOOP' } as never);
-    expect(state).toEqual(initialState);
     expect(state.status).toBe('idle');
+    expect(state.user).toBeNull();
+    expect(state._persistedAt).toEqual(expect.any(Number));
   });
 
   it('registerUser: transitions to submitting', () => {
@@ -131,7 +132,7 @@ describe('authReducer', () => {
 
     const state = authReducer(loggedInState, AuthActions.logoutUser());
 
-    expect(state).toEqual(initialState);
     expect(state.status).toBe('idle');
+    expect(state._persistedAt).toEqual(expect.any(Number));
   });
 });

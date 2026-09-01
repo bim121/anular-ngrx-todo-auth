@@ -10,9 +10,9 @@
 
 ## Результат фазы
 
-- [ ] Meta/OG/Twitter на всех routes
+- [x] Meta/OG/Twitter на всех routes
 - [x] TransferState для todos (authenticated SSR path)
-- [ ] Prerender login/register
+- [x] Prerender login/register
 - [ ] i18n en/ru
 - [ ] sitemap, robots, JSON-LD
 - [x] ADR-004 cookie auth for SSR
@@ -129,6 +129,11 @@ Steps:
 ---
 
 ## Неделя 3 — Prerender & hybrid rendering
+
+- [x] `login` / `register` → `RenderMode.Prerender`
+- [x] `todos` (+ kanban/calendar) → `RenderMode.Server`
+- [x] View-source checklist + `scripts/verify-ssr-view-source.mjs`
+- [x] Express: `compression` + immutable cache for hashed assets
 
 ### 7.3.1 app.routes.server.ts
 
