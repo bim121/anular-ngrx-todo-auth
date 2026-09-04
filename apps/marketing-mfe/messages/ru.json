@@ -1,0 +1,37 @@
+{
+  "brand": "Todo Platform",
+  "nav": {
+    "home": "Главная",
+    "pricing": "Цены",
+    "docs": "Документация",
+    "openApp": "Открыть приложение"
+  },
+  "home": {
+    "title": "Todo Platform",
+    "headline": "Организуйте работу без потери фокуса",
+    "description": "Публичный marketing-сайт Todo learning stack — SSR, i18n и общие design tokens.",
+    "ctaPrimary": "Смотреть цены",
+    "ctaSecondary": "Читать документацию"
+  },
+  "pricing": {
+    "title": "Цены — Todo Platform",
+    "headline": "Тарифы для команд",
+    "description": "Простые тарифы для личных задач и командной работы.",
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "blurb": "Личные списки и базовые фильтры."
+    },
+    "team": {
+      "name": "Team",
+      "price": "$12",
+      "blurb": "Общие доски, календарь и SSR-ready auth."
+    }
+  },
+  "docs": {
+    "title": "Документация — Todo Platform",
+    "headline": "Документация",
+    "description": "Как связаны Next.js marketing app, Angular shell и shared tokens.",
+    "body": "Этот App Router сайт закрывает SEO metadata, locale prefix, sitemap/robots и JSON-LD. Авторизованные todos остаются в Angular SSR приложении."
+  }
+}

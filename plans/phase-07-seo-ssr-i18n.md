@@ -19,12 +19,12 @@
 
 ### React/Next.js (marketing-mfe)
 
-- [ ] `npx create-next-app@latest apps/marketing-mfe` — App Router, TypeScript, Tailwind
-- [ ] Страницы `/`, `/pricing`, `/docs` с `generateMetadata` и Open Graph
-- [ ] `sitemap.ts` + `robots.ts` (Next conventions)
-- [ ] i18n: `next-intl` или `[locale]` segment — en/ru
-- [ ] JSON-LD в layout или page metadata
-- [ ] Import `libs/shared/design-tokens` — единый бренд с Angular DS
+- [x] `npx create-next-app@latest apps/marketing-mfe` — App Router, TypeScript, Tailwind
+- [x] Страницы `/`, `/pricing`, `/docs` с `generateMetadata` и Open Graph
+- [x] `sitemap.ts` + `robots.ts` (Next conventions)
+- [x] i18n: `next-intl` или `[locale]` segment — en/ru
+- [x] JSON-LD в layout или page metadata
+- [x] Import `libs/shared/design-tokens` — единый бренд с Angular DS
 - [ ] Lighthouse SEO ≥ 95 на marketing routes
 
 ### Vue 3 (analytics-mfe)

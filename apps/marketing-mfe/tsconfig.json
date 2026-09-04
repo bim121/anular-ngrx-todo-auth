@@ -1,33 +1,42 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2022",
-    "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
+    "strict": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@marketing/core/*": ["src/core/*"],
-      "@marketing/shared/*": ["src/shared/*"],
-      "@marketing/features/*": ["src/features/*"],
-      "@marketing/stores/*": ["src/stores/*"],
-      "@marketing/hooks/*": ["src/hooks/*"],
-      "@marketing/providers/*": ["src/providers/*"],
-      "@shared/data-access": ["../../libs/shared/data-access/src/index.ts"],
-      "@shared/data-access/*": ["../../libs/shared/data-access/src/*"],
-      "@shared/validators/*": ["../../libs/shared/validators/*"],
+      "@marketing/shared/*": ["./src/shared/*"],
       "@shared/design-tokens/*": ["../../libs/shared/design-tokens/*"]
     }
   },
-  "include": ["src", "../../libs/shared/data-access/src"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/features",
+    "src/stores",
+    "src/hooks",
+    "src/providers",
+    "src/core",
+    "src/App.tsx",
+    "src/main.tsx"
+  ]
 }

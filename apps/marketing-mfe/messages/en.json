@@ -1,0 +1,37 @@
+{
+  "brand": "Todo Platform",
+  "nav": {
+    "home": "Home",
+    "pricing": "Pricing",
+    "docs": "Docs",
+    "openApp": "Open app"
+  },
+  "home": {
+    "title": "Todo Platform",
+    "headline": "Organize work without losing focus",
+    "description": "Public marketing site for the Todo learning stack — SSR, i18n, and shared design tokens.",
+    "ctaPrimary": "View pricing",
+    "ctaSecondary": "Read docs"
+  },
+  "pricing": {
+    "title": "Pricing — Todo Platform",
+    "headline": "Plans for teams",
+    "description": "Simple pricing for individuals and teams organizing tasks together.",
+    "free": {
+      "name": "Free",
+      "price": "$0",
+      "blurb": "Personal lists and basic filters."
+    },
+    "team": {
+      "name": "Team",
+      "price": "$12",
+      "blurb": "Shared boards, calendar, and SSR-ready auth."
+    }
+  },
+  "docs": {
+    "title": "Docs — Todo Platform",
+    "headline": "Documentation",
+    "description": "How the marketing Next.js app, Angular shell, and shared tokens fit together.",
+    "body": "This App Router site covers SEO metadata, locale prefixes, sitemap/robots, and JSON-LD. Authenticated todos stay in the Angular SSR app."
+  }
+}

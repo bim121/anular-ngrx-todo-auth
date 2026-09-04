@@ -1,34 +1,31 @@
 # marketing-mfe
 
-React marketing micro-frontend — login + todo list on hooks (Phase 2).
+Next.js App Router marketing site (Phase 7 / R.7) — public SEO pages with i18n.
 
-- **Now:** Vite + React, feature folders, json-server auth + todos
-- **Phase 7:** migrate to Next.js App Router (SSR, `/pricing`, `/docs`)
-- **Phase 9:** mount into Angular shell at `/`
+- **Routes:** `/en`, `/en/pricing`, `/en/docs` (+ `/ru/...`)
+- **SEO:** `generateMetadata`, Open Graph, `sitemap.ts`, `robots.ts`, JSON-LD
+- **Tokens:** `libs/shared/design-tokens` shared with Angular DS
+- **Auth todos:** stay in Angular SSR (`NEXT_PUBLIC_ANGULAR_APP_URL`)
 
 ## Dev
 
 ```bash
-# terminal 1 — mock API
-npm run api
-
-# terminal 2 — marketing app
 npm run dev:marketing
 ```
 
-Open http://localhost:4300 — login with `test@example.com` / `password123`, then manage todos with filters (all / active / done).
+Open http://localhost:4300 — redirects to `/en`.
 
-## Stack notes
+## Scripts
 
-- **Login:** controlled form with shared `@shared/validators/email` (same rules as Angular).
-- **Todos:** TanStack Query via `useTodos` + `@tanstack/react-virtual` list + `React.memo` `TodoRow`.
-- **Perf:** `docs/react/perf-profiling.md` (scroll FPS / Profiler checklist).
-- **Docs:** `docs/react/reconciliation-and-fiber.md`, `docs/angular-vs-react-state.md`.
+| Command | Purpose |
+|---------|---------|
+| `npm run dev:marketing` | Next dev server on :4300 |
+| `npm run build:marketing` | Production build |
+| `npm run typecheck --workspace=marketing-mfe` | `tsc --noEmit` |
 
-## Perf stress (1000 todos)
+## Env
 
 ```bash
-node scripts/seed-many-todos.js 1000
+NEXT_PUBLIC_SITE_URL=http://localhost:4300
+NEXT_PUBLIC_ANGULAR_APP_URL=http://localhost:4200/en/todos
 ```
-
-Then scroll the virtual viewport — only ~viewport rows stay in the DOM.
