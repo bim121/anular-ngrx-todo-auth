@@ -11,6 +11,11 @@ import {
   buildDocumentTitle,
   buildPageDescription,
 } from '@app/core/seo/seo-meta.util';
+import {
+  buildWebApplicationJsonLd,
+  isPublicSeoPath,
+  syncJsonLdScript,
+} from '@app/core/seo/json-ld.util';
 import { localizeRoutePage } from '@app/core/i18n/route-i18n';
 import {
   syncCanonicalLink,
@@ -75,5 +80,9 @@ export class RoutePageContextService {
     this.meta.updateTag({ name: 'twitter:description', content: description });
     syncCanonicalLink(head, canonicalUrl);
     syncHreflangLinks(head, path);
+    syncJsonLdScript(
+      head,
+      isPublicSeoPath(path) ? buildWebApplicationJsonLd() : null,
+    );
   }
 }

@@ -1,10 +1,19 @@
-# View-source verification (Phase 7.3.2)
+# View-source verification (Phase 7.3–7.5)
 
 Manual checks after `npm run build` + `npm run serve:ssr` (default `http://localhost:4000`).
 
 Automated smoke: `node scripts/verify-ssr-view-source.mjs` (server must be running).
 
-## `/login` (Prerender)
+## SEO artifacts (Phase 7.5)
+
+| URL | Expected |
+|-----|----------|
+| `/robots.txt` | Allow locale login/register; Disallow todos/kanban/calendar/profile; `Sitemap:` line |
+| `/sitemap.xml` | `<urlset>` with `/en/login`, `/ru/login`, `/en/register`, `/ru/register` |
+
+Regenerate sitemap: `npm run sitemap` (also runs after `npm run build`).
+
+## `/en/login` (Prerender)
 
 **View Source** (`Ctrl+U`) should show:
 
@@ -14,12 +23,14 @@ Automated smoke: `node scripts/verify-ssr-view-source.mjs` (server must be runni
 | `<title>` | `Login \| Todo App` (or route title + app name) |
 | `meta[name="description"]` | Sign-in description from route `data` |
 | `meta[property="og:title"]` | Same as document title |
-| `meta[rel="canonical"]` | `http://localhost:4200/login` (dev) or prod `siteUrl` |
+| `link[rel="canonical"]` | `{siteUrl}/en/login` |
+| `link[hreflang]` | `en`, `ru`, `x-default` |
+| `script#app-json-ld` | `application/ld+json` with `@type: WebApplication` |
 | Prerender hint | No per-request-only SSR variance; HTML identical across reloads |
 
-## `/register` (Prerender)
+## `/en/register` (Prerender)
 
-Same as login — title/description for Create Account route.
+Same as login — title/description for Create Account route + JSON-LD.
 
 ## `/todos` (Server SSR, auth-dependent)
 

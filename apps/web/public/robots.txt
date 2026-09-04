@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /en/login
+Allow: /ru/login
+Allow: /en/register
+Allow: /ru/register
+Disallow: /en/todos
+Disallow: /ru/todos
+Disallow: /en/kanban
+Disallow: /ru/kanban
+Disallow: /en/calendar
+Disallow: /ru/calendar
+Disallow: /en/profile
+Disallow: /ru/profile
+
+Sitemap: https://example.com/sitemap.xml

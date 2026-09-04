@@ -1,11 +1,48 @@
 #!/usr/bin/env node
 /**
- * Phase 7.3.2 / 7.4 — smoke-check SSR/prerender HTML (run while serve:ssr is up).
+ * Phase 7.3–7.5 — smoke-check SSR/prerender HTML + SEO artifacts
+ * (run while serve:ssr is up).
  * Usage: node scripts/verify-ssr-view-source.mjs [baseUrl]
  */
 const baseUrl = (process.argv[2] ?? 'http://localhost:4000').replace(/\/$/, '');
 
 const checks = [
+  {
+    path: '/robots.txt',
+    name: 'robots.txt',
+    assert(body) {
+      const failures = [];
+      if (!body.includes('User-agent:')) {
+        failures.push('missing User-agent');
+      }
+      if (!body.includes('Allow:') || !/Allow:.*login/i.test(body)) {
+        failures.push('missing Allow login');
+      }
+      if (!body.includes('Disallow:') || !/Disallow:.*todos/i.test(body)) {
+        failures.push('missing Disallow todos');
+      }
+      if (!body.includes('Sitemap:')) {
+        failures.push('missing Sitemap directive');
+      }
+      return failures;
+    },
+  },
+  {
+    path: '/sitemap.xml',
+    name: 'sitemap.xml',
+    assert(body) {
+      const failures = [];
+      if (!body.includes('<urlset')) {
+        failures.push('missing urlset');
+      }
+      for (const path of ['/en/login', '/ru/login', '/en/register', '/ru/register']) {
+        if (!body.includes(path)) {
+          failures.push(`missing ${path}`);
+        }
+      }
+      return failures;
+    },
+  },
   {
     path: '/en/login',
     name: 'en login prerender',
@@ -29,6 +66,9 @@ const checks = [
       if (!html.includes('hreflang="ru"')) {
         failures.push('missing hreflang=ru');
       }
+      if (!html.includes('application/ld+json') || !html.includes('WebApplication')) {
+        failures.push('missing JSON-LD WebApplication');
+      }
       return failures;
     },
   },
@@ -43,6 +83,9 @@ const checks = [
       if (!/Вход|Login/i.test(html)) {
         failures.push('missing login copy');
       }
+      if (!html.includes('application/ld+json')) {
+        failures.push('missing JSON-LD');
+      }
       return failures;
     },
   },
@@ -56,6 +99,9 @@ const checks = [
       }
       if (!/Create Account|register/i.test(html)) {
         failures.push('missing register copy');
+      }
+      if (!html.includes('WebApplication')) {
+        failures.push('missing JSON-LD WebApplication');
       }
       return failures;
     },

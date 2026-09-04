@@ -87,5 +87,15 @@ describe('RoutePageContextService (zoneless + router navigation)', () => {
     ).toBe('http://localhost:4200/login');
     expect(document.querySelector('link[hreflang="en"]')).toBeTruthy();
     expect(document.querySelector('link[hreflang="ru"]')).toBeTruthy();
+    expect(document.querySelector('#app-json-ld')?.textContent).toContain(
+      'WebApplication',
+    );
+  });
+
+  it('removes JSON-LD on non-public routes', async () => {
+    await router.navigateByUrl('/login');
+    await router.navigateByUrl('/todos');
+
+    expect(document.querySelector('#app-json-ld')).toBeNull();
   });
 });

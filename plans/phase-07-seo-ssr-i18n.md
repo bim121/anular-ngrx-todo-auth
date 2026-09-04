@@ -14,7 +14,7 @@
 - [x] TransferState для todos (authenticated SSR path)
 - [x] Prerender login/register
 - [x] i18n en/ru
-- [ ] sitemap, robots, JSON-LD
+- [x] sitemap, robots, JSON-LD
 - [x] ADR-004 cookie auth for SSR
 
 ### React/Next.js (marketing-mfe)
