@@ -23,6 +23,12 @@ Open http://localhost:4400 — login at `/login` with `test@example.com` / `pass
 | `/todos` | Todo list — `ref`, `computed`, `watch` (requires auth) |
 | `/analytics` | Dashboard stub (requires auth) |
 
+## SEO (Phase 7 / V.7.2)
+
+- Standalone app is **`noindex, nofollow`** (`index.html` + `src/core/seo.ts`).
+- Public SEO is owned by Next marketing + Angular shell — see [ADR-014](../../docs/adr/ADR-014-nuxt-vs-vite-analytics.md).
+- Nuxt migration **rejected** for this remote ([comparison](../../docs/multi-stack/07-nuxt-comparison-adr.md)).
+
 ## Stack notes
 
 - **Todos:** `TodoListView.vue` + `TodoRow.vue` with `v-memo` (Phase 5).

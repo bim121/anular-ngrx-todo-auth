@@ -6,8 +6,11 @@ import {
   TODO_REPOSITORY,
   createJsonServerTodoRepository,
 } from './services/json-server-todo.repository';
+import { ensureAnalyticsNoIndex } from './core/seo';
 import '@shared/design-tokens/styles/tokens.css';
 import './styles.css';
+
+ensureAnalyticsNoIndex();
 
 const app = createApp(App);
 const pinia = createPinia();

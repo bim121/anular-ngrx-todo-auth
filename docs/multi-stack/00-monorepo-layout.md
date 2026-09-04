@@ -10,8 +10,8 @@ Target polyglot MFE architecture: [polyglot-mfe-architecture.md](../../plans/pol
 | **web** (shell) | Angular 21 + Nx | `apps/web/` | layout, auth, router | Phase 4 — Nx app |
 | **todos-mfe** | Angular 21 | `libs/todos/*` (in web today) | `/todos/*` | Phase 9 — extract remote |
 | **admin-mfe** | Angular 21 | — | `/admin/*` | Phase 9 stub → Phase 14 |
-| **marketing-mfe** | React + Vite (→ Next.js 15) | `apps/marketing-mfe/` | `/`, `/pricing`, `/docs` | Phase 1 login stub |
-| **analytics-mfe** | Vue 3 + Vite | `apps/analytics-mfe/` | `/analytics` | Phase 1 auth stub |
+| **marketing-mfe** | Next.js 15 App Router | `apps/marketing-mfe/` | `/en`, `/pricing`, `/docs` | Phase 7 SEO/SSR |
+| **analytics-mfe** | Vue 3 + Vite SPA | `apps/analytics-mfe/` | `/analytics` | Phase 7 — stay Vite ([ADR-014](../adr/ADR-014-nuxt-vs-vite-analytics.md)); `noindex` |
 
 ## Angular libs (Nx)
 

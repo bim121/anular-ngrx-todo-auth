@@ -29,10 +29,10 @@
 
 ### Vue 3 (analytics-mfe)
 
-- [ ] **ADR-007:** Nuxt 3 vs Vite SPA для analytics — сравнение SSR/SEO (doc-only spike)
-- [ ] Решение: остаёмся на Vite SPA (dashboard не требует SEO); Nuxt — rejected или deferred
-- [ ] `docs/multi-stack/07-nuxt-comparison-adr.md` опубликован
-- [ ] analytics-mfe: client-only meta для `/analytics` (noindex в shell embed)
+- [x] **ADR-007 / ADR-014:** Nuxt 3 vs Vite SPA для analytics — сравнение SSR/SEO (doc-only spike)
+- [x] Решение: остаёмся на Vite SPA (dashboard не требует SEO); Nuxt — rejected / deferred
+- [x] `docs/multi-stack/07-nuxt-comparison-adr.md` опубликован
+- [x] analytics-mfe: client-only meta для `/analytics` (noindex в shell embed)
 
 ---
 

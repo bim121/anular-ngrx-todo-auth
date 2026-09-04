@@ -62,6 +62,19 @@ flowchart TB
 
 ---
 
+## SEO ownership (Phase 7)
+
+| Surface | Owner | Mechanism |
+|---------|-------|-----------|
+| Public marketing `/`, `/pricing`, `/docs` | **marketing-mfe (Next)** | `generateMetadata`, `sitemap.ts`, `robots.ts`, JSON-LD |
+| Auth + todos HTML for crawlers/share | **Angular `web` SSR** | Prerender login/register, TransferState, `$localize` |
+| Shell route `/analytics` (Phase 9) | **Angular shell (host)** | Host `<title>` / meta; remote mounts as client island |
+| Standalone `analytics-mfe` (`:4400`) | **Not indexed** | `meta robots=noindex,nofollow` in `index.html` + `src/core/seo.ts` |
+
+**Rule:** Vue analytics remote must **not** compete with host SEO. When federation mounts the remote under shell `/analytics`, crawlers see the **shell** document; the remote must not inject conflicting `canonical` / indexable titles. See [ADR-014](../docs/adr/ADR-014-nuxt-vs-vite-analytics.md) and [07-nuxt-comparison-adr.md](../docs/multi-stack/07-nuxt-comparison-adr.md).
+
+---
+
 ## Manifest (runtime)
 
 **Файл:** `apps/shell/public/mf-manifest.json`
@@ -117,7 +130,7 @@ plans/multi-stack-roadmap.md    # матрица Angular + React/Next + Vue по
 | Фаза | Polyglot |
 |------|----------|
 | 5 | Vue spike: chart component → будущий analytics-mfe |
-| 7 | Next.js SSR spike → marketing-mfe pages |
+| 7 | Next.js SSR marketing-mfe; Vue stays Vite SPA ([ADR-014](../docs/adr/ADR-014-nuxt-vs-vite-analytics.md)) |
 | 8 | Env/CSP для всех remotes |
 | **9** | **Все 4 MFE + shell** |
 | 11 | E2E Playwright cross-framework |
